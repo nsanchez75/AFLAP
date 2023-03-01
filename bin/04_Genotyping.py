@@ -178,7 +178,6 @@ def main():
                     
                     paste_output = os.popen(f"paste - {fcall}").read()
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
-                    df.columns = 
                     
 
 if __name__ == "__main__":
