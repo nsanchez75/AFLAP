@@ -1,6 +1,11 @@
 #!/usr/bin/R
-null <- library(ggplot2)
-null <- library(dplyr)
+if (!require("ggplot2")) {
+    install.packages("ggplot2")
+}
+if (!require("dplyr")) {
+    install.packages("dplyr")
+}
+
 args <- commandArgs(trailingOnly = TRUE)
 
 His <- read.table(args[1], sep=' ', header=FALSE)
