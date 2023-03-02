@@ -118,7 +118,7 @@ def main():
 
             print(f"Running ABySS with -k set to {k}...")
             abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}.fa -o AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark1.fa"
-            subprocess.run(abyss_cmd, shell=True)
+            subprocess.run(abyss_cmd)
             abyss_check = False
 
             # extract subsequences // mark2
