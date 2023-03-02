@@ -115,14 +115,11 @@ def main():
             if int(args.kmer) == 31:   k = 25
             elif int(args.kmer) == 25: k = 19
             else:                 k = int(args.kmer) - 2
-            if os.path.exists(f"AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark1.fa"):
-                print(f"ABySS had already been run on {g} using {k}. Skipping.")
-                abyss_check = True
-            else:
-                print(f"Running ABySS with -k set to {k}...")
-                abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}.fa -o AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark1.fa"
-                subprocess.run(abyss_cmd, shell=True)
-                abyss_check = False
+
+            print(f"Running ABySS with -k set to {k}...")
+            abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}.fa -o AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark1.fa"
+            subprocess.run(abyss_cmd, shell=True)
+            abyss_check = False
 
             # extract subsequences // mark2
             ak = int(args.kmer) + int(args.kmer) - 1
