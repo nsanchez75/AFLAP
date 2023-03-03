@@ -170,7 +170,7 @@ def main():
                 for line in fcount:
                     line = line.strip().split()
 
-                    f_call = f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
+                    fcall = f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
                     paste_output = os.popen(f"paste - {fcall}").read()
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
 
