@@ -62,7 +62,7 @@ def main():
                         line = line.strip().split()
 
                         if g in {line[3], line[4]}:
-                            h_list += [line]
+                            h_list += [line[0]]
 
             if not len(h_list):
                 print(f"Error: No progeny found whose parent is {g}. Terminating.")
@@ -70,7 +70,7 @@ def main():
 
             for h in h_list:
                 if not os.path.exists(f"AFLAP_tmp/01/ProgCounts/{h}.jf{args.kmer}"):
-                    print(f"Error: No has for {h} detected. Please rerun 01_JELLYFISH.py.")
+                    print(f"Error: No progeny {h} detected. Please rerun 01_JELLYFISH.py.")
                     exit(1)
 
                 if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt") and \
