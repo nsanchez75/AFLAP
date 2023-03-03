@@ -77,10 +77,10 @@ def main():
                    os.path.exists(f"AFLAP_tmp/04/Call/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"):
                     print(f"Genotype of {g} markers for {h} previously calculated, will use these.")
                 else:
-                    jellyfish_cmd = f"jellyfish query -s AFLAP_tmp/03/ParentalMarkers/{g}_m{args.kmer}_MARKERS_L{LO}_U{HI}_{P0}.fa AFLAP_tmp/01/ProgCounts/{h}.jf{args.kmer} > AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
+                    jellyfish_cmd = f"jellyfish query -s AFLAP_tmp/03/ParentalMarkers/{g}_m{args.kmer}_MARKERS_L{LO}_U{HI}_{P0}.fa AFLAP_tmp/01/ProgCounts/{h}.jf{args.kmer}"
                     jellyfish_output = subprocess.run(jellyfish_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-                    with open(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt", 'r') as fin, open(f"AFLAP_tmp/04/Call/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt", 'w') as fout:
-                        for line in fin:
+                    with open(f"AFLAP_tmp/04/Call/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt", 'w') as fout:
+                        for line in jellyfish_output:
                             line = line.strip().split()
 
                             if int(line[1]) >= args.LOD:
@@ -94,7 +94,7 @@ def main():
 
 
     # check for markers
-    with open("AFLAP_tmp/01.LA.txt", 'r') as fla:
+    with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
         for g in fla:
             g = g.strip()
             print(f"Calling GT for {g} derived markers...")
