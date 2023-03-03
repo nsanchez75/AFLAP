@@ -139,11 +139,6 @@ def main():
                         if g in {line[3], line[4]}:
                             h_list += [line]
 
-            for l in h_list:
-                print(l)
-            print("test ending hee heere")
-            exit(0)
-
             if not len(h_list):
                 print(f"Error: No progeny found whose parent is {g}. Terminating.")
                 exit(1)
