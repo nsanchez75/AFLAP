@@ -166,12 +166,11 @@ def main():
             print(f"GT calling for {g} derived markers complete!")
 
             # put contents into .tsv file
-            with open(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt", 'r') as fcount, \
-                      f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt" as fcall, \
-                 open(f"AFLAP_tmp/04/{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.Genotypes.tsv", 'w') as fout:
+            with open(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.Genotypes.tsv", 'w') as fout:
                 for line in fcount:
                     line = line.strip().split()
 
+                    f_call = f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
                     paste_output = os.popen(f"paste - {fcall}").read()
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
 
