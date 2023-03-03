@@ -19,7 +19,7 @@ def main():
 
 
     # check for markers
-    with open("AFLAP_tmp/01.LA.txt", 'r') as fla:
+    with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
         for g in fla:
             g = g.strip()
             print(f"Calling GT for {g} derived markers...")
