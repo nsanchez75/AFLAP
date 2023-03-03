@@ -14,7 +14,8 @@ def main():
 
 
     # make directories
-    os.makedirs(["AFLAP_tmp/04/Count", "AFLAP_tmp/04/Call"], exist_ok=True)
+    os.makedirs("AFLAP_tmp/04/Count", exist_ok=True)
+    os.makedirs("AFLAP_tmp/04/Call", exist_ok=True)
 
 
     # check for markers
@@ -45,7 +46,7 @@ def main():
             else:
                 print("Can't automatically locate marker file. Please try rerunning AFLAP.py.")
                 exit(1)     # FIXME: doesn't exit in .sh file check on this
-            
+
             # get lines in pedigree file whose parent is g
             h_list = []
             if os.path.exists("AFLAP_tmp/Pedigree_F1.txt"):
@@ -62,11 +63,11 @@ def main():
 
                         if g in {line[3], line[4]}:
                             h_list += [line]
-            
+
             if not len(h_list):
                 print(f"Error: No progeny found whose parent is {g}. Terminating.")
                 exit(1)
-            
+
             for h in h_list:
                 if not os.path.exists(f"AFLAP_tmp/01/ProgCounts/{h}.jf{args.kmer}"):
                     print("Error: No has for {h} detected. Please rerun 01_JELLYFISH.py.")
@@ -86,10 +87,10 @@ def main():
                                 fout.write("1\n")
                             else:
                                 fout.write("0\n")
-            
+
             print(f"GT calling for {g} derived markers complete!")
-            
-            
+
+
 
 
     # check for markers
@@ -175,10 +176,10 @@ def main():
                  open(f"AFLAP_tmp/04/{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.Genotypes.tsv", 'w') as fout:
                 for line in fcount:
                     line = line.strip().split()
-                    
+
                     paste_output = os.popen(f"paste - {fcall}").read()
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
-                    
+
 
 if __name__ == "__main__":
     main()
