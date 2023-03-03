@@ -70,7 +70,7 @@ def main():
 
             for h in h_list:
                 if not os.path.exists(f"AFLAP_tmp/01/ProgCounts/{h}.jf{args.kmer}"):
-                    print("Error: No has for {h} detected. Please rerun 01_JELLYFISH.py.")
+                    print(f"Error: No has for {h} detected. Please rerun 01_JELLYFISH.py.")
                     exit(1)
 
                 if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt") and \
