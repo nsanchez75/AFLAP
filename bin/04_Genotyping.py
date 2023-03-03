@@ -55,7 +55,7 @@ def main():
                         line = line.strip().split()
 
                         if g in {line[3], line[4]}:
-                            h_list += [line]
+                            h_list += [line[0]]
             if os.path.exists("AFLAP_tmp/Pedigree_F2.txt"):
                 with open("AFLAP_tmp/Pedigree_F2.txt", 'r') as ff2:
                     for line in ff2:
