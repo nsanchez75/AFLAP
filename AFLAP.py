@@ -74,15 +74,19 @@ def main():
 
         os.system(f'python3 {DIR}/bin/03_ObtainMarkers.py -P {args.Pedigree} -m {args.kmer}')
 
-        print("continue to 04?")
-        exit(0)
-
         if args.LowCov:
-            os.system(f'{DIR}/bin/04_Genotyping.sh -P {args.Pedigree} -m {args.kmer} -L')
+            os.system(f'python3 {DIR}/bin/04_Genotyping.py -P {args.Pedigree} -m {args.kmer} -L')
+
+            print("continue to 05?")
+            exit(0)
 
             os.system(f'{DIR}/bin/05_ObtainSegStats.sh -d {args.Sdl} -D {args.Sdu} -P {args.Pedigree} -m {args.kmer} -L')
         else:
-            os.system(f'{DIR}/bin/04_Genotyping.sh -P {args.Pedigree} -m {args.kmer}')
+            os.system(f'python3 {DIR}/bin/04_Genotyping.py -P {args.Pedigree} -m {args.kmer}')
+
+            print("continue to 05?")
+            exit(0)
+
             os.system(f'{DIR}/bin/05_ObtainSegStats.sh -d {args.Sdl} -D {args.Sdu} -P {args.Pedigree} -m {args.kmer}')
         if args.kinship:
             os.system(f'{DIR}/bin/06_KinshipEstimation.sh -P {args.Pedigree}')
