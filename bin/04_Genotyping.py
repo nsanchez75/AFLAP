@@ -171,7 +171,7 @@ def main():
                     line = line.strip().split()
 
                     fcall = f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
-                    paste_output = os.popen(f"paste - {fcall}").read()
+                    paste_output = os.popen(f"paste - {glob.glob(fcall)}").read()
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
 
 
