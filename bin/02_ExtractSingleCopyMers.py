@@ -31,7 +31,7 @@ def main()->None:
             if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
                 print(f"\tHistogram for {G} detected. Skipping.")
             else:
-                cmd = f"jellyfish histo AFLAP_tmp/01/F0Counts/{G}.jf{args.kmer} > AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"
+                cmd = f"jellyfish histo AFLAP_tmp/01/F0Count/{G}.jf{args.kmer} > AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"
                 subprocess.run(cmd, shell=True, executable="/bin/bash")
 
                 if not os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
@@ -58,7 +58,7 @@ def main()->None:
                 histo_same = True
             else:
                 print(f"\t\tRunning jellyfish dump for {G}...")
-                cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Counts/{G}.jf{args.kmer}"
+                cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
                 subprocess.run(cmd, shell=True, executable="/bin/bash")
                 histo_same = False
 
