@@ -32,14 +32,14 @@ def main()->None:
                     parents.add(line[0])
                 elif [isinstance(x, int) for x in [line[3], line[4]]]:
                     if line[3] > line[4]:
-                        print("Error: cannot have a lower bound higher than an upper bound.")
+                        print("Error in 01_JELLYFISH.py: cannot have a lower bound higher than an upper bound.")
                         sys.exit(1)
 
                     # write {parent} {lower bound} {upper bound} to LA.txt
                     fla.write(f"{line[0]} {line[3]} {line[4]}")
                     parents.add(line[0])
                 else:
-                    print("Error: invalid bound entry in Pedigree_F0.txt.")
+                    print("Error in 01_JELLYFISH.py: invalid bound entry in Pedigree_F0.txt.")
                     sys.exit(1)
 
 

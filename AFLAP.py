@@ -25,13 +25,13 @@ def main()->None:
         jellyfish_version = subprocess.check_output("jellyfish --version", shell=True).decode().strip()
         print(f"{jellyfish_version} detected.")
     except OSError:
-        print("Error: Jellyfish not detected. Please modify your PATH.")
+        print("Error in AFLAP.py: Jellyfish not detected. Please modify your PATH.")
         sys.exit(1)
     try:
         abyss_version = subprocess.check_output("ABYSS --version", shell=True).decode().strip()
         print(f"{abyss_version} detected.")
     except OSError:
-        print("Error: ABySS not detected. Please modify your PATH.")
+        print("Error in AFLAP.py: ABySS not detected. Please modify your PATH.")
         sys.exit(1)
     # TODO: add R/4.0.1 as well?
 

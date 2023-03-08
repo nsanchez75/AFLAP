@@ -12,7 +12,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
             # check if individual's count exists
             if os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
                 if not os.path.getsize(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-                    print(f"Error: AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty.")
+                    print(f"Error in jellyfish_count.py: AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty.")
                     sys.exit(1)
 
                 print(f"\tHash detected for {ind}. Skipping.")
@@ -25,7 +25,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
                         line = line.strip().split()
                         if line[0] == ind:
                             if not os.path.exists(line[2]):
-                                print(f"Error: {line[2]} not found.")
+                                print(f"Error in jellyfish_count.py: {line[2]} not found.")
                                 sys.exit(1)
                             reads.append(line[2])
 
@@ -36,7 +36,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
 
                 # check if jellyfish worked
                 if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-                    print(f"Error: Jellyfish for {ind} did not complete.")
+                    print(f"Error in jellyfish_count.py: Jellyfish for {ind} did not complete.")
                     sys.exit(1)
                 else:
                     print(f"\tHash for {ind} performed.")
