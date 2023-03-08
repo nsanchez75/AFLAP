@@ -46,6 +46,8 @@ def main()->None:
 
     pa.pedigree_analysis(args.Pedigree)
 
+    print("everything looks good")
+    exit(1)
 
     # 3. run programs (#TODO?: allow user to specify what programs to run)
     if args.remove:
