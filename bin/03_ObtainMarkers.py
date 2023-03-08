@@ -191,7 +191,7 @@ def main()->None:
                     
                 # create final marker
                 print("\tCreating final marker...")
-                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'r') as fabsub, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'r') as fjq, open(f"AFLAP_tmp/03/ParentalMarkers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa", 'w') as fmark:
+                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'r') as fabsub, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'r') as fjq, open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa", 'w') as fmark:
                     # create set of sequences from jf_query file
                     fjq_set = set()
                     for line in fjq:
