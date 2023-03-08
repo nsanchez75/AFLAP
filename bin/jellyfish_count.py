@@ -25,7 +25,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
                         line = line.strip().split()
                         if line[0] == ind:
                             if not os.path.exists(line[0]):
-                                print(f"Error: {line[0]} not found.")
+                                print(f"Error: {line[0]} not found in AFLAP_tmp/Pedigree_{f_type}.txt.")
                                 sys.exit(1)
                             reads.append(line[2])
 
