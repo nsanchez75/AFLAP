@@ -31,7 +31,7 @@ def main()->None:
             if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo") and os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
                 print(f"\tHistogram for {G} detected. Skipping.")
             else:
-                if not os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
+                if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo") and not os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
                     print(f"\tEmpty histogram for {G} found. Deleting...")
                     subprocess.run(f"rm AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", shell=True)
                     print(f"\tCreating new histogram for {G}...")
