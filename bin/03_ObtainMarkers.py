@@ -60,7 +60,7 @@ def main()->None:
                 print("Performing marker assembly...")
                 mark_check = False
 
-            if mark_check:
+            if not mark_check:
                 # define ak
                 ak = 2 * int(args.kmer) - 1
 
