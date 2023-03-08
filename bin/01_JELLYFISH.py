@@ -45,9 +45,9 @@ def main()->None:
 
     # 2. perform k-mer counting
     ## make directories
-    os.makedirs("AFLAP_tmp/01/F0_Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/01/F1_Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/01/F2_Count", exist_ok=True)
+    os.makedirs("AFLAP_tmp/01/F0Count", exist_ok=True)
+    os.makedirs("AFLAP_tmp/01/F1Count", exist_ok=True)
+    os.makedirs("AFLAP_tmp/01/F2Count", exist_ok=True)
 
     ## parents
     jc.jellyfish_count(args.kmer, args.threads, "F0")
