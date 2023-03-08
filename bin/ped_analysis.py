@@ -97,7 +97,7 @@ def pedigree_analysis(pedigree: str)->None:
         print("F1 crosses that have been identified:")
         for cross in f1_crosses:
             c_vals = cross.strip().split()
-            print(f"{cross[0]}x{cross[1]}")
+            print(f"{c_vals[0]}x{c_vals[1]}")
             f.write(f"{f1_crosses[cross]} 1 {c_vals[0]} {c_vals[1]}")
         print()
         # F2 progeny
