@@ -63,7 +63,7 @@ def main()->None:
         exit(1)
 
     print("01 good")
-    exit(0)
+    exit(1)
 
     # 02_ExtractSingleCopyMers.py
     try:
