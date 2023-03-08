@@ -30,12 +30,12 @@ def main()->None:
                 for pair in fc:
                     pair = pair.strip().split()
 
-                    if   pair[0] == G: 
-                        fct.write(f"{pair[1]}\n")
-                        p0.append(pair[1])
-                    elif pair[1] == G:
-                        fct.write(f"{pair[0]}\n")
-                        p0.append(pair[0])
+                    if pair[2] == G: 
+                        fct.write(f"{pair[3]}\n")
+                        p0.append(pair[3])
+                    elif pair[3] == G:
+                        fct.write(f"{pair[2]}\n")
+                        p0.append(pair[2])
                     else: continue
 
             # convert p0 into string
