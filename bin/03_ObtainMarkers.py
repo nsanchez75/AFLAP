@@ -44,8 +44,8 @@ def main()->None:
             # check if marker for G exists
             if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa"):
                 # check if file is empty
-                if not os.path.getsize(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{op}.fa"):
-                    print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{op}.fa is empty.")
+                if not os.path.getsize(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa"):
+                    print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa is empty.")
                     sys.exit(1)
 
                 while True:
