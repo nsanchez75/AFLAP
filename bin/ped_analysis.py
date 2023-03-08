@@ -1,6 +1,14 @@
 import os
 import sys
 
+def sortwrite_Ftext(in_set:set, f_type:str)->None:
+    with open(f"AFLAP_tmp/01/{f_type}.txt", 'r+') as f:
+        for s in in_set: f.write(f"{s}\n")
+        f.seek(0)
+        lines = sorted(f.readlines())
+        f.seek(0)
+        f.writelines(lines)
+
 def pedigree_analysis(pedigree: str)->None:
     # 0. initialize variables
     f0_count   = 0
@@ -69,12 +77,10 @@ def pedigree_analysis(pedigree: str)->None:
         pass    # TODO: implement when working w/ F2
 
 
-    # 3. Create F0.txt, F1.txt, F2.txt
-    with open("AFLAP_tmp/01/F0.txt", 'w') as f:
-        for p in parents: f.write(f"{p}\n")
-    with open("AFLAP_tmp/01/F1.txt", 'w') as f:
-        for f1_prog in f1_progs: f.write(f"{f1_prog}\n")
-    # TODO: implement F2.txt when working w/ F2
+    # 3. Create F0.txt, F1.txt, F2.txt  FIXME: could be redundant with Pedigree_{f_type}.txt having same info
+    sortwrite_Ftext(parents, "F0")
+    sortwrite_Ftext(f1_progs, "F1")
+    # sortwrite_Ftext(f2_progs, "F2")   # TODO: implement F2.txt when working w/ F2
 
 
     # 4. determine parent count
@@ -83,6 +89,7 @@ def pedigree_analysis(pedigree: str)->None:
         sys.exit(1)
     elif f0_count == 2: print("2 parents detected. This will be easy! Identifying cross(es)...")
     else: print(f"{f0_count} parents detected. This is not so easy! Identifying crosses...")
+
 
     # 5. identify and print cross
     with open("AFLAP_tmp/01/Crosses.txt", 'w') as f:
