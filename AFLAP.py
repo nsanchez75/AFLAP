@@ -68,7 +68,7 @@ def main()->None:
         print("Error found in 02_ExtractSingleCopyMers.py.")
     # 03_ObtainMarkers.py
     try:
-        os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py")
+        os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 03_ObtainMarkers.py.")
 
