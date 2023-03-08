@@ -31,6 +31,7 @@ def main()->None:
             if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
                 print(f"\tHistogram for {G} detected. Skipping.")
             else:
+                print(f"\tCreating histogram for {G}...")
                 cmd = f"jellyfish histo AFLAP_tmp/01/F0Count/{G}.jf{args.kmer} > AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"
                 subprocess.run(cmd, shell=True, executable="/bin/bash")
 
