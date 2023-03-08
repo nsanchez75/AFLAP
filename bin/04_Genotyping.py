@@ -91,7 +91,7 @@ def main():
             print(f"GT calling for {G} derived markers complete!")
 
             # put contents into .tsv file
-            with open(f"AFLAP_tmp/04/Count/{h}_{g}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.tsv", 'w') as fout:
+            with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.tsv", 'w') as fout:
                 for line in fcount:
                     line = line.strip().split()
 
