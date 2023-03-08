@@ -28,10 +28,16 @@ def main()->None:
             UP = p[2]
             mer_count = 0
 
-            if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
+            if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo") and os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
                 print(f"\tHistogram for {G} detected. Skipping.")
             else:
-                print(f"\tCreating histogram for {G}...")
+                if not os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
+                    print(f"\tEmpty histogram for {G} found. Deleting...")
+                    subprocess.run(f"rm AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", shell=True)
+                    print(f"\tCreating new histogram for {G}...")
+                else:
+                    print(f"\tCreating histogram for {G}...")
+                
                 cmd = f"jellyfish histo AFLAP_tmp/01/F0Count/{G}.jf{args.kmer} > AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"
                 subprocess.run(cmd, shell=True, executable="/bin/bash")
 
