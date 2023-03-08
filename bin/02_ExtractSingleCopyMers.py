@@ -15,7 +15,7 @@ def main()->None:
 
 
     # 2. get/make histograms
-    print("Generating F0 histograms to undergo linkage analysis:")
+    print("Generating F0 histograms to undergo linkage analysis...")
     if not os.path.exists("AFLAP_tmp/01/LA.txt"):
         print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/01/LA.txt not found. Rerun 01_JELLYFISH.py.")
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
