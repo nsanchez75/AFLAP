@@ -61,15 +61,15 @@ def main()->None:
     except SystemExit:
         print("Error found in 01_JELLYFISH.py.")
         exit(1)
-
-    print("01 good")
-    exit(1)
-
     # 02_ExtractSingleCopyMers.py
     try:
         os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 02_ExtractSingleCopyMers.py.")
+    
+    print("02 good")
+    exit(0)
+    
     # 03_ObtainMarkers.py
     try:
         os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py")
