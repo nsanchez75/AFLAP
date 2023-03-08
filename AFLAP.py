@@ -46,8 +46,6 @@ def main()->None:
 
     pa.pedigree_analysis(args.Pedigree)
 
-    print("everything looks good")
-    exit(1)
 
     # 3. run programs (#TODO?: allow user to specify what programs to run)
     if args.remove:
@@ -63,6 +61,10 @@ def main()->None:
     except SystemExit:
         print("Error found in 01_JELLYFISH.py.")
         exit(1)
+
+    print("01 good")
+    exit(0)
+
     # 02_ExtractSingleCopyMers.py
     try:
         os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
