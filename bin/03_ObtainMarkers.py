@@ -102,7 +102,7 @@ def main()->None:
                                 if not len(line): continue
 
                                 # write unique sequences into .fa file
-                                if not int(line[0]):
+                                if not int(line[1]):
                                     # update ml_count in stats
                                     ffa.write(f">{ml_count}\n{line[0]}\n")
                                     ml_count += 1
