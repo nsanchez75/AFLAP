@@ -91,7 +91,7 @@ def main():
                         if not os.path.exists(f"AFLAP_tmp/01/ParentalCounts/{p0}.jf{args.kmer}"):
                             print(f"JELLYFISH results of {p0} can't be located. Please rerun 01_JELLYFISH.py. " +
                                    "Terminating.")
-                            exit(0)
+                            exit(1)
                         print(f"Intersecting {g} with {p0}...")
 
                         # filter and overwrite output
@@ -188,6 +188,7 @@ def main():
 
                             if len(line) >= 2 and int(line[1]) == 0:
                                 fmark3.write(f">{i}\n{line[0]}\n")
+                                i += 1
 
             # export final marker set with ABySS-conserved headers
             with open(f"AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark2.fa", 'r') as fmark2, open(f"AFLAP_tmp/03/{g}_m{args.kmer}_L{lo}_U{hi}_Mark3.fa", 'r') as fmark3, open(f"AFLAP_tmp/03/ParentalMarkers/{g}_m{args.kmer}_MARKERS_L{lo}_U{hi}_{p0}.fa", 'w') as fout:

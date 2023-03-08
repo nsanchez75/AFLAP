@@ -90,9 +90,6 @@ def main():
 
             print(f"GT calling for {g} derived markers complete!")
 
-
-
-
     # check for markers
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
         for g in fla:
@@ -171,7 +168,7 @@ def main():
                     line = line.strip().split()
 
                     fcall = f"AFLAP_tmp/04/Call/*_{g}_m{args.kmer}_L{LO}_U{HI}_{P0}.txt"
-                    paste_output = os.popen(f"paste - {glob.glob(fcall)}").read()
+                    paste_output = os.popen(f"paste - {fcall}")
                     df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
 
 
