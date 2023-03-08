@@ -81,7 +81,7 @@ def main()->None:
                     shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
 
                 # filter .fa file against other parents
-                with open(f"AFLAP_tmp/03.{G}_CrossedTo.txt", 'r') as fct:
+                with open(f"AFLAP_tmp/03/{G}_CrossedTo.txt", 'r') as fct:
                     for op in fct:
                         op = op.strip()
 
