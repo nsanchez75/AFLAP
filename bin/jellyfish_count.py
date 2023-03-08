@@ -24,8 +24,8 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
                     for line in fin:
                         line = line.strip().split()
                         if line[0] == ind:
-                            if not os.path.exists(line[1]):
-                                print(f"Error: {line[1]} not found.")
+                            if not os.path.exists(line[2]):
+                                print(f"Error: {line[2]} not found.")
                                 sys.exit(1)
                             reads.append(line[2])
 
