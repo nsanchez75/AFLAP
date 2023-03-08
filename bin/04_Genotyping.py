@@ -49,19 +49,16 @@ def main()->None:
                 print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not found. Rerun 03_ObtainMarkers.py.")
                 exit(1)
 
+            # initialize list consisting of F0's progeny
+            h_list = []
+
             # run jellyfish on F1 and F2 individuals who descend from F0
-            gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
-            gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
+            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
+            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
 
             # put contents into .tsv file
-            with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.tsv", 'w') as fout:
-                for line in fcount:
-                    line = line.strip().split()
-
-                    fcall = f"AFLAP_tmp/04/Call/*_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt"
-                    paste_output = os.popen(f"paste - {fcall}")
-                    df = pd.DataFrame([i.strip().split() for i in paste_output.strip('\n') if i])
-
+            for h in h_list:
+                with open()
 
 if __name__ == "__main__":
     main()

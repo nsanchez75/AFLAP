@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:str)->None:
+def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
     # declare which F type is being worked on
     print(f"\tWorking on {f_type}...")
 
@@ -42,3 +42,5 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
 
                     if int(line[1]) >= LOD: fout.write("1\n")
                     else: fout.write("0\n")
+
+    return h_list
