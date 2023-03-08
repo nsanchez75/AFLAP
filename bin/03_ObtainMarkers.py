@@ -86,13 +86,13 @@ def main()->None:
                         op = op.strip()
 
                         # check if .jf for other parent exists
-                        if not os.path.exists(f"AFLAP_tmp/01/F0Counts/{op}.jf{args.kmer}"):
-                            print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/01/F0Counts/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
+                        if not os.path.exists(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"):
+                            print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/01/F0Count/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
                             sys.exit(1)
 
                         # filter and overwrite .fa file
                         print(f"\tFiltering and overwriting AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa...")
-                        jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Counts/{op}.jf{args.kmer}"
+                        jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
                         jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
                         with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'w') as ffa:
                             for line in jf_out:
@@ -154,7 +154,7 @@ def main()->None:
 
                 # refilter against self
                 print("\tRefiltering against self...")
-                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa AFLAP_tmp/01/F0Counts/{G}.jf{args.kmer}"
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
                 jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
                 with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
                     i = 1
@@ -174,7 +174,7 @@ def main()->None:
                     for op in fct:
                         op = op.strip()
 
-                        jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Counts/{op}.jf{args.kmer}"
+                        jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
                         jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
                         with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
                             i = 1
