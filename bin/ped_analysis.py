@@ -40,7 +40,9 @@ def pedigree_analysis(pedigree: str)->None:
                 if "NA" not in {cols[3], cols[4]} and cols[3] == cols[4]:
                     print(f"Error: identical crossed parents identified for{cols[0]}.")
                     sys.exit(1)
-                cross = ' '.join([cols[3], cols[4]].sort())
+                cross = [cols[3], cols[4]]
+                cross.sort()
+                cross = ' '.join(cross)
                 if cross not in f1_crosses: f1_crosses[cross] = 1
                 else: f1_crosses[cross] += 1
 
