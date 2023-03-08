@@ -40,7 +40,7 @@ def pedigree_analysis(pedigree: str)->None:
                 if "NA" not in {cols[3], cols[4]} and cols[3] == cols[4]:
                     print(f"Error: identical crossed parents identified for{cols[0]}.")
                     sys.exit(1)
-                cross = str([cols[3], cols[4]].sort())
+                cross = ' '.join([cols[3], cols[4]].sort())
                 if cross not in f1_crosses: f1_crosses[cross] = 1
                 else: f1_crosses[cross] += 1
 
@@ -86,9 +86,9 @@ def pedigree_analysis(pedigree: str)->None:
     with open("AFLAP_tmp/01/Crosses.txt", 'w') as f:
         # F1 progeny
         print("F1 crosses that have been identified:")
-        for crosses in f1_crosses:
-            c_vals = crosses.strip().split()
-            f.write(f"{f1_crosses[crosses]} 1 {c_vals[0]} {c_vals[1]}")
+        for cross in f1_crosses:
+            c_vals = cross.strip().split()
+            f.write(f"{f1_crosses[cross]} 1 {} {}")
         print()
         # F2 progeny
         # # TODO: implement stuff below when working with F2
