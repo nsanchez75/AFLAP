@@ -70,7 +70,7 @@ def main()->None:
                 histo_same = False
 
             # counting k-mers
-            print(f"\tCounting number of {args.kmer}-mers for {G}:")
+            print(f"\tCounting number of {args.kmer}-mers for {G}...")
             with open(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'r') as fkmers:
                 for line in fkmers:
                     if line.startswith('>'): mer_count += 1
