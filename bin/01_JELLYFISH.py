@@ -19,10 +19,8 @@ def main()->None:
 
 
     # 1. indentify which parents will have a map constructed for them
-    ## initialize variables
+    ## initialize parent set
     parents    = set()
-    la_count   = set()
-    nola_count = set()
 
     ## perform LA analysis
     with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, open("AFLAP_tmp/01/LA.txt", 'w') as fla, open("AFLAP_tmp/01/noLA.txt", 'w') as fnola:
