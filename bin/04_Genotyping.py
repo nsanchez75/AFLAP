@@ -4,7 +4,7 @@ import pandas as pd
 import subprocess
 
 
-def main():
+def main()->None:
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-L', '--LOD', default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
