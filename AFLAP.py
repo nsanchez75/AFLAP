@@ -66,16 +66,14 @@ def main()->None:
         os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 02_ExtractSingleCopyMers.py.")
-    
-    print("02 good")
-    exit(0)
-    
     # 03_ObtainMarkers.py
     try:
         os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py")
     except SystemExit:
         print("Error found in 03_ObtainMarkers.py.")
 
+    print("03 good")
+    exit(0)
 
 if __name__ == "__main__":
     main()
