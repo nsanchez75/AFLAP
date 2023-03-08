@@ -1,7 +1,6 @@
 import argparse
+import csv
 import os
-import pandas as pd
-import subprocess
 
 import genotype_jf as gj
 
@@ -58,7 +57,8 @@ def main()->None:
 
             # put contents into .tsv file
             for h in h_list:
-                with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
+                with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall, open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.tsv", 'w') as ftsv:
+
 
 
 if __name__ == "__main__":
