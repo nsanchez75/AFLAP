@@ -55,7 +55,7 @@ def main()->None:
                         mark_check = True
                         break
                     elif mark_again in {"no", "n"}:
-                        print("Skipping.")
+                        print("Skipping marker assembly.")
                         mark_check = False
                         break
             else:
