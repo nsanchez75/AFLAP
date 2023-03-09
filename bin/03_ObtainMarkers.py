@@ -52,11 +52,11 @@ def main()->None:
                     mark_again = input(f"Marker already found for {G}. Would you like to make a new one? (y/n) ")
                     if mark_again in {"yes", "y", "ye"}:
                         print("Performing marker assembly again...")
-                        mark_check = True
+                        mark_check = False
                         break
                     elif mark_again in {"no", "n"}:
                         print("Skipping.")
-                        mark_check = False
+                        mark_check = True
                         break
             else:
                 print("Performing marker assembly...")
