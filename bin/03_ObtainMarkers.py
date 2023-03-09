@@ -53,9 +53,11 @@ def main()->None:
                     if mark_again in {"yes", "y", "ye"}:
                         print("Performing marker assembly again...")
                         mark_check = True
+                        break
                     elif mark_again in {"no", "n"}:
                         print("Skipping.")
                         mark_check = False
+                        break
             else:
                 print("Performing marker assembly...")
                 mark_check = False
