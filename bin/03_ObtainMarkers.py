@@ -39,7 +39,7 @@ def main()->None:
                     else: continue
 
             # convert p0 into string
-            p0 = 'x'.join(p0)
+            p0 = '_'.join(p0)
 
             # check if marker for G exists
             if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa"):

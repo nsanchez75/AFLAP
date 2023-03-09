@@ -33,7 +33,7 @@ def main()->None:
                 p0 = []
                 for op in fct:
                     p0.append(op.strip())
-                p0 = 'x'.join(p0)
+                p0 = '_'.join(p0)
 
             # check if marker exists
             if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa"):
@@ -55,9 +55,9 @@ def main()->None:
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
 
-            # put contents into .tsv file
+            # put contents into a 2x2 matrix
             for h in h_list:
-                with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall, open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.tsv", 'w') as ftsv:
+                with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall:
 
 
 
