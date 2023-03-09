@@ -179,7 +179,7 @@ def main()->None:
                         with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
                             i = 1
                             for line in jf_out:
-                                line.strip().split()
+                                line = line.strip().split()
 
                                 # disregard empty lines FIXME: determine why this happens
                                 if not len(line): continue
