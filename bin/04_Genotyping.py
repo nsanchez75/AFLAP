@@ -92,8 +92,7 @@ def main()->None:
                     b_arr = np.array(b_vals)
                     m_2d = np.column_stack((m_2d, b_arr))
             
-            # print matrix as a test
-            print(m_2d)
+            np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t')
 
 
 if __name__ == "__main__":
