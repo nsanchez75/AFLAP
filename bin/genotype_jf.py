@@ -27,6 +27,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
 
         # perform jellyfish query if necessary
         for h in h_list:
+            print(f"Creating Count and Call for {h}...")
             if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"):
                 print(f"Error in genotype_jf.py: {h} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
                 sys.exit(1)
