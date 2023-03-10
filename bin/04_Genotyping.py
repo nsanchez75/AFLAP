@@ -1,6 +1,8 @@
 import argparse
 import csv
+import numpy as np
 import os
+import sys
 
 import genotype_jf as gj
 
@@ -55,10 +57,37 @@ def main()->None:
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
 
-            # put contents into a 2x2 matrix
-            for h in h_list:
-                with open(f"AFLAP_tmp/04/Count/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall:
+            # initialize 2x2 matrix
+            m_2d = np.ndarray()
 
+            # place
+            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa") as f:
+                head_list = []
+                seq_list = []
+
+                while True:
+                    head = f.readline().strip().replace('>', '')
+                    if not head: break
+
+                    seq = f.readline().strip()
+
+                    head_list.append(head)
+                    seq_list.append(seq)
+
+                # add seq and head to first 2 columns of matrix respectively
+                m_2d = np.column_stack(seq_list, head_list)
+
+            # add call values to matrix
+            for h in h_list:
+                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall:
+                    bvals = []
+                    for bval in fcall:
+                        bvals.append(bval.strip())
+                    
+                    m_2d = np.column_stack(seq_list, head_list)
+            
+            # print matrix as a test
+            print(m_2d)
 
 
 if __name__ == "__main__":
