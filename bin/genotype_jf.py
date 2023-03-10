@@ -33,7 +33,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
 
             # create counts of progeny
             if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
-                print(f"\tCount for {h} detected. Skipping")
+                print(f"\t\t\tCount for {h} detected. Skipping")
             else:
                 jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
                 jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
@@ -46,7 +46,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
 
             # create calls of progeny
             if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
-                print(f"\tCall for {h} detected. Skipping.")
+                print(f"\t\t\tCall for {h} detected. Skipping.")
             else:
                 with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as fcall:
                     for line in fcount:
