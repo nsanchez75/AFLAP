@@ -39,7 +39,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
                         # disregard empty lines FIXME: determine why this happens
                         if not len(line): continue
 
-                        f.write(line)
+                        f.write(f"{line}\n")
 
             # create calls of progeny
             if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
