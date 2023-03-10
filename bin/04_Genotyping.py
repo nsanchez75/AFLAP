@@ -77,8 +77,10 @@ def main()->None:
                     sys.exit(1)
 
                 # initialize 2d matrix and add seq and head to first 2 columns of matrix respectively
-                m_2d = np.array(seq_list).T
-                m_2d = np.hstack(m_2d, [head_list])
+                seq_arr = np.array(seq_list)
+                head_arr = np.array(head_list)
+
+                m_2d = np.column_stack((seq_arr, head_arr))
 
                 print(m_2d)
                 exit(0)
