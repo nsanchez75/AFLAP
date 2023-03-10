@@ -74,6 +74,7 @@ def main()->None:
             with open(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'r') as fkmers:
                 for line in fkmers:
                     if line.startswith('>'): mer_count += 1
+                print(f"\t\t{mer_count} {args.kmer}-mers counted for {G}.")
 
             # create histo.png
             if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:
