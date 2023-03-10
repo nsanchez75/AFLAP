@@ -98,7 +98,7 @@ def main()->None:
                 print("Error in 04_Genotyping.py: Genotypes.MarkerID.tsv was not made.")
                 sys.exit(1)
             else:
-                print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
+                print(f"Genotypes.MarkerID.tsv for {G} has been created.")
 
 
 if __name__ == "__main__":
