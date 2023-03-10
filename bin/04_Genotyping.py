@@ -77,7 +77,11 @@ def main()->None:
                     sys.exit(1)
 
                 # initialize 2d matrix and add seq and head to first 2 columns of matrix respectively
-                m_2d = np.ndarray([seq_list, head_list]).T
+                m_2d = np.ndarray([seq_list]).T
+                m_2d = np.hstack(m_2d, [head_list])
+
+                print(m_2d)
+                exit(0)
 
             # add call values to matrix
             for h in h_list:
