@@ -29,18 +29,15 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
                 sys.exit(1)
 
             if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt") and os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
-                print("\t")
+                print(f"\tCount and Call for {h} detected. Skipping")
+            else:
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
+                jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                with open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as f:
+                    for line in jf_out:
+                        line = line.strip().split()
 
-            jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
-            jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-            with open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r+') as fout:
-                # get to end of file
-                fout.seek(0, 2)
-
-                for line in jf_out:
-                    line = line.strip().split()
-
-                    if int(line[1]) >= LOD: fout.write("1\n")
-                    else: fout.write("0\n")
+                        if int(line[1]) >= LOD: f.write("1\n")
+                        else: f.write("0\n")
 
     return h_list
