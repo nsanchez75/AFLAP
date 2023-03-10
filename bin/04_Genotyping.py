@@ -57,7 +57,7 @@ def main()->None:
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
 
-            # place
+            # extract info from MARKERS file
             with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa") as f:
                 head_list = []
                 seq_list = []
@@ -92,7 +92,13 @@ def main()->None:
                     b_arr = np.array(b_vals)
                     m_2d = np.column_stack((m_2d, b_arr))
             
-            np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t')
+            # create and fill .tsv file
+            np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t', format='%s')
+            if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
+                print("Error in 04_Genotyping.py: Genotypes.MarkerID.tsv was not made.")
+                sys.exit(1)
+            else:
+                print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
 
 
 if __name__ == "__main__":
