@@ -22,25 +22,34 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
             print(f"Error in genotype_jf.py: No progeny of {parent} found among given {f_type}.")
             sys.exit(1)
 
-        # perform jellyfish query
+        # perform jellyfish query if necessary
         for h in h_list:
             if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"):
                 print(f"Error in genotype_jf.py: {h} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
                 sys.exit(1)
 
-            if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt") and os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
-                print(f"\tCount and Call for {h} detected. Skipping")
+            # create counts of progeny
+            if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
+                print(f"\tCount for {h} detected. Skipping")
             else:
                 jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
                 jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-                with open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as f:
+                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as f:
                     for line in jf_out:
-                        line = line.strip().split()
-
                         # disregard empty lines FIXME: determine why this happens
                         if not len(line): continue
 
-                        if int(line[1]) >= int(LOD): f.write("1\n")
-                        else: f.write("0\n")
+                        f.write(line)
+
+            # create calls of progeny
+            if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
+                print(f"\tCall for {h} detected. Skipping.")
+            else:
+                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as fcall:
+                    for line in fcount:
+                        line = line.strip().split()
+
+                        if int(line[1]) >= int(LOD): fcall.write(f"1\n")
+                        else: fcall.write(f"0\n")
 
     return h_list
