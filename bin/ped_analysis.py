@@ -1,6 +1,12 @@
 import os
 import sys
 
+def sort_ped(f_type:str)->None:
+    with open(f"AFLAP_tmp/Pedigree_{f_type}.txt", 'r+') as f:
+        lines = sorted(f.readlines())
+        f.seek(0)
+        f.writelines(lines)
+
 def sortwrite_Ftext(in_set:set, f_type:str)->None:
     with open(f"AFLAP_tmp/01/{f_type}.txt", 'r+') as f:
         for s in in_set: f.write(f"{s}\n")
@@ -77,7 +83,13 @@ def pedigree_analysis(pedigree: str)->None:
         pass    # TODO: implement when working w/ F2
 
 
-    # 3. Create F0.txt, F1.txt, F2.txt  FIXME: could be redundant with Pedigree_{f_type}.txt having same info
+    # 4. sort pedigree files
+    sort_ped("F0")
+    sort_ped("F1")
+    sort_ped("F2")
+
+
+    # 3. create F0.txt, F1.txt, F2.txt  FIXME: could be redundant with Pedigree_{f_type}.txt having same info
     sortwrite_Ftext(parents, "F0")
     sortwrite_Ftext(f1_progs, "F1")
     # sortwrite_Ftext(f2_progs, "F2")   # TODO: implement F2.txt when working w/ F2
