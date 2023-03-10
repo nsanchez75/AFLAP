@@ -10,8 +10,8 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
     h_list = []
 
     # add progeny of parent to list
-    if os.path.exists(f"AFLAP_tmp/Pedigree_{f_type}.txt"):
-        with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
+    if os.path.exists(f"AFLAP_tmp/{f_type}.txt"):
+        with open(f"AFLAP_tmp/{f_type}.txt") as f:
             for prog in f:
                 prog = prog.strip().split()
 
