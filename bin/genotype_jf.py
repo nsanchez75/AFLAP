@@ -37,7 +37,8 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
                     for line in jf_out:
                         line = line.strip().split()
 
-                        print(line)
+                        # disregard empty lines FIXME: determine why this happens
+                        if not len(line): continue
 
                         if int(line[1]) >= int(LOD): f.write("1\n")
                         else: f.write("0\n")
