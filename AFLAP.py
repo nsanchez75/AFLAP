@@ -71,9 +71,14 @@ def main()->None:
         os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 03_ObtainMarkers.py.")
+    # 04_Genotyping.py
+    try:
+        os.system(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -L {args.LOD}")
+    except SystemExit:
+        print("Error found in 04_Genotyping.py.")
 
-    print("03 good")
-    exit(0)
+    print("04 good")
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
