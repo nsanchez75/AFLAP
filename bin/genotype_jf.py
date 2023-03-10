@@ -22,7 +22,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
 
         # check if any progeny found
         if not len(h_list):
-            print(f"No progeny of {parent} found among given {f_type}.")
+            print(f"\t\tNo progeny of {parent} found among given {f_type}.")
 
         # perform jellyfish query if necessary
         for h in h_list:

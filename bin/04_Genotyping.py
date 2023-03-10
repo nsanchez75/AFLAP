@@ -82,17 +82,15 @@ def main()->None:
 
                 m_2d = np.column_stack((seq_arr, head_arr))
 
-                print(m_2d)
-                exit(0)
-
             # add call values to matrix
             for h in h_list:
                 with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall:
-                    bvals = []
-                    for bval in fcall:
-                        bvals.append(bval.strip())
+                    b_vals = []
+                    for b_val in fcall:
+                        b_vals.append(b_val.strip())
                     
-                    m_2d = np.column_stack(seq_list, head_list)
+                    b_arr = np.array(b_vals)
+                    m_2d = np.column_stack((m_2d, b_arr))
             
             # print matrix as a test
             print(m_2d)
