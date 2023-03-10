@@ -57,9 +57,6 @@ def main()->None:
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
             h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
 
-            # initialize 2x2 matrix
-            m_2d = np.ndarray()
-
             # place
             with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa") as f:
                 head_list = []
@@ -74,8 +71,13 @@ def main()->None:
                     head_list.append(head)
                     seq_list.append(seq)
 
-                # add seq and head to first 2 columns of matrix respectively
-                m_2d = np.column_stack(seq_list, head_list)
+                # check if head_list and seq_list are same size
+                if len(head_list) != len(seq_list):
+                    print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not extracted properly.")
+                    sys.exit(1)
+
+                # initialize 2d matrix and add seq and head to first 2 columns of matrix respectively
+                m_2d = np.ndarray([seq_list, head_list]).T
 
             # add call values to matrix
             for h in h_list:
