@@ -33,6 +33,9 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
             else:
                 jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
                 jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                
+                print(jf_out)
+                
                 with open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as f:
                     for line in jf_out:
                         line = line.strip().split()
