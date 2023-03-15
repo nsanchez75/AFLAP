@@ -1,5 +1,7 @@
 import argparse
+import numpy as np
 import os
+import subprocess
 import sys
 
 def main()->None:
@@ -70,15 +72,11 @@ def main()->None:
 
                     # add values to respective dictionaries
                     if clen == ak:
-                        if prop_calls not in meq:
-                            meq[prop_calls] = 1
-                        else:
-                            meq[prop_calls] += 1
+                        if prop_calls not in meq: meq[prop_calls] = 1
+                        else: meq[prop_calls] += 1
                     else:
-                        if prop_calls not in mov:
-                            mov[prop_calls] = 1
-                        else:
-                            meq[prop_calls] += 1
+                        if prop_calls not in mov: mov[prop_calls] = 1
+                        else: meq[prop_calls] += 1
 
                 # write to MarkerEqual and MarkerOver
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
@@ -87,6 +85,50 @@ def main()->None:
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
+
+            # run R script
+            cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
+            subprocess.run(cmd, shell=True)
+
+            # perform analysis on progeny of G
+            with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
+                for f1_prog in ff1:
+                    f1_prog = f1_prog.strip().split()
+                    if G in {f1_prog[3], f1_prog[4]}:
+                        # check if call for F1 progeny exists
+                        if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt"):
+                            print(f"Error in 05_ObtainSegStats.py: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
+                            sys.exit(1)
+
+                    # initialize variables
+                    m_count = 0
+                    cov = 0
+
+                    # determine m_count based on F1 progeny's call file
+                    with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcall:
+                        for call in fpcall:
+                            m_count += int(call.strip())
+                    
+                    # determine cov based on F1 progeny's count file
+                    with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcount:
+                        c_dict = dict()
+                        for count in fpcount:
+                            if not len(count.strip()): continue     # skip empty lines
+                            cval = int(count.strip().split()[1])
+
+                            if cval not in c_dict: c_dict[cval] = 1
+                            else: c_dict[cval] += 1
+
+                        # find most frequent count
+                        max = -np.inf
+                        for c in c_dict:
+                            if c_dict[c] > max:
+                                max = c_dict[c]
+                                cov = c
+                    
+                    # check cov value
+                    if cov == 1:
+                        
 
 
 if __name__ == "__main__":
