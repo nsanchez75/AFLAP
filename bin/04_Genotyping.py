@@ -88,10 +88,10 @@ def main()->None:
                     b_vals = []
                     for b_val in fcall:
                         b_vals.append(b_val.strip())
-                    
+
                     b_arr = np.array(b_vals)
                     m_2d = np.column_stack((m_2d, b_arr))
-            
+
             # create and fill .tsv file
             np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t', fmt='%s')
             if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
