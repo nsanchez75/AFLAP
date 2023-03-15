@@ -1,11 +1,10 @@
 channels:
+  - conda-forge
   - bioconda
   - r
 dependencies:
   - kmer-jellyfish
   - abyss
-  - r-essentials
-  - r-base
   - r-dplyr
   - r-ggplot2
   - r-ggrepel
