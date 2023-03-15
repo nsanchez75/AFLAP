@@ -30,7 +30,7 @@ def main()->None:
                 for pair in fc:
                     pair = pair.strip().split()
 
-                    if pair[2] == G: 
+                    if pair[2] == G:
                         fct.write(f"{pair[3]}\n")
                         p0.append(pair[3])
                     elif pair[3] == G:
@@ -190,7 +190,7 @@ def main()->None:
                                 if not int(line[1]):
                                     fjq.write(f">{i}\n{line[0]}\n")
                                     i += 1
-                    
+
                 # create final marker
                 print("\tCreating final marker...")
                 with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'r') as fabsub, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'r') as fjq, open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa", 'w') as fmark:
@@ -199,7 +199,7 @@ def main()->None:
                     for line in fjq:
                         if line.startswith('>'): continue
                         fjq_set.add(line.strip())
-                    
+
                     while True:
                         head = fabsub.readline().strip()
                         if not head: break
@@ -227,7 +227,7 @@ def main()->None:
                     f"\tNumber of markers after refiltering: {mar_count}\n" +
                     f"\tNumber of markers == {ak} bp: {mar61}\n" +
                     f"\tNumber of markers > {ak} bp: {mar62}\n")
-                
+
                 # write to G's MarkerReport.txt
                 with open(f"{G}.MarkerReport.txt", 'w') as f:
                     f.write(f"Report for {G}:\n" +
