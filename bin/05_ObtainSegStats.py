@@ -90,6 +90,8 @@ def main()->None:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
 
+            print(meq)
+            print(mov)
             print("check histos")
             exit(0)
 
