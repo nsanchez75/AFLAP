@@ -75,6 +75,7 @@ def main()->None:
                     prop_calls = num_calls / num_prog
 
                     # add values to respective dictionaries
+                    print(f"clen: {clen}")
                     if clen == ak:
                         if prop_calls not in meq: meq[prop_calls] = 1
                         else: meq[prop_calls] += 1
