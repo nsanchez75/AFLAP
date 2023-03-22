@@ -89,7 +89,7 @@ def main()->None:
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
-            
+
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
                 fme.writelines(fme.readlines().sort(key=histo_sort))
