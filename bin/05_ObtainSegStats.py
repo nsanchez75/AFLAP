@@ -80,7 +80,7 @@ def main()->None:
                         else: meq[prop_calls] += 1
                     else:
                         if prop_calls not in mov: mov[prop_calls] = 1
-                        else: meq[prop_calls] += 1
+                        else: mov[prop_calls] += 1
 
                 # write to MarkerEqual and MarkerOver
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
