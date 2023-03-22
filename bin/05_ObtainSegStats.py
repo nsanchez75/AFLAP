@@ -4,6 +4,10 @@ import os
 import subprocess
 import sys
 
+def histo_sort(line:str)->float:
+    line_fields = line.strip().split()
+    return float(line_fields[0])
+
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
@@ -85,6 +89,12 @@ def main()->None:
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
+            
+            # sort histograms (helps with debugging)
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
+                fme.writelines(fme.readlines().sort(key=histo_sort))
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
+                fmo.writelines(fmo.readlines().sort(key=histo_sort))
 
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
@@ -100,53 +110,52 @@ def main()->None:
                             print(f"Error in 05_ObtainSegStats.py: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
                             sys.exit(1)
 
-                    # initialize variables
-                    m_count = 0
-                    cov = 0
+                        # initialize variables
+                        m_count = 0
+                        cov = 0
 
-                    # determine m_count based on F1 progeny's call file
-                    with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcall:
-                        for call in fpcall:
-                            m_count += int(call.strip())
-                    
-                    # determine cov based on F1 progeny's count file
-                    with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcount:
-                        c_dict = dict()
-                        for count in fpcount:
-                            if not len(count.strip()): continue     # skip empty lines
-                            cval = int(count.strip().split()[1])
+                        # determine m_count based on F1 progeny's call file
+                        with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcall:
+                            for call in fpcall:
+                                m_count += int(call.strip())
 
-                            if cval not in c_dict: c_dict[cval] = 1
-                            else: c_dict[cval] += 1
+                        # determine cov based on F1 progeny's count file
+                        with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fpcount:
+                            c_dict = dict()
+                            for count in fpcount:
+                                if not len(count.strip()): continue     # skip empty lines
+                                cval = int(count.strip().split()[1])
 
-                        # find most frequent count
-                        max = -np.inf
-                        for c in c_dict:
-                            if c_dict[c] > max:
-                                max = c_dict[c]
-                                cov = c
-                        
-                        # confirm if cov's peak is 1
-                        if cov == 1:
-                            not1 = 0
-                            is1 = 0
+                                if cval not in c_dict: c_dict[cval] = 1
+                                else: c_dict[cval] += 1
+
+                            # find most frequent count
+                            max = -np.inf
                             for c in c_dict:
-                                if c == 1: is1 = c_dict[c]
-                                if c > 5:  not1 += c_dict[c]
+                                if c_dict[c] > max:
+                                    max = c_dict[c]
+                                    cov = c
 
-                            # remove data for coverage counts 0-5
-                            if not1 > is1:
-                                c_dict.pop(1, 2, 3, 4, 5)
-
-                                # find most frequent count again
-                                max = -np.inf
+                            # confirm if cov's peak is 1
+                            if cov == 1:
+                                not1 = 0
+                                is1 = 0
                                 for c in c_dict:
-                                    if c_dict[c] > max:
-                                        max = c_dict[c]
-                                        cov = c
-                    
-                    
+                                    if c == 1: is1 = c_dict[c]
+                                    if c > 5:  not1 += c_dict[c]
 
+                                # remove data for coverage counts 0-5
+                                if not1 > is1:
+                                    c_dict.pop(1, 2, 3, 4, 5)
+
+                                    # find most frequent count again
+                                    max = -np.inf
+                                    for c in c_dict:
+                                        if c_dict[c] > max:
+                                            max = c_dict[c]
+                                            cov = c
+
+                        print(f"{f1_prog[0]}\t{m_count}\t{cov}")
 
 
 
