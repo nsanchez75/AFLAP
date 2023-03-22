@@ -125,10 +125,30 @@ def main()->None:
                             if c_dict[c] > max:
                                 max = c_dict[c]
                                 cov = c
-                    
-                    # check cov value
-                    if cov == 1:
                         
+                        # confirm if cov's peak is 1
+                        if cov == 1:
+                            not1 = 0
+                            is1 = 0
+                            for c in c_dict:
+                                if c == 1: is1 = c_dict[c]
+                                if c > 5:  not1 += c_dict[c]
+
+                            # remove data for coverage counts 0-5
+                            if not1 > is1:
+                                c_dict.pop(1, 2, 3, 4, 5)
+
+                                # find most frequent count again
+                                max = -np.inf
+                                for c in c_dict:
+                                    if c_dict[c] > max:
+                                        max = c_dict[c]
+                                        cov = c
+                    
+                    
+
+
+
 
 
 if __name__ == "__main__":
