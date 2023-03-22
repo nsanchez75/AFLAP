@@ -110,7 +110,7 @@ def main()->None:
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
                         if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt"):
-                            print(f"Error in 05_ObtainSegStats.py: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
+                            raise FileNotFoundError(f"Error in 05_ObtainSegStats.py: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
                             sys.exit(1)
 
                         # initialize variables
