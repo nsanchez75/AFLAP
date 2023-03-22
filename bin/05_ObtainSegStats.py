@@ -100,6 +100,9 @@ def main()->None:
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
             subprocess.run(cmd, shell=True)
 
+            print('check plots and histos')
+            sys.exit(0)
+
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
                 for f1_prog in ff1:
