@@ -93,10 +93,12 @@ def main()->None:
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
                 lines = fme.readlines()
-                fme.writelines(lines.sort(key=histo_sort))
+                lines.sort(key=histo_sort)
+                fme.writelines(lines)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
                 lines = fmo.readlines()
-                fmo.writelines(lines.sort(key=histo_sort))
+                lines.sort(key=histo_sort)
+                fmo.writelines(lines)
 
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
