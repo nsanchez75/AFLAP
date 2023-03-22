@@ -48,13 +48,13 @@ def main()->None:
                 sys.exit(1)
 
             # count progeny
-            with open(f"AFLAP/tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
+            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
                 num_prog = len(ftsv.readline()) - 2
 
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
             # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
-            with open(f"AFLAP/tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
+            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
                 # initialize dictionaries for MarkerEqual and MarkerOver
                 meq = dict()
                 mov = dict()
