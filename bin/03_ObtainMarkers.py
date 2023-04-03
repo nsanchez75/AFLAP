@@ -117,7 +117,7 @@ def main()->None:
                 else: k = int(args.kmer) - 2
 
                 # perform ABySS assembly
-                print(f"\tRunning ABySS with -k set to {k}...")
+                print(f"\tRunning ABySS with -k set to {k}...\n")
                 abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa -o AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"
                 subprocess.run(abyss_cmd, shell=True)
                 # check if abyss ran properly
