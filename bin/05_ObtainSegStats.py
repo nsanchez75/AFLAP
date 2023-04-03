@@ -91,20 +91,18 @@ def main()->None:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
 
-            print(meq)
-            print(mov)
+            # sort histograms (helps with debugging)
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
+                lines = fme.readlines()
+                lines.sort(key=histo_sort)
+                fme.writelines(lines)
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
+                lines = fmo.readlines()
+                lines.sort(key=histo_sort)
+                fmo.writelines(lines)
+
             print("check histos")
             exit(0)
-
-            # # sort histograms (helps with debugging)
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
-            #     lines = fme.readlines()
-            #     lines.sort(key=histo_sort)
-            #     fme.writelines(lines)
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
-            #     lines = fmo.readlines()
-            #     lines.sort(key=histo_sort)
-            #     fmo.writelines(lines)
 
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
