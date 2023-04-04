@@ -74,10 +74,10 @@ def main()->None:
 
                     # write to MarkerEqual and MarkerOver
                     if int(tsv_line[2]) == ak:
-                        if prop in meq: meq[prop] = counts
+                        if prop not in meq: meq[prop] = counts
                         else:           meq[prop] += counts
                     else:
-                        if prop in mov: mov[prop] = counts
+                        if prop not in mov: mov[prop] = counts
                         else:           mov[prop] += counts
 
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w') as fme:
