@@ -69,11 +69,14 @@ def main()->None:
                     # split lines by whitespace
                     tsv_line = tsv_line.split()
 
-                    counts = sum([int(x) for x in tsv_line[3:]])
+                    counts = sum([int(x) for x in tsv_line[4:]])
                     prop = counts / num_prog
 
                     # write to MarkerEqual and MarkerOver
                     if int(tsv_line[2]) == ak:
+                        if prop in meq:
+                            meq[prop] = counts
+                        
                         with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
                             fme.write(f"{prop} {counts}\n")
                     else:
@@ -83,21 +86,13 @@ def main()->None:
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
                 lines = fme.readlines()
-                print("fme lines before:")
-                print(lines)
                 lines.sort(key=histo_sort)
-                print("fme lines after:")
-                print(lines)
                 fme.seek(0)
                 fme.writelines(lines)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'r+') as fmo:
                 fmo.seek(0)
                 lines = fmo.readlines()
-                print("fmo lines before:")
-                print(lines)
                 lines.sort(key=histo_sort)
-                print("fmo lines after:")
-                print(lines)
                 fmo.seek(0)
                 fmo.writelines(lines)
 
