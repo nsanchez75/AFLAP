@@ -54,7 +54,7 @@ def main()->None:
                     cross = cross.strip().split()
                     if G in {cross[2], cross[3]}:
                         num_prog = cross[0]
-            
+
             # check if progeny count is valid
             if num_prog is None:
                 raise ValueError(f"Error in 05_ObtainSegStats.py: Invalid number of progeny.")
@@ -63,6 +63,9 @@ def main()->None:
 
             # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
             with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
+                # skip over labels line
+                ftsv.readline()
+
                 # initialize dictionaries for MarkerEqual and MarkerOver
                 meq = dict()
                 mov = dict()
@@ -76,11 +79,11 @@ def main()->None:
                     # split lines by whitespace
                     tsv_line = tsv_line.split()
 
-                    counts = sum([int(x) for x in tsv_line[3:]])
+                    counts = sum([int(x) for x in tsv_line[4:]])
                     prop = counts / num_prog
 
                     # write to MarkerEqual and MarkerOver
-                    if int(tsv_line[2]) == ak:
+                    if int(tsv_line[3]) == ak:
                         if prop not in meq: meq[prop] = 1
                         else:           meq[prop] += 1
                     else:
