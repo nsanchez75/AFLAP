@@ -62,6 +62,7 @@ def main()->None:
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
             # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
+            # TODO: potentially use pandas read_csv for easier data processing
             with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
                 # skip over labels line
                 ftsv.readline()
@@ -107,6 +108,8 @@ def main()->None:
                 lines.sort(key=histo_sort)
                 fmo.seek(0)
                 fmo.writelines(lines)
+
+            # TODO: sed 's/_/ /' AFLAP_tmp/04/${g}_m${mer}_L${Lo}_U${Up}_$P0.Genotypes.MarkerID.tsv | awk '{for (i=4; i<=NF;i++) j+=$i; print j; j=0 }' | sort -n | uniq -c | awk -v var=$ProC '{print $2/var, $1}' > AFLAP_Results/${g}_m${mer}_L${Lo}_U${Up}_${P0}_AllMarkers.hist
 
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
