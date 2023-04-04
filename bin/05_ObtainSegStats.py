@@ -53,7 +53,7 @@ def main()->None:
                 for cross in fnp:
                     cross = cross.strip().split()
                     if G in {cross[2], cross[3]}:
-                        num_prog = cross[0]
+                        num_prog = int(cross[0])
 
             # check if progeny count is valid
             if num_prog is None:
