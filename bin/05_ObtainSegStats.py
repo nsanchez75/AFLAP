@@ -69,7 +69,7 @@ def main()->None:
                     # split lines by whitespace
                     tsv_line = tsv_line.split()
 
-                    counts = sum([int(x) for x in tsv_line[4:]])
+                    counts = sum([int(x) for x in tsv_line[3:]])
                     prop = counts / num_prog
 
                     # write to MarkerEqual and MarkerOver
