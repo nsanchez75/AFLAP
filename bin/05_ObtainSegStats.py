@@ -101,7 +101,7 @@ def main()->None:
                 print(lines)
                 fme.writelines(lines)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
-                fme.seek(0)
+                fmo.seek(0)
                 lines = fmo.readlines()
                 print("fmo lines before:")
                 print(lines)
