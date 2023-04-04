@@ -49,16 +49,17 @@ def pedigree_analysis(pedigree: str)->None:
                 if cols[0] not in f1_progs:
                     f1_count += 1
                     f1_progs.add(cols[0])
+                    # add or create new cross in crosses dictionary
+                    cross = [cols[3], cols[4]]
+                    cross.sort()
+                    cross = ' '.join(cross)
+                    if cross not in f1_crosses: f1_crosses[cross] = 1
+                    else: f1_crosses[cross] += 1
 
                 # check if progeny has duplicated parents
                 if "NA" not in {cols[3], cols[4]} and cols[3] == cols[4]:
                     print(f"Error in ped_analysis.py: identical crossed parents identified for{cols[0]}.")
                     sys.exit(1)
-                cross = [cols[3], cols[4]]
-                cross.sort()
-                cross = ' '.join(cross)
-                if cross not in f1_crosses: f1_crosses[cross] = 1
-                else: f1_crosses[cross] += 1
 
                 f1.write(line)
             elif cols[1] == '2':
