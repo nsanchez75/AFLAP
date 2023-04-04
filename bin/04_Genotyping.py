@@ -1,6 +1,5 @@
 import argparse
-import csv
-import numpy as np
+import pandas as pd
 import os
 import sys
 
@@ -81,8 +80,12 @@ def main()->None:
                     sys.exit(1)
 
                 # initialize 2d matrix and add seq and head to first 2 columns of matrix respectively
-                seq_arr = np.array(seq_list)
-                head_arr = np.array(head_list)
+                data = {"MarkerID": seq_list, "MarkerSequence": head_list}
+
+                print(data)
+                exit(0)
+
+                matrix = pd.DataFrame()
 
                 m_2d = np.column_stack((seq_arr, head_arr))
 

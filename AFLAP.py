@@ -76,6 +76,10 @@ def main()->None:
         os.system(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -L {args.LOD}")
     except SystemExit:
         print("Error found in 04_Genotyping.py.")
+
+    print("04 good")
+    exit(0)
+
     # 05_ObtainSegStats.py
     try:
         os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
