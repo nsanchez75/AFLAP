@@ -74,14 +74,16 @@ def main()->None:
 
                     # write to MarkerEqual and MarkerOver
                     if int(tsv_line[2]) == ak:
-                        if prop in meq:
-                            meq[prop] = counts
-                        
-                        with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
-                            fme.write(f"{prop} {counts}\n")
+                        if prop in meq: meq[prop] = counts
+                        else:           meq[prop] += counts
                     else:
-                        with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
-                            fmo.write(f"{prop} {counts}\n")
+                        if prop in mov: mov[prop] = counts
+                        else:           mov[prop] += counts
+
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w') as fme:
+                for prop in meq: fme.write(f"{prop} {meq[prop]}\n")
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w') as fmo:
+                for prop in mov: fmo.write(f"{prop} {mov[prop]}\n")
 
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
