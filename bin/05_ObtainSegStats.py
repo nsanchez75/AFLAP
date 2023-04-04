@@ -108,9 +108,6 @@ def main()->None:
                 fmo.seek(0)
                 fmo.writelines(lines)
 
-            print("check histos")
-            exit(0)
-
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
             subprocess.run(cmd, shell=True)
