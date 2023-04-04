@@ -87,12 +87,9 @@ def main()->None:
                         for b_val in fcall: b_vals.append(b_val.strip())
                     data[h] = b_vals
 
-                print(data)
+                matrix = pd.DataFrame(data=data)
+                print(matrix)
                 exit(0)
-
-                matrix = pd.DataFrame()
-
-                m_2d = np.column_stack((seq_arr, head_arr))
 
             # add call values to matrix
             for h in h_list:
