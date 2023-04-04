@@ -79,37 +79,18 @@ def main()->None:
                     print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not extracted properly.")
                     sys.exit(1)
 
-                # get data
-                data = {"MarkerID": seq_list, "MarkerSequence": head_list}
-                for h in h_list:
-                    with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcall:
-                        b_vals = []
-                        for b_val in fcall: b_vals.append(b_val.strip())
-                    data[h] = b_vals
-
-                matrix = pd.DataFrame(data=data)
-                print(matrix)
-                exit(0)
-
-            # add call values to matrix
+            # get data
+            data = {"MarkerID": seq_list, "MarkerSequence": head_list}
             for h in h_list:
                 with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcall:
                     b_vals = []
-                    for b_val in fcall:
-                        b_vals.append(b_val.strip())
+                    for b_val in fcall: b_vals.append(b_val.strip())
+                data[h] = b_vals
 
-                    b_arr = np.array(b_vals)
-                    m_2d = np.column_stack((m_2d, b_arr))
+            matrix = pd.DataFrame(data=data)
 
-            # create and fill .tsv file
-            np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t', fmt='%s')
-            
-            # sort tsv file
-            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r+') as ftsv:
-                tsv_lines = ftsv.readlines()
-                tsv_lines.sort(key=tsv_sort)
-                ftsv.seek(0)
-                ftsv.writelines(tsv_lines)
+            # create tsv file
+            matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
             
             # check tsv file status
             if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
