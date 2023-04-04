@@ -93,14 +93,18 @@ def main()->None:
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
                 lines = fme.readlines()
+                print("fme lines before:")
+                print(lines)
                 lines.sort(key=histo_sort)
-                print("fme lines:")
+                print("fme lines after:")
                 print(lines)
                 fme.writelines(lines)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
                 lines = fmo.readlines()
+                print("fmo lines before:")
+                print(lines)
                 lines.sort(key=histo_sort)
-                print("fmo lines:")
+                print("fmo lines after:")
                 print(lines)
                 fmo.writelines(lines)
 
