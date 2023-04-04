@@ -6,9 +6,9 @@ import sys
 
 import genotype_jf as gj
 
-def tsv_sort(line:str)->float:
+def tsv_sort(line:str)->str:
     line_fields = line.strip().split()
-    return float(line_fields[0])
+    return str(line_fields[0])
 
 def main()->None:
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
