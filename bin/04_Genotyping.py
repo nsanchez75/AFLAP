@@ -6,6 +6,10 @@ import sys
 
 import genotype_jf as gj
 
+def tsv_sort(line:str)->float:
+    line_fields = line.strip().split()
+    return float(line_fields[0])
+
 def main()->None:
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
@@ -94,6 +98,15 @@ def main()->None:
 
             # create and fill .tsv file
             np.savetxt(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", m_2d, delimiter='\t', fmt='%s')
+            
+            # sort tsv file
+            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r+') as ftsv:
+                tsv_lines = ftsv.readlines()
+                tsv_lines.sort(key=tsv_sort)
+                ftsv.seek(0)
+                ftsv.writelines(tsv_lines)
+            
+            # check tsv file status
             if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
                 print("Error in 04_Genotyping.py: Genotypes.MarkerID.tsv was not made.")
                 sys.exit(1)
