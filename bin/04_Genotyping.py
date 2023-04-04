@@ -84,7 +84,7 @@ def main()->None:
 
             # add call values to matrix
             for h in h_list:
-                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt") as fcall:
+                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcall:
                     b_vals = []
                     for b_val in fcall:
                         b_vals.append(b_val.strip())

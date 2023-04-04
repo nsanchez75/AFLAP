@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import os
+import re
 import subprocess
 import sys
 
@@ -59,28 +60,35 @@ def main()->None:
                 meq = dict()
                 mov = dict()
 
+
                 for tsv_line in ftsv:
                     # extract original contig length
-                    tsv_line = tsv_line.strip().split()
-                    clen = tsv_line[1].split('_')[1]
+                    tsv_line = tsv_line.strip()
+                    # replace underscore with space
+                    tsv_line = re.sub('_', tsv_line)
+                    # split lines by whitespace
+                    tsv_line = tsv_line.split()
 
-                    # initialize number of calls variable
-                    num_calls = 0
+                    if int(tsv_line[2]) == ak:
+                        counts = [int(x) for x in tsv_line[3:]]
 
-                    # count number of calls for sequence in progeny
-                    for i in range(2, len(tsv_line)):
-                        num_calls += int(tsv_line[i])
+                #     # initialize number of calls variable
+                #     num_calls = 0
 
-                    # find proportion of calls to progeny
-                    prop_calls = num_calls / num_prog
+                #     # count number of calls for sequence in progeny
+                #     for i in range(2, len(tsv_line)):
+                #         num_calls += int(tsv_line[i])
 
-                    # add values to respective dictionaries
-                    if int(clen) == ak:
-                        if prop_calls not in meq: meq[prop_calls] = 1
-                        else: meq[prop_calls] += 1
-                    else:
-                        if prop_calls not in mov: mov[prop_calls] = 1
-                        else: mov[prop_calls] += 1
+                #     # find proportion of calls to progeny
+                #     prop_calls = num_calls / num_prog
+
+                #     # add values to respective dictionaries
+                #     if int(clen) == ak:
+                #         if prop_calls not in meq: meq[prop_calls] = 1
+                #         else: meq[prop_calls] += 1
+                #     else:
+                #         if prop_calls not in mov: mov[prop_calls] = 1
+                #         else: mov[prop_calls] += 1
 
                 # write to MarkerEqual and MarkerOver
                 with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
