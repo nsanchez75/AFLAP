@@ -49,8 +49,15 @@ def main()->None:
                 sys.exit(1)
 
             # count progeny
-            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
-                num_prog = len(ftsv.readline()) - 2
+            with open(f"AFLAP_tmp/01/Crosses", 'r') as fnp:
+                for cross in fnp:
+                    cross = cross.strip().split()
+                    if G in {cross[2], cross[3]}:
+                        num_prog = cross[0]
+            
+            # check if progeny count is valid
+            if num_prog is None:
+                raise ValueError(f"Error in 05_ObtainSegStats.py: Invalid number of progeny.")
 
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
