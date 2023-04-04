@@ -79,8 +79,13 @@ def main()->None:
                     print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not extracted properly.")
                     sys.exit(1)
 
-                # initialize 2d matrix and add seq and head to first 2 columns of matrix respectively
+                # get data
                 data = {"MarkerID": seq_list, "MarkerSequence": head_list}
+                for h in h_list:
+                    with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcall:
+                        b_vals = []
+                        for b_val in fcall: b_vals.append(b_val.strip())
+                    data[h] = b_vals
 
                 print(data)
                 exit(0)
