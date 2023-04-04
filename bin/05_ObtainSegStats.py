@@ -90,11 +90,9 @@ def main()->None:
                     for m in mov:
                         fmo.write(f"{m} {mov[m]}\n")
 
-            print("check histos")
-            exit(0)
-
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w+') as fme:
+                fme.seek(0)
                 lines = fme.readlines()
                 print("fme lines before:")
                 print(lines)
@@ -103,6 +101,7 @@ def main()->None:
                 print(lines)
                 fme.writelines(lines)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w+') as fmo:
+                fme.seek(0)
                 lines = fmo.readlines()
                 print("fmo lines before:")
                 print(lines)
