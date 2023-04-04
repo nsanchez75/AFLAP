@@ -49,7 +49,7 @@ def main()->None:
                 sys.exit(1)
 
             # count progeny
-            with open(f"AFLAP_tmp/01/Crosses", 'r') as fnp:
+            with open(f"AFLAP_tmp/01/Crosses.txt", 'r') as fnp:
                 for cross in fnp:
                     cross = cross.strip().split()
                     if G in {cross[2], cross[3]}:
