@@ -69,34 +69,16 @@ def main()->None:
                     # split lines by whitespace
                     tsv_line = tsv_line.split()
 
+                    counts = sum([int(x) for x in tsv_line[3:]])
+                    prop = counts / num_prog
+
+                    # write to MarkerEqual and MarkerOver
                     if int(tsv_line[2]) == ak:
-                        counts = [int(x) for x in tsv_line[3:]]
-
-                #     # initialize number of calls variable
-                #     num_calls = 0
-
-                #     # count number of calls for sequence in progeny
-                #     for i in range(2, len(tsv_line)):
-                #         num_calls += int(tsv_line[i])
-
-                #     # find proportion of calls to progeny
-                #     prop_calls = num_calls / num_prog
-
-                #     # add values to respective dictionaries
-                #     if int(clen) == ak:
-                #         if prop_calls not in meq: meq[prop_calls] = 1
-                #         else: meq[prop_calls] += 1
-                #     else:
-                #         if prop_calls not in mov: mov[prop_calls] = 1
-                #         else: mov[prop_calls] += 1
-
-                # write to MarkerEqual and MarkerOver
-                with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
-                    for m in meq:
-                        fme.write(f"{m} {meq[m]}\n")
-                with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
-                    for m in mov:
-                        fmo.write(f"{m} {mov[m]}\n")
+                        with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'a') as fme:
+                            fme.write(f"{prop} {counts}\n")
+                    else:
+                        with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'a') as fmo:
+                            fmo.write(f"{prop} {counts}\n")
 
             # sort histograms (helps with debugging)
             with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
