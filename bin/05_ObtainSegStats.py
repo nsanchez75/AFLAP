@@ -65,7 +65,7 @@ def main()->None:
                     # extract original contig length
                     tsv_line = tsv_line.strip()
                     # replace underscore with space
-                    tsv_line = re.sub('_', tsv_line)
+                    tsv_line = re.sub('_', ' ', tsv_line)
                     # split lines by whitespace
                     tsv_line = tsv_line.split()
 
