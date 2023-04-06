@@ -68,7 +68,7 @@ def main()->None:
             tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
 
             # get marker stats
-            for row in tsv_file.rows:
+            for index, row in tsv_file.T.iterrows():
                 print(f"|{row}|")
             exit(0)
 
