@@ -63,14 +63,11 @@ def main()->None:
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
             # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
-            # TODO: potentially use pandas read_csv for easier data processing
             
             tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
 
             # get marker stats
-            for index, row in tsv_file.T.iterrows():
-                print(f"|{row}|")
-            exit(0)
+            
 
             # with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
             #     # skip over labels line
