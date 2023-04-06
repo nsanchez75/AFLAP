@@ -89,6 +89,10 @@ def main()->None:
 
             matrix = pd.DataFrame(data=data)
 
+            # split marker sequence and value and reorder
+            matrix[["MarkerSequence", "MarkerValue"]] = matrix["MarkerSequence"].str.split('_', expand=True)
+            matrix = matrix.reindex(columns=["MarkerID", "MarkerSequence", "MarkerValue"] + list(matrix.columns[2:-1]))
+
             # create tsv file
             matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
             
