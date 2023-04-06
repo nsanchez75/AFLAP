@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import os
+import pandas as pd
 import re
 import subprocess
 import sys
@@ -63,6 +64,11 @@ def main()->None:
 
             # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
             # TODO: potentially use pandas read_csv for easier data processing
+            
+            tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
+            print(tsv_file)
+            exit(0)
+            
             with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
                 # skip over labels line
                 ftsv.readline()
