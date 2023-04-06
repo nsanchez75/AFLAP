@@ -1,5 +1,4 @@
 import argparse
-import numpy as np
 import os
 import pandas as pd
 import re
@@ -62,12 +61,8 @@ def main()->None:
 
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
-            # compare contig lengths that subsequences came from TODO: fact check whether it comes from ABySS or jellyfish
-            
-            tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
-
-            exit(0)
             # get marker stats
+            tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
             
 
             # with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
