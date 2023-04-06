@@ -66,6 +66,7 @@ def main()->None:
             
             tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
 
+            exit(0)
             # get marker stats
             
 
