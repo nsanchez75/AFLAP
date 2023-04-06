@@ -66,54 +66,57 @@ def main()->None:
             # TODO: potentially use pandas read_csv for easier data processing
             
             tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
-            print(tsv_file)
+
+            # get marker stats
+            for row in tsv_file.rows:
+                print(f"|{row}|")
             exit(0)
-            
-            with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
-                # skip over labels line
-                ftsv.readline()
 
-                # initialize dictionaries for MarkerEqual and MarkerOver
-                meq = dict()
-                mov = dict()
+            # with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
+            #     # skip over labels line
+            #     ftsv.readline()
+
+            #     # initialize dictionaries for MarkerEqual and MarkerOver
+            #     meq = dict()
+            #     mov = dict()
 
 
-                for tsv_line in ftsv:
-                    # extract original contig length
-                    tsv_line = tsv_line.strip()
-                    # replace underscore with space
-                    tsv_line = re.sub('_', ' ', tsv_line)
-                    # split lines by whitespace
-                    tsv_line = tsv_line.split()
+            #     for tsv_line in ftsv:
+            #         # extract original contig length
+            #         tsv_line = tsv_line.strip()
+            #         # replace underscore with space
+            #         tsv_line = re.sub('_', ' ', tsv_line)
+            #         # split lines by whitespace
+            #         tsv_line = tsv_line.split()
 
-                    counts = sum([int(x) for x in tsv_line[4:]])
-                    prop = counts / num_prog
+            #         counts = sum([int(x) for x in tsv_line[4:]])
+            #         prop = counts / num_prog
 
-                    # write to MarkerEqual and MarkerOver
-                    if int(tsv_line[3]) == ak:
-                        if prop not in meq: meq[prop] = 1
-                        else:           meq[prop] += 1
-                    else:
-                        if prop not in mov: mov[prop] = 1
-                        else:           mov[prop] += 1
+            #         # write to MarkerEqual and MarkerOver
+            #         if int(tsv_line[3]) == ak:
+            #             if prop not in meq: meq[prop] = 1
+            #             else:           meq[prop] += 1
+            #         else:
+            #             if prop not in mov: mov[prop] = 1
+            #             else:           mov[prop] += 1
 
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w') as fme:
-                for prop in meq: fme.write(f"{prop} {meq[prop]}\n")
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w') as fmo:
-                for prop in mov: fmo.write(f"{prop} {mov[prop]}\n")
+            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w') as fme:
+            #     for prop in meq: fme.write(f"{prop} {meq[prop]}\n")
+            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w') as fmo:
+            #     for prop in mov: fmo.write(f"{prop} {mov[prop]}\n")
 
-            # sort histograms (helps with debugging)
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
-                lines = fme.readlines()
-                lines.sort(key=histo_sort)
-                fme.seek(0)
-                fme.writelines(lines)
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'r+') as fmo:
-                fmo.seek(0)
-                lines = fmo.readlines()
-                lines.sort(key=histo_sort)
-                fmo.seek(0)
-                fmo.writelines(lines)
+            # # sort histograms (helps with debugging)
+            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
+            #     lines = fme.readlines()
+            #     lines.sort(key=histo_sort)
+            #     fme.seek(0)
+            #     fme.writelines(lines)
+            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'r+') as fmo:
+            #     fmo.seek(0)
+            #     lines = fmo.readlines()
+            #     lines.sort(key=histo_sort)
+            #     fmo.seek(0)
+            #     fmo.writelines(lines)
 
             # TODO: sed 's/_/ /' AFLAP_tmp/04/${g}_m${mer}_L${Lo}_U${Up}_$P0.Genotypes.MarkerID.tsv | awk '{for (i=4; i<=NF;i++) j+=$i; print j; j=0 }' | sort -n | uniq -c | awk -v var=$ProC '{print $2/var, $1}' > AFLAP_Results/${g}_m${mer}_L${Lo}_U${Up}_${P0}_AllMarkers.hist
 
