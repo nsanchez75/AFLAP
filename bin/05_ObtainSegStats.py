@@ -1,13 +1,15 @@
 import argparse
 import os
 import pandas as pd
-import re
 import subprocess
 import sys
 
 def histo_sort(line:str)->float:
     line_fields = line.strip().split()
     return float(line_fields[0])
+
+def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
+    return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame()
 
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
@@ -46,7 +48,6 @@ def main()->None:
             # check for genotype table
             if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
                 raise FileNotFoundError(f"Error in 05_ObtainSegStats.py: Genotype table for {G} not found. Rerun 04_Genotyping.py.")
-                sys.exit(1)
 
             # count progeny
             with open(f"AFLAP_tmp/01/Crosses.txt", 'r') as fnp:
@@ -62,56 +63,19 @@ def main()->None:
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
             # get marker stats
-            tsv_file = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
+            tsv = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
             
+            ## get frequencies (sum of calls / number of progeny)
+            tsv["Frequency"] = tsv.iloc[:, 3:-1].sum(axis=1).div(num_prog)
 
-            # with open(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", 'r') as ftsv:
-            #     # skip over labels line
-            #     ftsv.readline()
-
-            #     # initialize dictionaries for MarkerEqual and MarkerOver
-            #     meq = dict()
-            #     mov = dict()
-
-
-            #     for tsv_line in ftsv:
-            #         # extract original contig length
-            #         tsv_line = tsv_line.strip()
-            #         # replace underscore with space
-            #         tsv_line = re.sub('_', ' ', tsv_line)
-            #         # split lines by whitespace
-            #         tsv_line = tsv_line.split()
-
-            #         counts = sum([int(x) for x in tsv_line[4:]])
-            #         prop = counts / num_prog
-
-            #         # write to MarkerEqual and MarkerOver
-            #         if int(tsv_line[3]) == ak:
-            #             if prop not in meq: meq[prop] = 1
-            #             else:           meq[prop] += 1
-            #         else:
-            #             if prop not in mov: mov[prop] = 1
-            #             else:           mov[prop] += 1
-
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'w') as fme:
-            #     for prop in meq: fme.write(f"{prop} {meq[prop]}\n")
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'w') as fmo:
-            #     for prop in mov: fmo.write(f"{prop} {mov[prop]}\n")
-
-            # # sort histograms (helps with debugging)
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist", 'r+') as fme:
-            #     lines = fme.readlines()
-            #     lines.sort(key=histo_sort)
-            #     fme.seek(0)
-            #     fme.writelines(lines)
-            # with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist", 'r+') as fmo:
-            #     fmo.seek(0)
-            #     lines = fmo.readlines()
-            #     lines.sort(key=histo_sort)
-            #     fmo.seek(0)
-            #     fmo.writelines(lines)
-
-            # TODO: sed 's/_/ /' AFLAP_tmp/04/${g}_m${mer}_L${Lo}_U${Up}_$P0.Genotypes.MarkerID.tsv | awk '{for (i=4; i<=NF;i++) j+=$i; print j; j=0 }' | sort -n | uniq -c | awk -v var=$ProC '{print $2/var, $1}' > AFLAP_Results/${g}_m${mer}_L${Lo}_U${Up}_${P0}_AllMarkers.hist
+            ## MarkerAll
+            mal = get_count_frequency(tsv)
+            ## MarkerEquals
+            meq = tsv.loc[tsv["MarkerValue"].astype(int) == 61]
+            meq = get_count_frequency(meq)
+            ## MarkerOver
+            mov = tsv.loc[tsv["MarkerValue"].astype(int) > 61]
+            mov = get_count_frequency(mov)
 
             # run R script
             cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
