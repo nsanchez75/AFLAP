@@ -58,7 +58,7 @@ def main()->None:
 
             # check if progeny count is valid
             if num_prog is None:
-                raise ValueError(f"Error in 05_ObtainSegStats.py: Invalid number of progeny.")
+                raise ValueError("Error in 05_ObtainSegStats.py: Invalid number of progeny.")
 
             print(f"\t\t{num_prog} Genotype calls for {G} detected. Summarizing...")
 
