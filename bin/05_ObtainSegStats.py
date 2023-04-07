@@ -4,6 +4,8 @@ import pandas as pd
 import subprocess
 import sys
 
+import seg_stats
+
 def histo_sort(line:str)->float:
     line_fields = line.strip().split()
     return float(line_fields[0])
@@ -77,9 +79,8 @@ def main()->None:
             mov = tsv.loc[tsv["MarkerValue"].astype(int) > 61]
             mov = get_count_frequency(mov)
 
-            # run R script
-            cmd = f"Rscript bin/SegStats.R AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerEqual{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerOver{ak}.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_AllMarkers.hist AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png"
-            subprocess.run(cmd, shell=True)
+            # get segment statistics
+            seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
             print('check plots and histos')
             sys.exit(0)
