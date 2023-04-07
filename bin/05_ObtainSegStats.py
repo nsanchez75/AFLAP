@@ -9,7 +9,7 @@ def histo_sort(line:str)->float:
     return float(line_fields[0])
 
 def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
-    return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame()
+    return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
