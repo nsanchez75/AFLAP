@@ -1,7 +1,7 @@
 import argparse
+import math
 import os
 import pandas as pd
-import subprocess
 import sys
 
 import seg_stats
@@ -82,9 +82,6 @@ def main()->None:
             # get segment statistics
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
-            print('check plots and histos')
-            sys.exit(0)
-
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
                 for f1_prog in ff1:
@@ -115,7 +112,7 @@ def main()->None:
                                 else: c_dict[cval] += 1
 
                             # find most frequent count
-                            max = -np.inf
+                            max = -math.inf
                             for c in c_dict:
                                 if c_dict[c] > max:
                                     max = c_dict[c]
@@ -134,7 +131,7 @@ def main()->None:
                                     c_dict.pop(1, 2, 3, 4, 5)
 
                                     # find most frequent count again
-                                    max = -np.inf
+                                    max = -math.inf
                                     for c in c_dict:
                                         if c_dict[c] > max:
                                             max = c_dict[c]
@@ -142,7 +139,8 @@ def main()->None:
 
                         print(f"{f1_prog[0]}\t{m_count}\t{cov}")
 
-
+            print("continue debugging")
+            exit(0)
 
 
 if __name__ == "__main__":
