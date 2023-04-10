@@ -121,9 +121,6 @@ def main()->None:
                                     max = c_dict[c]
                                     cov = c
 
-                            print(c_dict)
-                            exit(0)
-
                             # confirm if cov's peak is 1
                             if cov == 1:
                                 not1 = 0
