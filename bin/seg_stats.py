@@ -19,8 +19,15 @@ def get_seg_stats(markers_all:pd.DataFrame, markers_equal:pd.DataFrame, markers_
     x2, y2 = get_datapoints(markers_over)
     x3, y3 = get_datapoints(markers_all)
 
-    # plot data and create png
+    # plot data
     plt.scatter(x1, y1, c='r', label=f'={ak}')
     plt.scatter(x2, y2, c='b', label=f'>{ak}')
     plt.plot(x3, y3, 'k-')
+
+    # implement plot info
+    plt.xlabel("Marker Presence")
+    plt.ylabel("Marker Density")
+    plt.legend('best')
+
+    # create png
     plt.savefig(oufile_name)
