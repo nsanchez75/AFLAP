@@ -111,6 +111,9 @@ def main()->None:
                                 if cval not in c_dict: c_dict[cval] = 1
                                 else: c_dict[cval] += 1
 
+                            # delete 0 from c_dict
+                            del c_dict[0]
+
                             # find most frequent count
                             max = -math.inf
                             for c in c_dict:
