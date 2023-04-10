@@ -79,6 +79,11 @@ def main()->None:
             mov = tsv.loc[tsv["MarkerValue"].astype(int) > 61]
             mov = get_count_frequency(mov)
 
+            print(mal)
+            print(meq)
+            print(mov)
+            exit(0)
+
             # get segment statistics
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
