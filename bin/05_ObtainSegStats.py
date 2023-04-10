@@ -129,9 +129,10 @@ def main()->None:
                                     if c == 1: is1 = c_dict[c]
                                     if c > 5:  not1 += c_dict[c]
 
-                                # remove data for coverage counts 0-5
+                                # remove data for coverage counts 1 - 5
                                 if not1 > is1:
-                                    c_dict.pop(1, 2, 3, 4, 5)
+                                    for i in range(1, 6):
+                                        del c_dict[i]
 
                                     # find most frequent count again
                                     max = -math.inf
