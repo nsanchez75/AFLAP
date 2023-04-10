@@ -79,9 +79,9 @@ def main()->None:
             mov = tsv.loc[tsv["MarkerValue"].astype(int) > 61]
             mov = get_count_frequency(mov)
 
-            print(mal)
-            print(meq)
-            print(mov)
+            print(mal.keys())
+            print(meq.keys())
+            print(mov.keys())
             exit(0)
 
             # get segment statistics
