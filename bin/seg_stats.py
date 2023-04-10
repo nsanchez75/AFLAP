@@ -15,10 +15,6 @@ def get_seg_stats(markers_all:pd.DataFrame, markers_equal:pd.DataFrame, markers_
     markers_equal["Frequency Count"]    = normalize_data(markers_equal)
     markers_over["Frequency Count"]     = normalize_data(markers_over)
 
-    print(markers_all)
-    print(markers_equal)
-    print(markers_over)
-
     x1, y1 = get_datapoints(markers_equal)
     x2, y2 = get_datapoints(markers_over)
     x3, y3 = get_datapoints(markers_all)
