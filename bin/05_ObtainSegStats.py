@@ -82,7 +82,7 @@ def main()->None:
             print(mal.keys())
             print(meq.keys())
             print(mov.keys())
-            exit(0)
+            # exit(0)
 
             # get segment statistics
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
