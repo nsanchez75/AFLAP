@@ -66,7 +66,7 @@ def main()->None:
 
             # get marker stats
             tsv = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t')
-            
+
             ## get frequencies (sum of calls / number of progeny)
             tsv["Frequency"] = tsv.iloc[:, 3:].sum(axis=1).div(num_prog)
 
@@ -117,6 +117,9 @@ def main()->None:
                                 if c_dict[c] > max:
                                     max = c_dict[c]
                                     cov = c
+
+                            print(c_dict)
+                            exit(0)
 
                             # confirm if cov's peak is 1
                             if cov == 1:
