@@ -19,15 +19,18 @@ def get_seg_stats(markers_all:pd.DataFrame, markers_equal:pd.DataFrame, markers_
     x2, y2 = get_datapoints(markers_over)
     x3, y3 = get_datapoints(markers_all)
 
+    # init plot
+    fig, ax = plt.subplots()
+
     # plot data
-    plt.scatter(x1, y1, c='r', label=f'={ak}')
-    plt.scatter(x2, y2, c='b', label=f'>{ak}')
-    plt.plot(x3, y3, 'k-')
+    ax.plot(x1, y1, 'ro', label=f'={ak}')
+    ax.plot(x2, y2,'bo', label=f'>{ak}')
+    ax.plot(x3, y3, 'k-')
 
     # implement plot info
     plt.xlabel("Marker Presence")
     plt.ylabel("Marker Density")
-    plt.legend('best')
+    ax.legend('best')
 
     # create png
     plt.savefig(oufile_name)
