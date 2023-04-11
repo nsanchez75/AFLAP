@@ -31,3 +31,4 @@ def get_seg_stats(markers_all:pd.DataFrame, markers_equal:pd.DataFrame, markers_
 
     # create png
     plt.savefig(oufile_name)
+    plt.clf()

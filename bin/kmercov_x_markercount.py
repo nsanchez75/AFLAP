@@ -8,4 +8,6 @@ def plot_cov_and_mcount(mc:pd.DataFrame, outfile_name:str)->None:
     plt.scatter(x, y, c='k')
     plt.xlabel = "K-Mer Coverage"
     plt.ylabel = "Marker Count"
+
     plt.savefig(outfile_name)
+    plt.clf()
