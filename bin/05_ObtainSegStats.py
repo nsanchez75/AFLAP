@@ -22,6 +22,8 @@ def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-L', '--LOD', default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
+    parser.add_argument('-d', '--SDL', default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
+    parser.add_argument('-D', '--SDU', default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
     args = parser.parse_args()
 
 
