@@ -15,8 +15,8 @@ def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
 def make_symlink(srcfile:str, dstlink:str)->None:
-    if os.path.islink(dstlink): return
-    else: os.symlink(srcfile, dstlink)
+    if os.path.islink(dstlink): os.unlink(dstlink)
+    os.symlink(srcfile, dstlink)
 
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
@@ -174,6 +174,15 @@ def main()->None:
 
             print(tsv.columns)
             exit(0)            
+
+            # filter tsv file
+            findex = 1
+            for filename in os.listdir("AFLAP_tmp/05/FilteredCall"):
+                with open(filename, 'r') as ffcall:
+                    
+
+            print("continue debugging")
+            exit(0)
 
 
 if __name__ == "__main__":
