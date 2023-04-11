@@ -24,7 +24,6 @@ def main()->None:
 
 
     # 1. create directories
-    os.makedirs("AFLAP_tmp/05/FilteredCall", exist_ok=True)
     os.makedirs("AFLAP_tmp/05/SegregationInfo", exist_ok=True)
 
 
