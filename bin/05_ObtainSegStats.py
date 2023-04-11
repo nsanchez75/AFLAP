@@ -5,6 +5,7 @@ import pandas as pd
 import sys
 
 import seg_stats
+import kmercov_x_markercount as kxm
 
 def histo_sort(line:str)->float:
     line_fields = line.strip().split()
@@ -82,8 +83,8 @@ def main()->None:
             # get segment statistics
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
-            # initialize list of marker counts
-            mc_list = list()
+            # initialize dataframe of marker counts
+            mc_df = pd.DataFrame(data={"F1 Prog": None, "Marker Count": None, "K-Mer Coverage": None})
 
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
@@ -149,11 +150,10 @@ def main()->None:
                                             max = c_dict[c]
                                             cov = c
 
-                        mc_list.append(f"{f1_prog[0]}\t{m_count}\t{cov}")
+                        mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
 
-            # awk -v OFS='\t' '{if ($2 == 0) $3 = 0; print $0}' > AFLAP_Results/${g}_m${mer}_L${Lo}_U${Up}_${P0}_MarkerCount.txt
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerCount.txt", 'w') as fmc:
-                for mc in mc_list: fmc.write(f"{mc}\n")
+            # TODO: python matplotlib script
+            kxm.plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_KmerCovXMarkerCount.png")
 
             print("continue debugging")
             exit(0)
