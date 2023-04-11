@@ -172,7 +172,7 @@ def main()->None:
                 make_symlink(f"../../04/Call/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
                              f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
 
-
+            print(tsv)
             print("continue debugging")
             exit(0)
 
