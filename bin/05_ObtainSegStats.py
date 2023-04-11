@@ -14,11 +14,6 @@ def histo_sort(line:str)->float:
 def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
-def make_symlink(srcfile:str, dstlink:str)->None:
-    if os.path.exists(dstlink): os.remove(dstlink)
-    elif os.path.islink(dstlink): return
-    os.symlink(srcfile, dstlink)
-
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
@@ -167,16 +162,10 @@ def main()->None:
             for i in low_cov.index:
                 print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
 
-            # operate on progeny with coverage >= LOD
-            hi_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) >= int(args.LOD)]
-            for i in hi_cov.index:
-                make_symlink(f"/share/rwmwork/nsanc/aflap_git/AFLAP_tmp/04/Call/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
-                             f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
-
-            # remove Frequency column from tsv file
-            tsv = tsv.iloc[:, :-1]
             # create filtered tsv file
             tsv_filtered = tsv.loc[tsv["Frequency"].astype(int).between(args.SDL, args.SDU)]
+            # remove Frequency column from tsv file
+            tsv_filtered = tsv_filtered.iloc[:, :-1]
             tsv_filtered.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
 
             print("continue debugging")
