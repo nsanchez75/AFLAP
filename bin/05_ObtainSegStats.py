@@ -84,7 +84,7 @@ def main()->None:
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
             # initialize dataframe of marker counts
-            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-Mer Coverage"])
+            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
 
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
@@ -152,8 +152,10 @@ def main()->None:
 
                         mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
 
-            # TODO: python matplotlib script
+            # plot k-mer coverage and marker count
             kxm.plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_KmerCovXMarkerCount.png")
+
+            low_cov = mc_df.loc[mc_df["K-mer Coverage"]]
 
             print("continue debugging")
             exit(0)
