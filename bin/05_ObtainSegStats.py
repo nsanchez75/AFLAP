@@ -162,7 +162,7 @@ def main()->None:
                 print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
 
             # create filtered tsv file
-            tsv_filtered = tsv.loc[tsv["Frequency"].astype(int).between(args.SDL, args.SDU)]
+            tsv_filtered = tsv.loc[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
             # remove Frequency column from tsv file
             tsv_filtered = tsv_filtered.iloc[:, :-1]
             tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
