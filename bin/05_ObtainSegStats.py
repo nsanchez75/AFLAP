@@ -91,8 +91,8 @@ def main()->None:
                 for f1_prog in ff1:
                     f1_prog = f1_prog.strip().split()
                     # skip over if f1_prog encountered already
-                    if f1_prog in f1_prog_set: continue
-                    f1_prog_set.add(f1_prog)
+                    if f1_prog[0] in f1_prog_set: continue
+                    f1_prog_set.add(f1_prog[0])
 
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
