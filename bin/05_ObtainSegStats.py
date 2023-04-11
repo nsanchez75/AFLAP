@@ -147,7 +147,7 @@ def main()->None:
                         mc_set.add(f"{f1_prog[0]}\t{m_count}\t{cov}")
 
             # awk -v OFS='\t' '{if ($2 == 0) $3 = 0; print $0}' > AFLAP_Results/${g}_m${mer}_L${Lo}_U${Up}_${P0}_MarkerCount.txt
-            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerCount.txt", 'r') as fmc:
+            with open(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerCount.txt", 'w') as fmc:
                 for mc in mc_set: fmc.write(f"{mc}\n")
 
             print("continue debugging")
