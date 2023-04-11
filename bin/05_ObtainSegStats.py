@@ -14,6 +14,10 @@ def histo_sort(line:str)->float:
 def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
+def make_symlink(srcfile:str, dstlink:str):
+    if os.path.islink(dstlink): os.replace(srcfile, dstlink)
+    else: os.symlink(srcfile, dstlink)
+
 def main()->None:
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
@@ -163,8 +167,8 @@ def main()->None:
             # operate on progeny with coverage >= LOD
             hi_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) >= int(args.LOD)]
             for i in hi_cov.index:
-                os.symlink(f"AFLAP_tmp/04/Call/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
-                           f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
+                make_symlink(f"AFLAP_tmp/04/Call/{hi_cov['F1 Prog']}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
+                             f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog']}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
 
 
             print("continue debugging")
