@@ -84,7 +84,7 @@ def main()->None:
             seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png")
 
             # initialize dataframe of marker counts
-            mc_df = pd.DataFrame(data={"F1 Prog": None, "Marker Count": None, "K-Mer Coverage": None})
+            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-Mer Coverage"])
 
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
