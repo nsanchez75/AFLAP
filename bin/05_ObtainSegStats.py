@@ -172,9 +172,6 @@ def main()->None:
             tsv_filtered = tsv_filtered.iloc[:, :-1]
             tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
 
-            print("continue debugging")
-            exit(0)
-
 
 if __name__ == "__main__":
     main()
