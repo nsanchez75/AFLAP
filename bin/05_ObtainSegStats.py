@@ -23,15 +23,11 @@ def main()->None:
     args = parser.parse_args()
 
 
-    # 1. create directories
-    os.makedirs("AFLAP_tmp/05/SegregationInfo", exist_ok=True)
-
-
-    # 2. initialize variables
+    # 1. initialize variables
     ak = 2 * int(args.kmer) - 1
 
 
-    # 3. analyze all parents whom we can create a genetic map for
+    # 2. analyze all parents whom we can create a genetic map for
     print("Performing segment statistics analysis...")
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
         for p in fla:
