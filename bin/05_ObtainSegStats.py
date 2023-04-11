@@ -15,7 +15,7 @@ def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
 def make_symlink(srcfile:str, dstlink:str)->None:
-    if os.path.islink(dstlink): os.replace(srcfile, dstlink)
+    if os.path.islink(dstlink): return
     else: os.symlink(srcfile, dstlink)
 
 def main()->None:
@@ -174,9 +174,6 @@ def main()->None:
 
             print(tsv.columns)
             exit(0)            
-
-            print("continue debugging")
-            exit(0)
 
 
 if __name__ == "__main__":
