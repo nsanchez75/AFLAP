@@ -167,7 +167,7 @@ def main()->None:
             # operate on progeny with coverage >= LOD
             hi_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) >= int(args.LOD)]
             for i in hi_cov.index:
-                make_symlink(f"AFLAP_tmp/04/Call/{hi_cov['F1 Prog']}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
+                make_symlink(f"AFLAP_tmp/04/Call/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
                              f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
 
 
