@@ -176,9 +176,10 @@ def main()->None:
             exit(0)            
 
             # filter tsv file
-            findex = 1
-            for filename in os.listdir("AFLAP_tmp/05/FilteredCall"):
-                with open(filename, 'r') as ffcall:
+            # findex = 1
+            # for filename in os.listdir("AFLAP_tmp/05/FilteredCall"):
+            #     with open(filename, 'r') as ffcall:
+
                     
 
             print("continue debugging")
