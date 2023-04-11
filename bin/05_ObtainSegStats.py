@@ -156,6 +156,11 @@ def main()->None:
             # plot k-mer coverage and marker count
             kxm.plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_KmerCovXMarkerCount.png")
 
+            if (not args.LOD == 2):
+                print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
+                      f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_MarkerSeg.png.\n" +
+                      "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
+
             # filter out progeny with coverage < LOD
             low_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
             for i in low_cov.index:
