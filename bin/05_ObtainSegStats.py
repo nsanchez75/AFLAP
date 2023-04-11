@@ -155,7 +155,17 @@ def main()->None:
             # plot k-mer coverage and marker count
             kxm.plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}_KmerCovXMarkerCount.png")
 
-            low_cov = mc_df.loc[mc_df["K-mer Coverage"]]
+            # filter out progeny with coverage < LOD
+            low_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
+            for i in low_cov.index:
+                print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
+            
+            # operate on progeny with coverage >= LOD
+            hi_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) >= int(args.LOD)]
+            for i in hi_cov.index:
+                os.symlink(f"AFLAP_tmp/04/Call/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt",
+                           f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")
+
 
             print("continue debugging")
             exit(0)
