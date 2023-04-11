@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import sys
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     args = parser.parse_args()
@@ -238,7 +238,3 @@ def main()->None:
                             f"\tNumber of markers after refiltering:            {mar_count}\n" +
                             f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                             f"\tNumber of markers > {ak} bp:                    {mar62}\n")
-
-
-if __name__ == "__main__":
-    main()

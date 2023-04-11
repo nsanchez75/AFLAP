@@ -11,7 +11,7 @@ import jellyfish_count as jc
 #	The script will detect previous results and used them when able.
 ###########################################################
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='JELLYFISH', description="A script to obtain JELLYFISH hashes to be used when running AFLAP.")
     parser.add_argument('-m', '--kmer', default=31, help="K-mer size (optional). Default [31].")
     parser.add_argument('-t', '--threads', default=4, help="Threads for JELLYFISH counting (optional). Default [4].")
@@ -56,7 +56,3 @@ def main()->None:
     ## F2 progeny
     # TODO: uncomment this when working on F2
     # jc.jellyfish_count(args.kmer, args.threads, "F2")
-
-
-if __name__ == "__main__":
-    main()

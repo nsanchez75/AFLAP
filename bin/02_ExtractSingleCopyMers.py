@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExtractingSingleCopyMers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     args = parser.parse_args()
@@ -93,7 +93,3 @@ def main()->None:
                     sys.exit(1)
                 else:
                     print(f"\t\tHistogram for {G} constructed.")
-
-
-if __name__ == "__main__":
-    main()

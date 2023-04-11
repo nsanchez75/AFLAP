@@ -5,7 +5,7 @@ import sys
 
 import bin.ped_analysis as pa
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='AFLAP', description="A script to run all stages of AFLAP.")
     parser.add_argument('-P', '--Pedigree', type=str, required=True, help="Pedigree file (required). See AFLAP README for more information.")
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
@@ -84,7 +84,3 @@ def main()->None:
     
     print("05 good")
     exit(0)
-    
-
-if __name__ == "__main__":
-    main()

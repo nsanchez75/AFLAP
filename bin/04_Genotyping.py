@@ -9,7 +9,7 @@ def tsv_sort(line:str)->str:
     line_fields = line.strip().split()
     return str(line_fields[0])
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-L', '--LOD', default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
@@ -102,7 +102,3 @@ def main()->None:
                 sys.exit(1)
             else:
                 print(f"Genotypes.MarkerID.tsv for {G} has been created.")
-
-
-if __name__ == "__main__":
-    main()

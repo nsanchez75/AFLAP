@@ -14,7 +14,7 @@ def histo_sort(line:str)->float:
 def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
-def main()->None:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
@@ -169,6 +169,3 @@ def main()->None:
             tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
 
             print(f"\t\tFinished summarized for {G}")
-
-if __name__ == "__main__":
-    main()
