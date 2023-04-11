@@ -89,10 +89,11 @@ def main()->None:
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
                 f1_prog_set = set()
                 for f1_prog in ff1:
+                    f1_prog = f1_prog.strip().split()
+                    # skip over if f1_prog encountered already
                     if f1_prog in f1_prog_set: continue
                     f1_prog_set.add(f1_prog)
-                    
-                    f1_prog = f1_prog.strip().split()
+
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
                         if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt"):
