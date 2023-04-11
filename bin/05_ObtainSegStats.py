@@ -174,7 +174,7 @@ def main()->None:
                              f"AFLAP_tmp/05/FilteredCall/{hi_cov['F1 Prog'][i]}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt")     
 
             # remove Frequency column from tsv file
-            tsv = tsv[:-1]
+            tsv = tsv[:-2]
 
             print(tsv)
 
