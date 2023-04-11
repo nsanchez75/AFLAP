@@ -87,7 +87,11 @@ def main()->None:
 
             # perform analysis on progeny of G
             with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
+                f1_prog_set = set()
                 for f1_prog in ff1:
+                    if f1_prog in f1_prog_set: continue
+                    f1_prog_set.add(f1_prog)
+                    
                     f1_prog = f1_prog.strip().split()
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
