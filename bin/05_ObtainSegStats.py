@@ -177,7 +177,7 @@ def main()->None:
             tsv = tsv.iloc[:, :-1]
 
             # filter tsv file
-            
+            tsv = tsv.loc[tsv["Frequency"].astype(int).between(args.SDL, args.SDU)]
 
                     
 
