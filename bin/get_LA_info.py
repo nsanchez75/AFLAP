@@ -1,4 +1,4 @@
-def get_LA_info(la_filename:str, cross_filename:str)->list[list[str, str, str, str]]:
+def get_LA_info(la_filename:str, cross_filename:str)->list[tuple[str, str, str, str]]:
     with open(la_filename, 'r') as fla:
         ret_list = list()
         for p in fla:
@@ -21,6 +21,6 @@ def get_LA_info(la_filename:str, cross_filename:str)->list[list[str, str, str, s
             p0 = '_'.join(p0)
 
             # create tuple
-            ret_list.append([G, LO, UP, p0])
+            ret_list.append((G, LO, UP, p0))
     
     return ret_list
