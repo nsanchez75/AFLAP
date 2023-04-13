@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
     parser.add_argument('-k', '--kinship', action='store_true', help='Run kinship estimation.')
     parser.add_argument('-x', '--LowCov', action='store_true', help='Run with low coverage parameters.')
-    parser.add_argument('-U', '--Max', help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
+    parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
 
 
@@ -55,32 +55,45 @@ if __name__ == "__main__":
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
+    # TODO: fix all error printing
     # 01_JELLYFISH.py
     try:
         os.system(f"python3 {DIR}/bin/01_JELLYFISH.py -t {args.threads} -m {args.kmer}")
     except SystemExit:
         print("Error found in 01_JELLYFISH.py.")
         exit(1)
+    
     # 02_ExtractSingleCopyMers.py
     try:
         os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 02_ExtractSingleCopyMers.py.")
+    
     # 03_ObtainMarkers.py
     try:
         os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}")
     except SystemExit:
         print("Error found in 03_ObtainMarkers.py.")
+    
     # 04_Genotyping.py
     try:
         os.system(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -L {args.LOD}")
     except SystemExit:
         print("Error found in 04_Genotyping.py.")
+    
     # 05_ObtainSegStats.py
     try:
         os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
     except:
         print("Error found in 05_ObtainSegStats.py.")
     
-    print("05 good")
-    exit(0)
+    if (args.kinship):
+        # TODO: implement 05b
+        pass
+    elif (args.max is not None):
+        # TODO: implement 05c
+
+    try:
+        os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
+    except:
+        print("Error found in 06_ExportToLepMap3.py.")
