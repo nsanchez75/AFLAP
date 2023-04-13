@@ -1,7 +1,7 @@
 import argparse
 import os
 
-import bin.get_LA_info as gli
+import get_LA_info as gli
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExportToLepMap3', description="A script to export the genotype table to LepMap3.")
