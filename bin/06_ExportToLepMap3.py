@@ -16,8 +16,8 @@ if __name__ == "__main__":
     if (not os.path.exists("AFLAP_tmp/01/LA.txt")):
         raise FileNotFoundError("AFLAP_tmp/01/LA.txt not found. Rerun pipeline.")
     list_of_parents = gli.get_LA_info(f"AFLAP_tmp/01/LA.txt", f"AFLAP_tmp/01/Crosses.txt")
-
-    print(list_of_parents)
+    G, LO, UP, P0 = list_of_parents
+    print(f"{G}\n{LO}\n{UP}\n{P0}")
     exit(0)
 
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
