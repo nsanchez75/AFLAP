@@ -1,6 +1,8 @@
 import argparse
 import os
 
+import bin.get_LA_info as gli
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExportToLepMap3', description="A script to export the genotype table to LepMap3.")
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
@@ -13,6 +15,11 @@ if __name__ == "__main__":
     # 2. get parents to run LepMap3 on
     if (not os.path.exists("AFLAP_tmp/01/LA.txt")):
         raise FileNotFoundError("AFLAP_tmp/01/LA.txt not found. Rerun pipeline.")
+    list_of_parents = gli.get_LA_info(f"AFLAP_tmp/01/LA.txt", f"AFLAP_tmp/Crosses.txt")
+
+    print(list_of_parents)
+    exit(0)
+
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
         for p in fla:
             # extract info about analyzed parent
