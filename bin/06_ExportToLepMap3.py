@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # 2. get parents to run LepMap3 on
     if (not os.path.exists("AFLAP_tmp/01/LA.txt")):
         raise FileNotFoundError("AFLAP_tmp/01/LA.txt not found. Rerun pipeline.")
-    list_of_parents = gli.get_LA_info(f"AFLAP_tmp/01/LA.txt", f"AFLAP_tmp/Crosses.txt")
+    list_of_parents = gli.get_LA_info(f"AFLAP_tmp/01/LA.txt", f"AFLAP_tmp/01/Crosses.txt")
 
     print(list_of_parents)
     exit(0)
