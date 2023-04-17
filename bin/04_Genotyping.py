@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import sys
 
+import get_LA_info as gli
 import genotype_jf as gj
 
 def tsv_sort(line:str)->str:
@@ -22,83 +23,69 @@ if __name__ == "__main__":
 
 
     # 2. check for markers
-    with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
-        for line in fla:
-            line = line.strip().split()
+    list_of_Gs = gli.get_LA_info("AFLAP_tmp/01/LA.txt", "AFLAP_tmp/01/Crosses.txt")
+    for G_info in list_of_Gs:
+        G, LO, UP, P0 = G_info
 
-            # declare variables from LA.txt
-            G  = line[0]    # F0 being analyzed
-            LO = line[1]    # F0's lower bound
-            UP = line[2]    # F1's upper bound
+        # check if marker exists
+        if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
+            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as fmark:
+                m_count = 0
+                for m in fmark:
+                    if m.startswith('>'):
+                        m_count += 1
 
-            print(f"Calling GT for {G}'s derived markers...")
+                print(f"\t{m_count} markers identified in AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa. These will be surveyed against progeny.")
+        else:
+            print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not found. Rerun 03_ObtainMarkers.py.")
+            exit(1)
 
-            # identify file based on intermediate results
-            with open(f"AFLAP_tmp/03/{G}_CrossedTo.txt", 'r') as fct:
-                p0 = []
-                for op in fct:
-                    p0.append(op.strip())
-                p0 = '_'.join(p0)
+        # initialize list consisting of F0's progeny
+        h_list = []
 
-            # check if marker exists
-            if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa"):
-                with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa", 'r') as fmark:
-                    m_count = 0
-                    for m in fmark:
-                        if m.startswith('>'):
-                            m_count += 1
+        # run jellyfish on F1 and F2 individuals who descend from F0
+        h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F1")
+        h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F2")
 
-                    print(f"\t{m_count} markers identified in AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa. These will be surveyed against progeny.")
-            else:
-                print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not found. Rerun 03_ObtainMarkers.py.")
-                exit(1)
+        # extract info from MARKERS file
+        with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:
+            head_list = []
+            seq_list = []
 
-            # initialize list consisting of F0's progeny
-            h_list = []
+            while True:
+                head = f.readline().strip().replace('>', '')
+                if not head: break
 
-            # run jellyfish on F1 and F2 individuals who descend from F0
-            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F1")
-            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, p0, "F2")
+                seq = f.readline().strip()
 
-            # extract info from MARKERS file
-            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa") as f:
-                head_list = []
-                seq_list = []
+                head_list.append(head)
+                seq_list.append(seq)
 
-                while True:
-                    head = f.readline().strip().replace('>', '')
-                    if not head: break
-
-                    seq = f.readline().strip()
-
-                    head_list.append(head)
-                    seq_list.append(seq)
-
-                # check if head_list and seq_list are same size
-                if len(head_list) != len(seq_list):
-                    print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{p0}.fa not extracted properly.")
-                    sys.exit(1)
-
-            # get data
-            data = {"MarkerID": seq_list, "MarkerSequence": head_list}
-            for h in h_list:
-                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.txt", 'r') as fcall:
-                    b_vals = []
-                    for b_val in fcall: b_vals.append(b_val.strip())
-                data[h] = b_vals
-
-            matrix = pd.DataFrame(data=data)
-
-            # split marker sequence and value and reorder
-            matrix[["MarkerSequence", "MarkerValue"]] = matrix["MarkerSequence"].str.split('_', expand=True)
-            matrix = matrix.reindex(columns=["MarkerID", "MarkerSequence", "MarkerValue"] + list(matrix.columns[2:-1]))
-
-            # create tsv file
-            matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
-            
-            # check tsv file status
-            if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.tsv"):
-                print("Error in 04_Genotyping.py: Genotypes.MarkerID.tsv was not made.")
+            # check if head_list and seq_list are same size
+            if len(head_list) != len(seq_list):
+                print(f"Error in 04_Genotyping.py: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
                 sys.exit(1)
-            else:
-                print(f"Genotypes.MarkerID.tsv for {G} has been created.")
+
+        # get data
+        data = {"MarkerID": seq_list, "MarkerSequence": head_list}
+        for h in h_list:
+            with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+                b_vals = []
+                for b_val in fcall: b_vals.append(b_val.strip())
+            data[h] = b_vals
+
+        matrix = pd.DataFrame(data=data)
+
+        # split marker sequence and value and reorder
+        matrix[["MarkerSequence", "MarkerValue"]] = matrix["MarkerSequence"].str.split('_', expand=True)
+        matrix = matrix.reindex(columns=["MarkerID", "MarkerSequence", "MarkerValue"] + list(matrix.columns[2:-1]))
+
+        # create tsv file
+        matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
+        
+        # check tsv file status
+        if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
+            print("Error in 04_Genotyping.py: Genotypes.MarkerID.tsv was not made.")
+            sys.exit(1)
+        else:
+            print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")

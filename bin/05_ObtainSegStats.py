@@ -39,7 +39,7 @@ if __name__ == "__main__":
         with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
             for cross in fcrosses:
                 cross = cross.strip().split()
-                
+
                 if G in (cross[2], cross[3]):
                     num_progs += int(cross[0])
         if not num_progs: raise ValueError("Error in 05_ObtainSegStats.py: Invalid number of progeny.")
