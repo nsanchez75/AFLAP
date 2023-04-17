@@ -1,4 +1,11 @@
+import os
+
 def get_LA_info(la_filename:str, cross_filename:str)->list[tuple[str, str, str, str]]:
+    # check if files exist
+    for file in (la_filename, cross_filename):
+        if (not os.path.exists(file)):
+            raise FileNotFoundError(f"Error: {file} not found.")
+
     with open(la_filename, 'r') as fla:
         ret_list = list()
         for p in fla:
@@ -22,5 +29,5 @@ def get_LA_info(la_filename:str, cross_filename:str)->list[tuple[str, str, str, 
 
             # create tuple
             ret_list.append((G, LO, UP, p0))
-    
+
     return ret_list
