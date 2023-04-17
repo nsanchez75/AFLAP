@@ -18,7 +18,7 @@ if __name__ == "__main__":
     list_of_parents = gli.get_LA_info(f"AFLAP_tmp/01/LA.txt", f"AFLAP_tmp/01/Crosses.txt")
     for info in list_of_parents:
         G, LO, UP, P0 = info
-    print(f"{G}\n{LO}\n{UP}\n{P0}")
+        print(f"{G}\n{LO}\n{UP}\n{P0}")
     exit(0)
 
     with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
