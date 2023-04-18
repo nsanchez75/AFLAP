@@ -1,5 +1,7 @@
 import argparse
 import os
+import pandas as pd
+import numpy as np
 
 import get_LA_info as gli
 
@@ -18,25 +20,53 @@ if __name__ == "__main__":
     list_of_Gs = gli.get_LA_info("AFLAP_tmp/01/LA.txt", "AFLAP_tmp/01/Crosses.txt")
     for G_info in list_of_Gs:
         G, LO, UP, P0 = G_info
-        print(f"{G}\n{LO}\n{UP}\n{P0}")
-    exit(0)
 
-    with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
-        for p in fla:
-            # extract info about analyzed parent
-            p = p.strip().split()
-            G = p[0]
-            LO = p[1]
-            UP = p[2]
+        if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
+            raise FileNotFoundError("Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
 
-            if (not os.path.exists(f"AFLAP_tmp/03/{G}_CrossedTo.txt")):
-                raise FileNotFoundError(f"AFLAP_tmp/03/{G}_CrossedTo.txt not found. Rerun pipeline.")
-            with open(f"AFLAP_tmp/03/{G}_CrossedTo.txt", 'r') as fct:
-                p0 = []
-                for op in fct:
-                    p0.append(op.strip())
-                p0 = '_'.join(p0)
-            
-            if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{p0}.Genotypes.MarkerID.Filtered.tsv")):
-                raise FileNotFoundError("Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
-            
+        # determine male and female parent
+        sex_dict = {'male': None, 'female': None}
+        with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
+            for cross in fcrosses:
+                cross = cross.strip().split()
+
+                # continue if parent not found
+                if G not in (cross[2], cross[3]): continue
+
+                # identify sex if parent found
+                if G == cross[2]:
+                    sex_dict['male']    = G
+                    sex_dict['female']  = P0
+                elif G == cross[3]:
+                    sex_dict['male']    = P0
+                    sex_dict['female']  = G
+                break
+
+        data = np.ndarray(["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
+                          ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
+                          ["CHR", "POS", '0'                                       , '0'                                       ],
+                          ["CHR", "POS", '0'                                       , '0'                                       ],
+                          ["CHR", "POS", '1'                                       , '2'                                       ],
+                          ["CHR", "POS", '0'                                       , '0'                                       ])
+
+        # put all F1 progeny of parent G into data header
+        with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
+            p1_set = set()
+            for p1 in fprog1:
+                p1 = p1.strip().split()
+
+                if G in (p1[3], p1[4]) and p1[0] not in p1_set:
+                        prog_data = np.ndarray([f"{sex_dict['male']}x{sex_dict['female']}"],
+                                               [p1[0]                                     ],
+                                               [sex_dict['male']                          ],
+                                               [sex_dict['female']                        ],
+                                               ['0'                                       ],
+                                               ['0'                                       ])
+                        np.hstack(data, prog_data)
+
+        print(data)
+
+        # TODO:
+        #   - iterate through filtered genotype.tsv's progeny [M1 ... M99]
+        #   - convert 0 -> 1 0 0 0 0 0 0 0 0 0, 1 -> 0 1 0 0 0 0 0 0 0 0
+        #   - place into data as column
