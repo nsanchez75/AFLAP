@@ -50,10 +50,11 @@ def pedigree_analysis(pedigree: str)->None:
                     f1_count += 1
                     f1_progs.add(cols[0])
                     # add or create new cross in crosses dictionary
-                    cross = [cols[3], cols[4]]
-                    cross.sort()
-                    cross = ' '.join(cross)
-                    if cross not in f1_crosses: f1_crosses[cross] = 1
+                    cross = f"{cols[3]} {cols[4]}"
+                    if cross not in f1_crosses:
+                        if f"{cols[4]} {cols[3]}" in f1_crosses:
+                            raise ValueError("Error: A parent in the pedigree is being treated as both male and female.")
+                        f1_crosses[cross] = 1
                     else: f1_crosses[cross] += 1
 
                 # check if progeny has duplicated parents
@@ -84,19 +85,19 @@ def pedigree_analysis(pedigree: str)->None:
         pass    # TODO: implement when working w/ F2
 
 
-    # 4. sort pedigree files
+    # 3. sort pedigree files
     sort_ped("F0")
     sort_ped("F1")
     sort_ped("F2")
 
 
-    # 3. create F0.txt, F1.txt, F2.txt  FIXME: could be redundant with Pedigree_{f_type}.txt having same info
+    # 4. create F0.txt, F1.txt, F2.txt  FIXME: could be redundant with Pedigree_{f_type}.txt having same info
     sortwrite_Ftext(parents, "F0")
     sortwrite_Ftext(f1_progs, "F1")
     # sortwrite_Ftext(f2_progs, "F2")   # TODO: implement F2.txt when working w/ F2
 
 
-    # 4. determine parent count
+    # 5. determine parent count
     if f0_count < 2:
         print("Error in ped_analysis.py: Cannot have less than 2 parents. Check pedigree file.")
         sys.exit(1)
@@ -104,7 +105,7 @@ def pedigree_analysis(pedigree: str)->None:
     else: print(f"{f0_count} parents detected. This is not so easy! Identifying crosses...")
 
 
-    # 5. identify and print cross
+    # 6. identify and print cross
     with open("AFLAP_tmp/01/Crosses.txt", 'w') as f:
         # F1 progeny
         print("F1 crosses that have been identified:")
