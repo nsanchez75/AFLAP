@@ -56,13 +56,16 @@ if __name__ == "__main__":
                 p1 = p1.strip().split()
 
                 if G in (p1[3], p1[4]) and p1[0] not in p1_set:
-                        prog_data = np.ndarray([f"{sex_dict['male']}x{sex_dict['female']}"],
-                                               [p1[0]                                     ],
-                                               [sex_dict['male']                          ],
-                                               [sex_dict['female']                        ],
-                                               ['0'                                       ],
-                                               ['0'                                       ])
-                        np.hstack(data, prog_data)
+                    prog_data = np.ndarray([f"{sex_dict['male']}x{sex_dict['female']}"],
+                                            [p1[0]                                     ],
+                                            [sex_dict['male']                          ],
+                                            [sex_dict['female']                        ],
+                                            ['0'                                       ],
+                                            ['0'                                       ])
+                    np.hstack(data, prog_data)
+                
+                p1_set.add(p1[0])
+                    
 
         print(data)
 
