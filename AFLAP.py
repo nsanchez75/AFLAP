@@ -92,6 +92,7 @@ if __name__ == "__main__":
         pass
     elif (args.max is not None):
         # TODO: implement 05c
+        pass
 
     try:
         os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
