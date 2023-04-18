@@ -1,5 +1,4 @@
 import os
-import sys
 
 def sort_ped(f_type:str)->None:
     with open(f"AFLAP_tmp/Pedigree_{f_type}.txt", 'r+') as f:
@@ -36,8 +35,7 @@ def pedigree_analysis(pedigree: str)->None:
             cols = line.strip().split()
             # check line size
             if len(cols) != 5:
-                print("Error in ped_analysis.py: Line in pedigree file over 5 columns. Check pedigree file.")
-                sys.exit(1)
+                raise ValueError("Error: Line in pedigree file over 5 columns.")
 
             if cols[1] == '0':
                 if cols[0] not in parents:
@@ -59,18 +57,15 @@ def pedigree_analysis(pedigree: str)->None:
 
                 # check if progeny has duplicated parents
                 if "NA" not in {cols[3], cols[4]} and cols[3] == cols[4]:
-                    print(f"Error in ped_analysis.py: identical crossed parents identified for{cols[0]}.")
-                    sys.exit(1)
+                    raise ValueError(f"Error: Identical crossed parents identified for {cols[0]}.")
 
                 f1.write(line)
             elif cols[1] == '2':
                 # TODO: work on later once we begin working on F2
-                print("Error in ped_analysis.py: AFLAP does not currently work on F2 progeny.")
-                sys.exit(1)
+                raise ValueError("Error: AFLAP does not currently work on F2 progeny.")
                 f2.write(line) # for future use
             else:
-                print("Error in ped_analysis.py: Pedigree file contains individual that is not F0, F1, or F2.")
-                sys.exit(1)
+                raise ValueError("Error: Pedigree file contains individual that is not F0, F1, or F2.")
 
 
     # 2. check F1.txt and F2.txt structure
@@ -79,8 +74,7 @@ def pedigree_analysis(pedigree: str)->None:
             for line in f:
                 line = line.strip().split()
                 if line[3] not in parents or line[4] not in parents:
-                    print(f"Error in ped_analysis.py: F1 progeny {line[0]} descends from parent not found in pedigree file.")
-                    sys.exit(1)
+                    raise ValueError(f"Error: F1 progeny {line[0]} descends from parent not found in pedigree file.")
     if os.path.exists("AFLAP_tmp/Pedigree_F2.txt"):
         pass    # TODO: implement when working w/ F2
 
@@ -99,10 +93,9 @@ def pedigree_analysis(pedigree: str)->None:
 
     # 5. determine parent count
     if f0_count < 2:
-        print("Error in ped_analysis.py: Cannot have less than 2 parents. Check pedigree file.")
-        sys.exit(1)
+        raise ValueError("Error: Pedigree file does not identify at least 2 parents.")
     elif f0_count == 2: print("2 parents detected. This will be easy! Identifying cross(es)...")
-    else: print(f"{f0_count} parents detected. This is not so easy! Identifying crosses...")
+    else: print(f"{f0_count} parents detected. This will not be so easy! Identifying crosses...")
 
 
     # 6. identify and print cross
