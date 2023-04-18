@@ -90,7 +90,7 @@ if __name__ == "__main__":
     if (args.kinship):
         # TODO: implement 05b
         pass
-    elif (args.max is not None):
+    elif (args.Max is not None):
         # TODO: implement 05c
         pass
 
