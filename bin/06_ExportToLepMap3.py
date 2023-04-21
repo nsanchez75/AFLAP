@@ -42,12 +42,12 @@ if __name__ == "__main__":
                     sex_dict['female']  = G
                 break
 
-        data = pd.DataFrame(["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
-                            ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
-                            ["CHR", "POS", '0'                                       , '0'                                       ],
-                            ["CHR", "POS", '0'                                       , '0'                                       ],
-                            ["CHR", "POS", '1'                                       , '2'                                       ],
-                            ["CHR", "POS", '0'                                       , '0'                                       ])
+        data = np.chararray([["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
+                             ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
+                             ["CHR", "POS", '0'                                       , '0'                                       ],
+                             ["CHR", "POS", '0'                                       , '0'                                       ],
+                             ["CHR", "POS", '1'                                       , '2'                                       ],
+                             ["CHR", "POS", '0'                                       , '0'                                       ]])
 
         # put all F1 progeny of parent G into data header
         with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
