@@ -42,7 +42,7 @@ if __name__ == "__main__":
                     sex_dict['female']  = G
                 break
 
-        data = np.chararray(["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
+        data = np.array(["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
                             ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
                             ["CHR", "POS", '0'                                       , '0'                                       ],
                             ["CHR", "POS", '0'                                       , '0'                                       ],
