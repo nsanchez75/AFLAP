@@ -65,7 +65,7 @@ if __name__ == "__main__":
                 p1_set.add(p1[0])
 
 
-        print(data)
+        print(df)
 
         # TODO:
         #   - iterate through filtered genotype.tsv's progeny [M1 ... M99]
