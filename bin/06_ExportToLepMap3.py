@@ -80,5 +80,7 @@ if __name__ == "__main__":
 
         # export df DataFrame to tsv dedicated to LepMap3
         df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sep='\t', header=False, index=False)
+        if not os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):
+            raise FileNotFoundError(f"Error: tsv file for {G} has not been created.")
 
         print(f"\tCompleted making a LepMap3 tsv file for {G}.")
