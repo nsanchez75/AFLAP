@@ -61,8 +61,6 @@ if __name__ == "__main__":
 
                 p1_set.add(p1[0])
 
-        print(df)
-
         # add rows from filtered tsv file to df
         if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
             raise FileNotFoundError("Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
@@ -72,6 +70,9 @@ if __name__ == "__main__":
         ftsv.insert(2, "Male Parent", 1)
         ftsv.insert(3, "Female Parent", 0)
         ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
+
+        print(df)
+        print(ftsv)
 
         # for i in range(0, len(ftsv.index)):
         #     df.loc[len(df.index) + i] = ftsv.loc[i].to_numpy()
