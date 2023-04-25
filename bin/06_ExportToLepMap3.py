@@ -70,14 +70,13 @@ if __name__ == "__main__":
         ftsv.insert(2, "Male Parent", 1)
         ftsv.insert(3, "Female Parent", 0)
         ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
+        ## set columns of ftsv DataFrame to match df's column names
+        ftsv = ftsv.set_axis(list(df.columns), axis=1)
+
+        ## concatenate ftsv under df
+        df = pd.concat([df, ftsv], ignore_index=True)
 
         print(df)
-        print(ftsv)
-
-        # for i in range(0, len(ftsv.index)):
-        #     df.loc[len(df.index) + i] = ftsv.loc[i].to_numpy()
-
-        # print(df)
 
         # TODO:
         #   - iterate through filtered genotype.tsv's progeny [M1 ... M99]
