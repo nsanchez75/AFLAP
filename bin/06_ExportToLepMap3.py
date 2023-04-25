@@ -21,6 +21,9 @@ if __name__ == "__main__":
     for G_info in list_of_Gs:
         G, LO, UP, P0 = G_info
 
+        # print init statement
+        print(f"\t Working on parent {G}...")
+
         # determine male and female parent
         sex_dict = {'male': None, 'female': None}
         with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
@@ -72,13 +75,10 @@ if __name__ == "__main__":
         ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
         ## set columns of ftsv DataFrame to match df's column names
         ftsv = ftsv.set_axis(list(df.columns), axis=1)
-
         ## concatenate ftsv under df
         df = pd.concat([df, ftsv], ignore_index=True)
 
-        print(df)
+        # export df DataFrame to tsv dedicated to LepMap3
+        df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sep='\t', header=False, index=False)
 
-        # TODO:
-        #   - iterate through filtered genotype.tsv's progeny [M1 ... M99]
-        #   - convert 0 -> 1 0 0 0 0 0 0 0 0 0, 1 -> 0 1 0 0 0 0 0 0 0 0
-        #   - place into data as column
+        print(f"\tCompleted making a LepMap3 tsv file for {G}.")
