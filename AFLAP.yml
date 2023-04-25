@@ -9,7 +9,7 @@ dependencies:
   - matplotlib==3.7.1
   - kmer-jellyfish
   - abyss
-  - Lep-MAP3
+  - lepwrap=4.0.1
   - r-dplyr
   - r-ggplot2
   - r-ggrepel
