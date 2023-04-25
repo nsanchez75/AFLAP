@@ -1,7 +1,6 @@
 import argparse
 import os
 import pandas as pd
-import numpy as np
 
 import get_LA_info as gli
 
