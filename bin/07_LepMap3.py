@@ -40,8 +40,8 @@ if __name__ == "__main__":
             sc2_results = subprocess.Popen(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
                                                  stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
             sc2_stderr.close()
-            for line in sc2_results.stdout:
-                lepmap_results = pd.concat([lepmap_results, line.strip()])
+            for sc2_results_line in sc2_results.stdout:
+                lepmap_results = pd.concat(lepmap_results, sc2_results_line.decode())
 
         print(lepmap_results)
         print("continue coding 07?")
