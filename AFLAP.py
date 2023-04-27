@@ -98,3 +98,8 @@ if __name__ == "__main__":
         os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
     except:
         print("Error found in 06_ExportToLepMap3.py.")
+
+    try:
+        os.system(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}")
+    except:
+        print("Error found in 07_LepMap3.py")
