@@ -41,7 +41,7 @@ if __name__ == "__main__":
                                                  stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
             sc2_stderr.close()
             for line in sc2_results.stdout:
-                lepmap_results = pd.concat(lepmap_results, line.strip())
+                lepmap_results = pd.concat([lepmap_results, line.strip()])
 
         print(lepmap_results)
         print("continue coding 07?")
