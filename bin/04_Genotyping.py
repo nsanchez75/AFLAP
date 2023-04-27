@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
 
     # 2. check for markers
-    list_of_Gs = gli.get_LA_info("AFLAP_tmp/01/LA.txt", "AFLAP_tmp/01/Crosses.txt")
+    list_of_Gs = gli.get_LA_info()
     for G_info in list_of_Gs:
         G, LO, UP, P0 = G_info
 
