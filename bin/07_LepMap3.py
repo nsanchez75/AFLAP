@@ -37,20 +37,51 @@ if __name__ == "__main__":
             # run LepMap3 - SeparateChromosomes2
             sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
             sc2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'w')
-            sc2_results = subprocess.Popen(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-                                                 stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
+            sc2_results = subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
+                           stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
             sc2_stdout.close()
             sc2_stderr.close()
 
         # gather analysis statistics
-        # m_count = 0
-        # fre_dict = dict()
-        # with open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'r') as flod:
-        #     for res_line in flod:
-        #         res_line = int(res_line.strip())
-        #         if res_line not in fre_dict: fre_dict[res_line] = 1
-        #         else: fre_dict[res_line] += 1
+        m_count = 0
+        fre_dict = dict()
+        with open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'r') as flod:
+            for res_line in flod:
+                # skip file header
+                if res_line.startswith('#'): continue
 
-        #         m_count += res_line
+                res_line = int(res_line.strip())
+                if res_line not in fre_dict: fre_dict[res_line] = 1
+                else: fre_dict[res_line] += 1
+        ## count number of linkage groups
+        lg_set = set()
+        for res in fre_dict:
+            if not res and (1/m_count >= 0.01):
+                lg_set.add(res)
+        print(f"{len(lg_set)} linkage groups detected containing a minimum of 1% of the markers.")
+
+        if (args.threads > len(lg_set)):
+            print("Running linkage group ordering in parallel as number of threads exceeds number of linkage groups...")
+        else:
+            print("Running linkage group ordering in series as number of threads does not exceed number of linkage groups...")
+        
+        for lg in lg_set:
+            if os.path.exists(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt"):
+                print(f"\tAnalysis of linkage group {lg} detected. Skipping.")
+            else:
+                om2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt", 'w')
+                om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
+                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", stdout=om2_out, stderr=om2_err)
+                om2_stdout.close()
+                om2_stderr.close()
+
+        print("Linkage group ordering complete")
+
+        # with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
+        #     for cross in fcrosses:
+        #         cross = cross.strip().split()
+        #         if (cross[2] == G):
+        #             p_male = G
+
 
         print("continue coding 07?")
