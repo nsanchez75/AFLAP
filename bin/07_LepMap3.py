@@ -53,6 +53,8 @@ if __name__ == "__main__":
                 res_line = int(res_line.strip())
                 if res_line not in fre_dict: fre_dict[res_line] = 1
                 else: fre_dict[res_line] += 1
+
+                m_count += 1
         ## count number of linkage groups
         lg_set = set()
         for res in fre_dict:
