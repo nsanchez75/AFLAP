@@ -58,7 +58,7 @@ if __name__ == "__main__":
         ## count number of linkage groups
         lg_set = set()
         for res in fre_dict:
-            if res and (res/m_count >= 0.01):
+            if res and (fre_dict[res]/m_count >= 0.01):
                 lg_set.add(res)
         print(f"{len(lg_set)} linkage groups detected containing a minimum of 1% of the markers.")
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             else:
                 om2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt", 'w')
                 om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
-                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", stdout=om2_out, stderr=om2_err)
+                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", stdout=om2_stdout, stderr=om2_stderr)
                 om2_stdout.close()
                 om2_stderr.close()
 
