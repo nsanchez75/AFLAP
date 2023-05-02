@@ -58,7 +58,7 @@ if __name__ == "__main__":
         ## count number of linkage groups
         lg_set = set()
         for res in fre_dict:
-            if not res and (1/m_count >= 0.01):
+            if res and (res/m_count >= 0.01):
                 lg_set.add(res)
         print(f"{len(lg_set)} linkage groups detected containing a minimum of 1% of the markers.")
 
