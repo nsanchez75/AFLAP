@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # check if necessary files exist
     if not os.path.exists("AFLAP_tmp/01/LA.txt"):
         raise FileNotFoundError("Error: AFLAP_tmp/01/LA.txt not found.")
-    
+
     # make directory
     os.makedirs(f"AFLAP_Results/LOD{args.LOD}", exist_ok=True)
 
@@ -36,10 +36,21 @@ if __name__ == "__main__":
         else:
             # run LepMap3 - SeparateChromosomes2
             sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
+            sc2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'w')
             sc2_results = subprocess.Popen(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-                                                 stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
+                                                 stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
+            sc2_stdout.close()
             sc2_stderr.close()
-            for sc2_results_line in sc2_results.stdout:
-                print(sc2_results_line.decode())
+
+        # gather analysis statistics
+        # m_count = 0
+        # fre_dict = dict()
+        # with open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'r') as flod:
+        #     for res_line in flod:
+        #         res_line = int(res_line.strip())
+        #         if res_line not in fre_dict: fre_dict[res_line] = 1
+        #         else: fre_dict[res_line] += 1
+
+        #         m_count += res_line
 
         print("continue coding 07?")
