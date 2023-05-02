@@ -35,13 +35,11 @@ if __name__ == "__main__":
             print(f"\tPrevious results for {G} detected. Skipping.")
         else:
             # run LepMap3 - SeparateChromosomes2
-            lepmap_results = pd.DataFrame()
             sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
             sc2_results = subprocess.Popen(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
                                                  stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
             sc2_stderr.close()
             for sc2_results_line in sc2_results.stdout:
-                lepmap_results = lepmap_results.append(pd.Series(sc2_results_line.decode('utf-8').rstrip('\n').split('\t'), ignore_index = True))
+                print(sc2_results_line.decode())
 
-        print(lepmap_results)
         print("continue coding 07?")
