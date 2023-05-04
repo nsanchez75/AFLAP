@@ -73,7 +73,7 @@ if __name__ == "__main__":
             else:
                 om2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt", 'w')
                 om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
-                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", stdout=om2_stdout, stderr=om2_stderr)
+                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", stdout=om2_stdout, stderr=om2_stderr)
                 om2_stdout.close()
                 om2_stderr.close()
 
