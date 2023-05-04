@@ -78,6 +78,8 @@ if __name__ == "__main__":
                 om2_stdout.close()
                 om2_stderr.close()
 
+                print(f"\tAnalysis of linkage group {lg} complete.")
+
         print("Linkage group ordering complete")
 
         # with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
