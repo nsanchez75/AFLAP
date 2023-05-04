@@ -38,7 +38,7 @@ if __name__ == "__main__":
             sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
             sc2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'w')
             sc2_results = subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-                           stdout=subprocess.PIPE, stderr=sc2_stderr, shell=True)
+                           stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
             sc2_stdout.close()
             sc2_stderr.close()
 
