@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # gather analysis statistics
         m_count = 0
         fre_dict = dict()
-        with open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.fre", 'r') as flod:
+        with open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'r') as flod:
             for res_line in flod:
                 # skip file header
                 if res_line.startswith('#'): continue
