@@ -25,9 +25,9 @@ if __name__ == "__main__":
             p = p.strip().split()
 
             # initialize variables
-            G = p[0]
-            LO = p[1]
-            UP = p[2]
+            G = int(p[0])
+            LO = int(p[1])
+            UP = int(p[2])
             mer_count = 0
 
             if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo") and os.path.getsize(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo"):
