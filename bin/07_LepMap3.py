@@ -74,11 +74,11 @@ if __name__ == "__main__":
                 print(f"\tAnalysis of linkage group {lg} detected. Skipping.")
             else:
                 om2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt", 'w')
-                # om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
+                om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
                 subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
                                stdout=om2_stdout, shell=True)
                 om2_stdout.close()
-                # om2_stderr.close()
+                om2_stderr.close()
 
                 print(f"\tAnalysis of linkage group {lg} complete.")
 
@@ -88,7 +88,15 @@ if __name__ == "__main__":
         #     for cross in fcrosses:
         #         cross = cross.strip().split()
         #         if (cross[2] == G):
-        #             p_male = G
+        #             sex_check = 0
+        #         elif (cross[3] == G):
+        #             sex_check = 1
+        #         else:
+        #             continue
+                
+        #         break
+
+        # if (not sex_check):
 
 
         print("continue coding 07?")
