@@ -3,6 +3,8 @@ import os
 import subprocess
 import sys
 
+from histoplot import histoplot
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExtractingSingleCopyMers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
@@ -84,8 +86,9 @@ if __name__ == "__main__":
                     print(f"\t\tMaking new histogram for {G}...")
                 else:
                     print(f"\t\t Making histogram for {G}...")
-                cmd = f"Rscript bin/HistoPlot.R AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo {LO} {UP} AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"
-                subprocess.run(cmd, shell=True)
+                histoplot(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", LO, UP, f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png")
+                # cmd = f"Rscript bin/HistoPlot.R AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo {LO} {UP} AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"
+                # subprocess.run(cmd, shell=True)
 
                 # check if histogram had been built
                 if not os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"):
