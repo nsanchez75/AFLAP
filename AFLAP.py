@@ -3,7 +3,8 @@ import os
 import subprocess
 import sys
 
-import bin.ped_analysis as pa
+from bin.ped_analysis import pedigree_analysis
+from bin.helper_funcs.yon import y_or_n
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='AFLAP', description="A script to run all stages of AFLAP.")
@@ -20,32 +21,44 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    # 1. check for modules
-    try:
-        jellyfish_version = subprocess.check_output("jellyfish --version", shell=True).decode().strip()
-        print(f"{jellyfish_version} detected.")
-    except OSError:
-        print("Error in AFLAP.py: Jellyfish not detected. Please modify your PATH.")
-        sys.exit(1)
-    try:
-        abyss_version = subprocess.check_output("ABYSS --version", shell=True).decode().strip()
-        print(f"{abyss_version} detected.")
-    except OSError:
-        print("Error in AFLAP.py: ABySS not detected. Please modify your PATH.")
-        sys.exit(1)
-    # TODO: add R/4.0.1 as well?
+    # check for dependencies
+    print("Checking for dependencies used in AFLAP...")
+    for module in ["jellyfish", "ABYSS", "lepmap3"]:
+        try:
+            subprocess.check_output(f"ls $CONDA_PREFIX/bin | grep {module}")
+            print(f"{module} detected.")
+        except:
+            print(f"Error: {module} not detected.")
+            sys.exit(1)
+    print("All dependencies found.")
 
 
-    # 2. perform Pedigree file analysis
-    # if os.path.exists("AFLAP_tmp/Pedigree.txt"):
-    #     # TODO: check if file is same as argument input
-    #     pass
-    # else:
+    # make directories if necessary
     os.makedirs("AFLAP_tmp", exist_ok=True)
     os.makedirs("AFLAP_tmp/01", exist_ok=True)
 
-    pa.pedigree_analysis(args.Pedigree)
+    # perform Pedigree file analysis
+    print("Performing pedigree file analysis...")
+    if os.path.exists("AFLAP_tmp/PedigreeInfo.txt"):
+        with open("AFLAP_tmp/PedigreeInfo.txt") as fped:
+            src = fped.readline().strip().split()[1]
+            if args.Pedigree == src:
+                print(f"\t{args.Pedigree} had already been analyzed. Skipping pedigree analysis.")
+            else:
+                overwrite_check = y_or_n(f"\t{src}, not {args.Pedigree}, had previously been analyzed. Would you like to overwrite the analysis of {src}? (y/n)")
+                if overwrite_check:
+                    print(f"\tOverwriting {src}...")
+                    pedigree_analysis(args.Pedigree)
+                else:
+                    print(f"\tNot overwriting {src}. Use it as the pedigree input instead.")
+                    sys.exit(0)
+    else:
+        print(f"\tAnalyzing {args.Pedigree}...")
+        pedigree_analysis(args.Pedigree)
+    print("Finished pedigree file analysis.")
 
+    print("continue revisions?")
+    exit(0)
 
     # 3. run programs (#TODO?: allow user to specify what programs to run)
     if args.remove:
