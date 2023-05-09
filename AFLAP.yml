@@ -1,7 +1,6 @@
 channels:
   - conda-forge
   - bioconda
-  - r
 dependencies:
   - python==3.10.8
   - numpy==1.24.1
@@ -10,7 +9,3 @@ dependencies:
   - kmer-jellyfish
   - abyss
   - lepwrap=4.0.1
-  - r-dplyr
-  - r-ggplot2
-  - r-ggrepel
-  - r-gplots
