@@ -1,14 +1,6 @@
 from matplotlib import pyplot as plt
 import os
 
-def find_max_y(yvals:list[int], LO:int, HI:int)->int:
-    max_y = 0
-    if len(yvals) < LO: max_y = max(yvals)
-    else:
-        max_y = 0
-        for i in range(LO, HI):
-            if max_y < yvals[i]: max_y = yvals[i]
-
 def histoplot(infilepath:str, LO:int, HI:int, outfilepath:str)->None:
     # check if file exists
     if not os.path.exists(infilepath):
@@ -25,7 +17,12 @@ def histoplot(infilepath:str, LO:int, HI:int, outfilepath:str)->None:
             histo_y.append(int(line[1]))
 
     # find maximum y bound
-    max_y = find_max_y(histo_y, LO, HI)
+    max_y = 0
+    if len(histo_y) < LO: max_y = max(histo_y)
+    else:
+        max_y = 0
+        for i in range(LO, HI):
+            if max_y < histo_y[i]: max_y = histo_y[i]
 
     # plot histogram
     plt.plot(histo_x, histo_y, 'k')
