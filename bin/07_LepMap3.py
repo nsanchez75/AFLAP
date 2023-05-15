@@ -1,9 +1,13 @@
 import argparse
 import os
 import pandas as pd
+import multiprocessing as mp
 import subprocess
 
 import get_LA_info as gli
+
+def run_subprocess(cmd):
+    subprocess.Popen(cmd, shell=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='LepMap3', description='A script to run LepMap3 and produce a genetic map which can be aligned to a genome assembly.')
@@ -23,6 +27,7 @@ if __name__ == "__main__":
 
     # run LepMap3 on parents
     list_of_Gs = gli.get_LA_info()
+    sc2_processes = list()
     for G_info in list_of_Gs:
         G, LO, UP, P0 = G_info
 
@@ -39,10 +44,17 @@ if __name__ == "__main__":
             # run LepMap3 - SeparateChromosomes2
             sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
             sc2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'w')
-            subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-                           stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
+            p = mp.Process(target=run_subprocess, args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", stdout=sc2_stdout, stderr=sc2_stderr).start()
+            sc2_processes.append(p)
+            # subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
+            #                stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
             sc2_stdout.close()
             sc2_stderr.close()
+
+        # wait for SeparateChromosomes2 processes to finish
+        for p in sc2_processes:
+            mp.Process(p).join()
+
 
         # gather analysis statistics
         m_count = 0
@@ -69,14 +81,16 @@ if __name__ == "__main__":
         else:
             print("Running linkage group ordering in series as number of threads does not exceed number of linkage groups...")
         
+        processes = list()
         for lg in lg_set:
             if os.path.exists(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt"):
                 print(f"\tAnalysis of linkage group {lg} detected. Skipping.")
             else:
                 om2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt", 'w')
                 om2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr", 'w')
-                subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-                               stdout=om2_stdout, shell=True)
+                p = mp.Process(target=run_subprocess, args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", stdout=om2_stdout, stderr=om2_stderr).start()
+                # subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
+                #                stdout=om2_stdout, shell=True)
                 om2_stdout.close()
                 om2_stderr.close()
 
@@ -92,10 +106,9 @@ if __name__ == "__main__":
         #         elif (cross[3] == G):
         #             sex_check = 1
         #         else:
-        #             continue
-                
+        #             continue        
         #         break
-
+        
         # if (not sex_check):
 
 
