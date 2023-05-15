@@ -20,8 +20,6 @@ if __name__ == "__main__":
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
 
-    print("here")
-
     # check for dependencies
     print("Checking for dependencies used in AFLAP...")
     for module in ["jellyfish", "ABYSS", "lepmap3"]:
