@@ -24,8 +24,8 @@ if __name__ == "__main__":
     print("Checking for dependencies used in AFLAP...")
     for module in ["jellyfish", "ABYSS", "lepmap3"]:
         try:
-            subprocess.check_output(f"ls $CONDA_PREFIX/bin | grep {module}")
-            print(f"{module} detected.")
+            subprocess.check_output(args=f"ls $CONDA_PREFIX/bin | grep {module}",
+                                    stdout=subprocess.PIPE, shell=True)
         except:
             print(f"Error: {module} not detected.")
             sys.exit(1)
