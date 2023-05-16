@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument('-P', '--Pedigree', type=str, required=True, help="Pedigree file (required). See AFLAP README for more information.")
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting (optional). Default [4].')
-    parser.add_argument('-r', '--remove', help='Individual to remove. All other options will be ignored.')
+    # parser.add_argument('-r', '--remove', help='Individual to remove. All other options will be ignored.')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
     parser.add_argument('-d', '--SDL', type=float, default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
@@ -53,11 +53,11 @@ if __name__ == "__main__":
         print(f"\tAnalyzing {args.Pedigree}...")
         pedigree_analysis(args.Pedigree)
 
-    # run programs (#TODO?: allow user to specify what programs to run)
-    if args.remove:
-        # TODO: figure out what args.remove does
-        print("Remove argument passed")
-        pass
+    # # run programs (#TODO?: allow user to specify what programs to run)
+    # if args.remove:
+    #     # TODO: figure out what args.remove does
+    #     print("Remove argument passed")
+    #     pass
 
     print("continue to debugging 01?")
     exit(0)
