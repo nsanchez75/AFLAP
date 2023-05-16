@@ -1,10 +1,13 @@
 import argparse
 import os
-import pandas as pd
 import multiprocessing as mp
 import subprocess
 
 import get_LA_info as gli
+
+#################################################
+#       A shell script to run LepMap3 and produce a genetic map which can be aligned to a genome assembly.
+#################################################
 
 def run_om2(cmd, lg, outfile, errfile):
     outf = open(outfile, 'w')

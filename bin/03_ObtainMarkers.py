@@ -6,6 +6,13 @@ import sys
 
 import get_LA_info as gli
 
+#################################################
+#	A Python script to derive single copy k-mers that are unique to a parent. These are then used a markers.
+#	To reduce redundancy k-mers are assembled using ABySS.
+#	To enable the use of a consistent has size, the markers are reduced to a sequnce length equal to option m.
+#	This consistent marker length then only need to be surveyed against only one progeny hash.
+#################################################
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')

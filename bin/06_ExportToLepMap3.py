@@ -4,6 +4,10 @@ import pandas as pd
 
 import get_LA_info as gli
 
+#################################################
+#       A shell script to export the genotype table to LepMap3.
+#################################################
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExportToLepMap3', description="A script to export the genotype table to LepMap3.")
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')

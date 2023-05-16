@@ -4,7 +4,7 @@ import os
 import jellyfish_count as jc
 
 ###########################################################
-#	Python script to be ran as part of the AFLAP pipeline.
+#	A Python script to be ran as part of the AFLAP pipeline.
 #	This script will sanity check the pedigree file then run JELLYFISH on parents and progeny specified in the pedigree file.
 #	The output will be stored in AFLAP_tmp.
 #	The script will detect previous results and used them when able.

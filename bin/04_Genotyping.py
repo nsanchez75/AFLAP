@@ -6,6 +6,11 @@ import sys
 import get_LA_info as gli
 import genotype_jf as gj
 
+#################################################
+#	A Python script to call genotypes of progeny using makrers derived from a parent and progeny JELLYFISH hashes.
+#	For optimal calls, a k-mer should be observed twice.
+#################################################
+
 def tsv_sort(line:str)->str:
     line_fields = line.strip().split()
     return str(line_fields[0])

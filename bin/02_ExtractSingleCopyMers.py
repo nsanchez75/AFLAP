@@ -5,6 +5,12 @@ import sys
 
 from histoplot import histoplot
 
+#################################################
+#	A Python script to generate and plot histograms of parental hashes.
+#	It will try to calculate peaks, if the user does not define them in the pedigree file, though this may be error prone.
+#	Finally, it extracts k-mers it estimates to be single copy.
+#################################################
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExtractingSingleCopyMers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
@@ -57,10 +63,9 @@ if __name__ == "__main__":
 
             print(f"\t\t{G} Bounds:\n" +
                   f"\t\t\tLower: {LO}\n" +
-                  f"\t\t\tUpper: {UP}")
+                  f"\t\t\tUpper: {UP}\n")
 
             # extract k-mers
-            print()
             print(f"\tExtracting {args.kmer}-mers from {G}:")
             if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
                 print(f"\t\t{args.kmer}-mers for {G} detected. Skipping.")

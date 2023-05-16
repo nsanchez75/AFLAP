@@ -8,6 +8,10 @@ import get_LA_info as gli
 import seg_stats
 import kmercov_x_markercount as kxm
 
+#################################################
+#       A shell script to obtain segregation statistics and exclude progeny which have low coverage.
+#################################################
+
 def histo_sort(line:str)->float:
     line_fields = line.strip().split()
     return float(line_fields[0])
