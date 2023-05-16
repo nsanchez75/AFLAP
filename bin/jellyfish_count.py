@@ -5,7 +5,7 @@ import sys
 def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
     print(f"Performing jellyfish {f_type} count:")
 
-    with open(f"AFLAP_tmp/01/{f_type}.txt", 'r') as f:
+    with open(f"AFLAP_tmp/01/Pedigree_{f_type}.txt", 'r') as f:
         for ind in f:
             ind = ind.strip()
 
