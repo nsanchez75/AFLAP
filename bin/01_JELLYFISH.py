@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 
 import jellyfish_count as jc
 
@@ -12,47 +11,25 @@ import jellyfish_count as jc
 ###########################################################
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='JELLYFISH', description="A script to obtain JELLYFISH hashes to be used when running AFLAP.")
-    parser.add_argument('-m', '--kmer', default=31, help="K-mer size (optional). Default [31].")
-    parser.add_argument('-t', '--threads', default=4, help="Threads for JELLYFISH counting (optional). Default [4].")
-    args = parser.parse_args()
+    try:
+        parser = argparse.ArgumentParser(prog='JELLYFISH', description="A script to obtain JELLYFISH hashes to be used when running AFLAP.")
+        parser.add_argument('-m', '--kmer', default=31, help="K-mer size (optional). Default [31].")
+        parser.add_argument('-t', '--threads', default=4, help="Threads for JELLYFISH counting (optional). Default [4].")
+        args = parser.parse_args()
 
+        # make directories
+        os.makedirs("AFLAP_tmp/01/F0Count", exist_ok=True)
+        os.makedirs("AFLAP_tmp/01/F1Count", exist_ok=True)
+        os.makedirs("AFLAP_tmp/01/F2Count", exist_ok=True)
 
-    # 1. indentify which parents will have a map constructed for them
-    ## initialize parent set
-    parents    = set()
-
-    ## perform LA analysis
-    with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, open("AFLAP_tmp/01/LA.txt", 'w') as fla, open("AFLAP_tmp/01/noLA.txt", 'w') as fnola:
-        for line in fin:
-            line = line.strip().split()
-            if line[0] not in parents:
-                if "NA" in [line[3], line[4]]:
-                    fnola.write(f"{line[0]}\n")
-                    parents.add(line[0])
-                elif [isinstance(x, int) for x in [line[3], line[4]]]:
-                    if line[3] > line[4]:
-                        print("Error in 01_JELLYFISH.py: cannot have a lower bound higher than an upper bound.")
-                        sys.exit(1)
-
-                    # write {parent} {lower bound} {upper bound} to LA.txt
-                    fla.write(f"{line[0]} {line[3]} {line[4]}")
-                    parents.add(line[0])
-                else:
-                    print("Error in 01_JELLYFISH.py: invalid bound entry in Pedigree_F0.txt.")
-                    sys.exit(1)
-
-
-    # 2. perform k-mer counting
-    ## make directories
-    os.makedirs("AFLAP_tmp/01/F0Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/01/F1Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/01/F2Count", exist_ok=True)
-
-    ## parents
-    jc.jellyfish_count(args.kmer, args.threads, "F0")
-    ## F1 progeny
-    jc.jellyfish_count(args.kmer, args.threads, "F1")
-    ## F2 progeny
-    # TODO: uncomment this when working on F2
-    # jc.jellyfish_count(args.kmer, args.threads, "F2")
+        # perform jellyfish counting
+        ## parents
+        jc.jellyfish_count(args.kmer, args.threads, "F0")
+        ## F1 progeny
+        jc.jellyfish_count(args.kmer, args.threads, "F1")
+        ## F2 progeny
+        # TODO: uncomment this when working on F2
+        # jc.jellyfish_count(args.kmer, args.threads, "F2")
+    except Exception as e:
+        print(f"Error when running 01_JELLYFISH {e}")
+        exit(1)
