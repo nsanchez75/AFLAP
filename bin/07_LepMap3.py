@@ -56,6 +56,7 @@ if __name__ == "__main__":
         # wait for SeparateChromosomes2 processes to finish
         for p in sc2_processes:
             mp.Process(p).join()
+        print(f"Finished analyzing {G}.")
 
 
         # gather analysis statistics
