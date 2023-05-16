@@ -24,13 +24,11 @@ if __name__ == "__main__":
     print("Checking for dependencies used in AFLAP...")
     for module in ["jellyfish", "ABYSS", "lepmap3"]:
         try:
-            subprocess.check_output(args=f"ls $CONDA_PREFIX/bin | grep {module}",
-                                    stdout=subprocess.PIPE, shell=True)
+            subprocess.check_output(args=f"ls $CONDA_PREFIX/bin | grep {module}", shell=True)
         except:
             print(f"Error: {module} not detected.")
             sys.exit(1)
     print("All dependencies found.")
-
 
     # make directories if necessary
     os.makedirs("AFLAP_tmp", exist_ok=True)
@@ -56,14 +54,14 @@ if __name__ == "__main__":
         pedigree_analysis(args.Pedigree)
     print("Finished pedigree file analysis.")
 
-    print("continue revisions?")
-    exit(0)
-
-    # 3. run programs (#TODO?: allow user to specify what programs to run)
+    # run programs (#TODO?: allow user to specify what programs to run)
     if args.remove:
         # TODO: figure out what args.remove does
         print("Remove argument passed")
         pass
+
+    print("continue to debugging 01?")
+    exit(0)
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
