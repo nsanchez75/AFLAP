@@ -52,7 +52,6 @@ if __name__ == "__main__":
     else:
         print(f"\tAnalyzing {args.Pedigree}...")
         pedigree_analysis(args.Pedigree)
-    print("Finished pedigree file analysis.")
 
     # run programs (#TODO?: allow user to specify what programs to run)
     if args.remove:

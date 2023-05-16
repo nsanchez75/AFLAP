@@ -95,7 +95,7 @@ def pedigree_analysis(pedigree: str)->None:
             print()
             ## F2 progeny
             # TODO: implement stuff below when working with F2
-            print("F1 crosses that have been identified:")
+            print("F2 crosses that have been identified:")
             for crosses in f2_crosses:
                 print(f"\t{crosses[0]}x{crosses[1]}")
                 f.write(f"{f2_crosses[crosses]} 2 {crosses[0]} {crosses[1]}")
@@ -125,3 +125,5 @@ def pedigree_analysis(pedigree: str)->None:
     except Exception as e:
         print(f"Error when running ped_analysis: {e}")
         exit(1)
+
+    print("Finished pedigree file analysis.")

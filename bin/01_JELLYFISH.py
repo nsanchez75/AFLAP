@@ -29,7 +29,8 @@ if __name__ == "__main__":
         jc.jellyfish_count(args.kmer, args.threads, "F1")
         ## F2 progeny
         # TODO: uncomment this when working on F2
-        # jc.jellyfish_count(args.kmer, args.threads, "F2")
+        jc.jellyfish_count(args.kmer, args.threads, "F2")
+
     except Exception as e:
         print(f"Error when running 01_JELLYFISH {e}")
         exit(1)
