@@ -3,6 +3,9 @@ import subprocess
 import sys
 
 def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
+    if not os.path.getsize(f"AFLAP_tmp/01/Pedigree_{f_type}.txt"):
+        print(f"No {f_type} individuals detected.")
+        return
     print(f"Performing jellyfish {f_type} count:")
 
     with open(f"AFLAP_tmp/01/Pedigree_{f_type}.txt", 'r') as f:
@@ -12,8 +15,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
             # check if individual's count exists
             if os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
                 if not os.path.getsize(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-                    print(f"Error in jellyfish_count.py: AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty.")
-                    sys.exit(1)
+                    raise ValueError(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty. Delete it and restart.")
 
                 print(f"\tHash detected for {ind}. Skipping.")
             else:
