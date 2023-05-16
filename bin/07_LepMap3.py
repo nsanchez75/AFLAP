@@ -6,12 +6,14 @@ import subprocess
 
 import get_LA_info as gli
 
-def run_subprocess(cmd, outfile, errfile):
+def run_om2(cmd, lg, outfile, errfile):
     outf = open(outfile, 'w')
     errf = open(errfile, 'w')
     subprocess.Popen(cmd, shell=True, stdout=outf, stderr=errf)
     outf.close()
     errf.close()
+
+    print(f"\tAnalysis of linkage group {lg} complete.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='LepMap3', description='A script to run LepMap3 and produce a genetic map which can be aligned to a genome assembly.')
@@ -46,18 +48,12 @@ if __name__ == "__main__":
             print(f"\tPrevious results for {G} detected. Skipping.")
         else:
             # run LepMap3 - SeparateChromosomes2
-            sc2_stderr = f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr"
-            sc2_stdout = f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt"
-            p = mp.Process(target=run_subprocess, args=(f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sc2_stdout, sc2_stderr)).start()
-            sc2_processes.append(p)
-            # subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
-            #                stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
-
-        # wait for SeparateChromosomes2 processes to finish
-        for p in sc2_processes:
-            mp.Process(p).join()
-        print(f"Finished analyzing {G}.")
-
+            sc2_stdout = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", 'w')
+            sc2_stderr = open(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.stderr", 'w')
+            subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ SeparateChromosomes2 lodLimit={args.LOD} numThreads={args.threads} data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
+                           stdout=sc2_stdout, stderr=sc2_stderr, shell=True)
+            sc2_stdout.close()
+            sc2_stderr.close()
 
         # gather analysis statistics
         m_count = 0
@@ -79,11 +75,13 @@ if __name__ == "__main__":
                 lg_set.add(res)
         print(f"{len(lg_set)} linkage groups detected containing a minimum of 1% of the markers.")
 
+        # analyze threads
         if (args.threads > len(lg_set)):
             print("Running linkage group ordering in parallel as number of threads exceeds number of linkage groups...")
         else:
             print("Running linkage group ordering in series as number of threads does not exceed number of linkage groups...")
-        
+
+        # process linkage groups
         om2_processes = list()
         for lg in lg_set:
             if os.path.exists(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt"):
@@ -91,12 +89,12 @@ if __name__ == "__main__":
             else:
                 om2_stdout = f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.txt"
                 om2_stderr = f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG{lg}.stderr"
-                p = mp.Process(target=run_subprocess, args=(f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", om2_stdout, om2_stderr)).start()
+                p = mp.Process(target=run_om2, args=(f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", lg, om2_stdout, om2_stderr))
+                om2_processes.append(p.start())
                 # subprocess.run(args=f"java -cp $CONDA_PREFIX/bin/lepmap3/ OrderMarkers2 useMorgan=1 numMergeIterations=20 chromosome={lg} map=AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt data=AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv",
                 #                stdout=om2_stdout, shell=True)
-
-                print(f"\tAnalysis of linkage group {lg} complete.")
-
+        for p in om2_processes:
+            mp.Process(p).join()
         print("Linkage group ordering complete")
 
         # with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
@@ -107,9 +105,9 @@ if __name__ == "__main__":
         #         elif (cross[3] == G):
         #             sex_check = 1
         #         else:
-        #             continue        
+        #             continue
         #         break
-        
+
         # if (not sex_check):
 
 
