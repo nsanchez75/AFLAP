@@ -14,7 +14,7 @@ import get_LA_info as gli
 def run_om2(cmd, lg, outfile, errfile):
     outf = open(outfile, 'w')
     errf = open(errfile, 'w')
-    subprocess.Popen(cmd, shell=True, stdout=outf, stderr=errf)
+    subprocess.run(cmd, shell=True, stdout=outf, stderr=errf)
     outf.close()
     errf.close()
 
