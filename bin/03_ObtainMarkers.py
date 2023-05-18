@@ -68,33 +68,32 @@ if __name__ == "__main__":
                 shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
 
             # filter .fa file against other parents
-            with open(f"AFLAP_tmp/03/{G}_CrossedTo.txt", 'r') as fct:
-                for op in fct:
-                    op = op.strip()
+            for op in P0.split():
+                op = op.strip()
 
-                    # check if .jf for other parent exists
-                    if not os.path.exists(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"):
-                        print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/01/F0Count/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
-                        sys.exit(1)
+                # check if .jf for other parent exists
+                if not os.path.exists(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"):
+                    print(f"Error in 03_ObtainMarkers.py: AFLAP_tmp/01/F0Count/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
+                    sys.exit(1)
 
-                    # filter and overwrite .fa file
-                    print(f"\tFiltering and overwriting AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa...")
-                    jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
-                    jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-                    with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'w') as ffa:
-                        for line in jf_out:
-                            line = line.strip().split()
+                # filter and overwrite .fa file
+                print(f"\tFiltering and overwriting AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa...")
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
+                jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'w') as ffa:
+                    for line in jf_out:
+                        line = line.strip().split()
 
-                            # disregard empty lines FIXME: determine why this happens
-                            if not len(line): continue
+                        # disregard empty lines FIXME: determine why this happens
+                        if not len(line): continue
 
-                            # write unique sequences into .fa file
-                            if not int(line[1]):
-                                # update ml_count in stats
-                                ffa.write(f">{ml_count}\n{line[0]}\n")
-                                ml_count += 1
+                        # write unique sequences into .fa file
+                        if not int(line[1]):
+                            # update ml_count in stats
+                            ffa.write(f">{ml_count}\n{line[0]}\n")
+                            ml_count += 1
 
-                        print(f"\t{ml_count} {G} {args.kmer}-mers remain after filtering against {op}.")
+                    print(f"\t{ml_count} {G} {args.kmer}-mers remain after filtering against {op}.")
 
             # initialize k variable
             if   int(args.kmer) == 31: k = 25
@@ -157,24 +156,23 @@ if __name__ == "__main__":
 
             # refilter against other parents
             print("\tRefiltering against other parents...")
-            with open(f"AFLAP_tmp/03/{G}_CrossedTo.txt", 'r') as fct:
-                for op in fct:
-                    op = op.strip()
+            for op in P0.split():
+                op = op.strip()
 
-                    jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
-                    jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-                    with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
-                        i = 1
-                        for line in jf_out:
-                            line = line.strip().split()
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
+                jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
+                    i = 1
+                    for line in jf_out:
+                        line = line.strip().split()
 
-                            # disregard empty lines FIXME: determine why this happens
-                            if not len(line): continue
+                        # disregard empty lines FIXME: determine why this happens
+                        if not len(line): continue
 
-                            # write unique sequences back into file
-                            if not int(line[1]):
-                                fjq.write(f">{i}\n{line[0]}\n")
-                                i += 1
+                        # write unique sequences back into file
+                        if not int(line[1]):
+                            fjq.write(f">{i}\n{line[0]}\n")
+                            i += 1
 
             # create final marker
             print("\tCreating final marker...")
