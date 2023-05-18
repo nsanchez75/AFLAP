@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
             lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', HEADER], skiprows=3, usecols=COLS_USED)
             if lg_df.empty: lg_df = lg_info
-            else: lg_df = pd.concat(lg_df, lg_info)
+            else: lg_df = pd.concat([lg_df, lg_info])
 
         joined_df = pd.merge(markerid_df, lg_df, on='MarkerSequence', how='inner')
 
