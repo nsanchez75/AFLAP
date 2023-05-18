@@ -122,10 +122,10 @@ if __name__ == "__main__":
 
         lg_df = pd.DataFrame
         for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
-            if not sex_check: HEADER, COLS_USED = "MP", [0, 1]
-            else: HEADER, COLS_USED = "FP", [0, 2]
+            if not sex_check: COLS_USED = [0, 1]
+            else: COLS_USED = [0, 2]
 
-            lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', HEADER], skiprows=3, usecols=COLS_USED)
+            lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', "Position"], skiprows=3, usecols=COLS_USED)
             if lg_df.empty: lg_df = lg_info
             else: lg_df = pd.concat([lg_df, lg_info])
 
