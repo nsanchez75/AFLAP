@@ -125,7 +125,7 @@ if __name__ == "__main__":
                 if not sex_check: COLS_USED = [0, 1]
                 else: COLS_USED = [0, 2]
 
-                lg_info = pd.read_csv(glob_path, sep='\t', header=['MarkerSequence', 'MP', 'FP'], skiprows=3, usecols=COLS_USED)
+                lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', 'MP', 'FP'], skiprows=3, usecols=COLS_USED)
                 if lg_df == None: lg_df = lg_info
                 else: lg_df = pd.concat(lg_df, lg_info)
 
