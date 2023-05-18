@@ -115,10 +115,10 @@ if __name__ == "__main__":
                         continue
                     break
 
-            if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmers}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
+            if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
                 # TODO: determine whether or not this should be using AFLAP_tmp/05
-                raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmers}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
-            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmers}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence'])
+                raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
+            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence'])
 
             lg_df = None
             for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
