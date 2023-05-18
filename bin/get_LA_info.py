@@ -1,8 +1,8 @@
 import os
 
 def get_LA_info()->list[tuple[str, str, str, str]]:
-    la_filename = "AFLAP_tmp/01/LA.txt"
-    cross_filename = "AFLAP_tmp/01/Crosses.txt"
+    la_filename = "AFLAP_tmp/LA.txt"
+    cross_filename = "AFLAP_tmp/Crosses.txt"
 
     # check if files exist
     for file in (la_filename, cross_filename):

@@ -24,9 +24,9 @@ if __name__ == "__main__":
 
     # 2. get/make histograms
     print("Generating F0 histograms to undergo linkage analysis...")
-    if not os.path.exists("AFLAP_tmp/01/LA.txt"):
-        print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/01/LA.txt not found. Rerun 01_JELLYFISH.py.")
-    with open("AFLAP_tmp/01/LA.txt", 'r') as fla:
+    if not os.path.exists("AFLAP_tmp/LA.txt"):
+        print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
+    with open("AFLAP_tmp/LA.txt", 'r') as fla:
         for p in fla:
             p = p.strip().split()
 

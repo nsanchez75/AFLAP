@@ -85,7 +85,7 @@ def pedigree_analysis(pedigree: str)->None:
         else: print(f"{len(parents)} parents detected. This will not be so easy! Identifying crosses...")
 
         # identify and print cross
-        with open("AFLAP_tmp/01/Crosses.txt", 'w') as f:
+        with open("AFLAP_tmp/Crosses.txt", 'w') as f:
             ## F1 progeny
             print("F1 crosses that have been identified:")
             for cross in f1_crosses:
@@ -103,8 +103,8 @@ def pedigree_analysis(pedigree: str)->None:
         # perform LA analysis
         checked_parents = set()
         with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
-             open("AFLAP_tmp/01/LA.txt", 'w') as fla,       \
-             open("AFLAP_tmp/01/noLA.txt", 'w') as fnola:
+             open("AFLAP_tmp/LA.txt", 'w') as fla,       \
+             open("AFLAP_tmp/noLA.txt", 'w') as fnola:
 
             for line in fin:
                 line = line.strip().split()

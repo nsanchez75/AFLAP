@@ -1,4 +1,6 @@
 import argparse
+import glob
+import pandas as pd
 import os
 import multiprocessing as mp
 import subprocess
@@ -101,16 +103,20 @@ if __name__ == "__main__":
             p.join()
         print("Linkage group ordering complete")
 
-        # with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
-        #     for cross in fcrosses:
-        #         cross = cross.strip().split()
-        #         if (cross[2] == G):
-        #             sex_check = 0
-        #         elif (cross[3] == G):
-        #             sex_check = 1
-        #         else:
-        #             continue
-        #         break
+        with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
+            for cross in fcrosses:
+                cross = cross.strip().split()
+                if (cross[2] == G):
+                    sex_check = 0
+                elif (cross[3] == G):
+                    sex_check = 1
+                else:
+                    continue
+                break
+
+        lepmap_df = pd.read_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sep='\t', usecols=[0, 1])
+
+        fps = glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt")
 
         # if (not sex_check):
 
