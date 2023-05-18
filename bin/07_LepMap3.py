@@ -120,13 +120,13 @@ if __name__ == "__main__":
             raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
         markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence'])
 
-        lg_df = None
+        lg_df = pd.DataFrame
         for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
             if not sex_check: HEADER, COLS_USED = "MP", [0, 1]
             else: HEADER, COLS_USED = "FP", [0, 2]
 
             lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', HEADER], skiprows=3, usecols=COLS_USED)
-            if lg_df == None: lg_df = lg_info
+            if lg_df.empty: lg_df = lg_info
             else: lg_df = pd.concat(lg_df, lg_info)
 
         joined_df = pd.merge(markerid_df, lg_df, on='MarkerSequence', how='inner')
