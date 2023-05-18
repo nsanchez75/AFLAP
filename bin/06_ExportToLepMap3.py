@@ -71,8 +71,8 @@ if __name__ == "__main__":
         ftsv = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t')
         ftsv.insert(0, "MarkerLoc", ftsv["MarkerSequence"].astype(str) + '_' + ftsv["MarkerValue"].astype(str))
         ftsv = ftsv.drop(["MarkerSequence", "MarkerValue"], axis=1)
-        ftsv.insert(2, "Male Parent", 1)
-        ftsv.insert(3, "Female Parent", 0)
+        ftsv.insert(2, "Male Parent", 0)
+        ftsv.insert(3, "Female Parent", 1)
         ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
         ## set columns of ftsv DataFrame to match df's column names
         ftsv = ftsv.set_axis(list(df.columns), axis=1)
