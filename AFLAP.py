@@ -59,56 +59,36 @@ if __name__ == "__main__":
     #     print("Remove argument passed")
     #     pass
 
-    print("continue to debugging 01?")
-    exit(0)
-
     DIR = os.path.dirname(os.path.abspath(__file__))
 
-    # TODO: fix all error printing
-    # 01_JELLYFISH.py
     try:
+        # 01_JELLYFISH.py
         os.system(f"python3 {DIR}/bin/01_JELLYFISH.py -t {args.threads} -m {args.kmer}")
-    except SystemExit:
-        print("Error found in 01_JELLYFISH.py.")
-        exit(1)
-    
-    # 02_ExtractSingleCopyMers.py
-    try:
+
+        # 02_ExtractSingleCopyMers.py
         os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
-    except SystemExit:
-        print("Error found in 02_ExtractSingleCopyMers.py.")
-    
-    # 03_ObtainMarkers.py
-    try:
+
+        # 03_ObtainMarkers.py
         os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}")
-    except SystemExit:
-        print("Error found in 03_ObtainMarkers.py.")
-    
-    # 04_Genotyping.py
-    try:
+
+        # 04_Genotyping.py
         os.system(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -L {args.LOD}")
-    except SystemExit:
-        print("Error found in 04_Genotyping.py.")
-    
-    # 05_ObtainSegStats.py
-    try:
+
+        # 05_ObtainSegStats.py
         os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
-    except:
-        print("Error found in 05_ObtainSegStats.py.")
-    
-    if (args.kinship):
-        # TODO: implement 05b
-        pass
-    elif (args.Max is not None):
-        # TODO: implement 05c
-        pass
 
-    try:
+        if (args.kinship):
+            # TODO: implement 05b
+            pass
+        elif (args.Max is not None):
+            # TODO: implement 05c
+            pass
+
+        # 06_ExportToLepMap3.py
         os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
-    except:
-        print("Error found in 06_ExportToLepMap3.py.")
 
-    try:
+        # 07_LepMap3.py
         os.system(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}")
+    
     except:
-        print("Error found in 07_LepMap3.py")
+        exit(1)
