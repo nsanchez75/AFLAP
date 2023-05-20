@@ -126,6 +126,9 @@ if __name__ == "__main__":
             else: COLS_USED = [0, 2]
 
             lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', "Position"], skiprows=3, usecols=COLS_USED)
+
+            lg_val = glob_path.split(glob_path.split("*")[0])[-1].split(glob_path.split("*")[1])[0]
+            lg_info['LG'] = lg_val
             if lg_df.empty: lg_df = lg_info
             else: lg_df = pd.concat([lg_df, lg_info])
 
