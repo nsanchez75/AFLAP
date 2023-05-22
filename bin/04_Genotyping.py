@@ -85,13 +85,13 @@ if __name__ == "__main__":
 
             # create tsv file
             matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
-            
+
             # check tsv file status
             if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
                 raise FileNotFoundError("Genotypes.MarkerID.tsv was not made.")
             else:
                 print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
-    
+
     except Exception as e:
         print(f"Error in 04_Genotyping.py: {e}")
         exit(1)
