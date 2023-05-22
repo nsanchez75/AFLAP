@@ -218,5 +218,7 @@ if __name__ == "__main__":
                             f"\tNumber of markers after refiltering:            {mar_count}\n" +
                             f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                             f"\tNumber of markers > {ak} bp:                    {mar62}\n")
+   
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")
+        exit(1)
