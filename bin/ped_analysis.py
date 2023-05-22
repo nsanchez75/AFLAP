@@ -122,8 +122,8 @@ def pedigree_analysis(pedigree: str)->None:
                     else:
                         raise ValueError("Invalid bound entry in Pedigree_F0.txt.")
 
+        print("Finished pedigree file analysis.")
+
     except Exception as e:
         print(f"Error when running ped_analysis: {e}")
         exit(1)
-
-    print("Finished pedigree file analysis.")
