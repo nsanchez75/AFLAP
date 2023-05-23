@@ -33,7 +33,6 @@ if __name__ == "__main__":
     # make directories if necessary
     os.makedirs("AFLAP_tmp", exist_ok=True)
     os.makedirs("AFLAP_Results", exist_ok=True)
-    os.makedirs("AFLAP_tmp/01", exist_ok=True)
 
     # perform Pedigree file analysis
     print("Performing pedigree file analysis...")
