@@ -70,7 +70,7 @@ if __name__ == "__main__":
                     raise ValueError(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
 
             # get data
-            data = {"MarkerID": seq_list, "MarkerSequence": head_list}
+            data = {"MarkerSequence": seq_list, "MarkerID": head_list}
             for h in h_list:
                 with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
                     b_vals = []
@@ -80,8 +80,8 @@ if __name__ == "__main__":
             matrix = pd.DataFrame(data=data)
 
             # split marker sequence and value and reorder
-            matrix[["MarkerSequence", "MarkerValue"]] = matrix["MarkerSequence"].str.split('_', expand=True)
-            matrix = matrix.reindex(columns=["MarkerID", "MarkerSequence", "MarkerValue"] + list(matrix.columns[2:-1]))
+            matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
+            matrix = matrix.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(matrix.columns[2:-1]))
 
             # create tsv file
             matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)

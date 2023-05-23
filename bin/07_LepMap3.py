@@ -118,7 +118,7 @@ if __name__ == "__main__":
             if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
                 # TODO: determine whether or not this should be using AFLAP_tmp/05
                 raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
-            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence', 'MarkerValue'], )
+            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerSequence', 'MarkerID', 'MarkerLength'], )
             markerid_df['RowIndex'] = markerid_df.index + 1
 
             lg_df = pd.DataFrame

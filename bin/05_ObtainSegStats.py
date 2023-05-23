@@ -57,10 +57,10 @@ if __name__ == "__main__":
             ## MarkerAll
             mal = get_count_frequency(tsv)
             ## MarkerEquals
-            meq = tsv.loc[tsv["MarkerValue"].astype(int) == 61]
+            meq = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
             meq = get_count_frequency(meq)
             ## MarkerOver
-            mov = tsv.loc[tsv["MarkerValue"].astype(int) > 61]
+            mov = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
             mov = get_count_frequency(mov)
 
             # get segment statistics
