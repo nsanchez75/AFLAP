@@ -29,6 +29,7 @@ def pedigree_analysis(pedigree: str)->None:
             # write pedigree file into Pedigree.txt
             fped.write(f"Source: {pedigree}")
 
+            # categorize individuals by generation type
             for line in fin:
                 cols = line.strip().split()
                 # check line size
