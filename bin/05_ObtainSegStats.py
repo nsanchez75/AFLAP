@@ -3,9 +3,9 @@ import math
 import os
 import pandas as pd
 
-import get_LA_info as gli
-import seg_stats
-import kmercov_x_markercount as kxm
+from get_LA_info import get_LA_info
+from seg_stats import get_seg_stats
+from kmercov_x_markercount import plot_cov_and_mcount
 
 #################################################
 #       A shell script to obtain segregation statistics and exclude progeny which have low coverage.
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # analyze all parents whom we can create a genetic map for
     try:
         print("Performing segment statistics analysis...")
-        list_of_Gs = gli.get_LA_info()
+        list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
             mov = get_count_frequency(mov)
 
             # get segment statistics
-            seg_stats.get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
+            get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
 
             # initialize dataframe of marker counts
             mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                         mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
 
             # plot k-mer coverage and marker count
-            kxm.plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
+            plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
 
             if (not args.LOD == 2):
                 print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +

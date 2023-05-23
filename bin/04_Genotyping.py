@@ -2,8 +2,8 @@ import argparse
 import pandas as pd
 import os
 
-import get_LA_info as gli
-import genotype_jf as gj
+from get_LA_info import get_LA_info
+from genotype_jf import genotype_jfq
 
 #################################################
 #	A Python script to call genotypes of progeny using makrers derived from a parent and progeny JELLYFISH hashes.
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # check for markers
     try:
-        list_of_Gs = gli.get_LA_info()
+        list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
 
@@ -48,8 +48,8 @@ if __name__ == "__main__":
             h_list = []
 
             # run jellyfish on F1 and F2 individuals who descend from F0
-            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F1")
-            h_list += gj.genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F2")
+            h_list += genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F1")
+            h_list += genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F2")
 
             # extract info from MARKERS file
             with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:

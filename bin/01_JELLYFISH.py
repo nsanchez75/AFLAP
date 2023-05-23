@@ -1,7 +1,7 @@
 import argparse
 import os
 
-import jellyfish_count as jc
+from jellyfish_count import jellyfish_count
 
 ###########################################################
 #	A Python script to be ran as part of the AFLAP pipeline.
@@ -24,12 +24,11 @@ if __name__ == "__main__":
 
         # perform jellyfish counting
         ## parents
-        jc.jellyfish_count(args.kmer, args.threads, "F0")
+        jellyfish_count(args.kmer, args.threads, "F0")
         ## F1 progeny
-        jc.jellyfish_count(args.kmer, args.threads, "F1")
+        jellyfish_count(args.kmer, args.threads, "F1")
         ## F2 progeny
-        # TODO: uncomment this when working on F2
-        jc.jellyfish_count(args.kmer, args.threads, "F2")
+        jellyfish_count(args.kmer, args.threads, "F2")
 
     except Exception as e:
         print(f"Error when running 01_JELLYFISH {e}")

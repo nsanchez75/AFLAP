@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 
-import get_LA_info as gli
+from get_LA_info import get_LA_info
 
 #################################################
 #	A Python script to derive single copy k-mers that are unique to a parent. These are then used a markers.
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # assemble for markers for parents whose bounds are identified
     try:
-        list_of_Gs = gli.get_LA_info()
+        list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
 

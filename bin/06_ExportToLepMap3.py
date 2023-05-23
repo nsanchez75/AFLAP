@@ -2,7 +2,7 @@ import argparse
 import os
 import pandas as pd
 
-import get_LA_info as gli
+from get_LA_info import get_LA_info
 
 #################################################
 #       A shell script to export the genotype table to LepMap3.
@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     # get parents to run LepMap3 on
     try:
-        list_of_Gs = gli.get_LA_info()
+        list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
 

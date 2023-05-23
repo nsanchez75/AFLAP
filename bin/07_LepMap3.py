@@ -5,7 +5,7 @@ import os
 import multiprocessing as mp
 import subprocess
 
-import get_LA_info as gli
+from get_LA_info import get_LA_info
 
 #################################################
 #       A shell script to run LepMap3 and produce a genetic map which can be aligned to a genome assembly.
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # run LepMap3 on parents
     try:
-        list_of_Gs = gli.get_LA_info()
+        list_of_Gs = get_LA_info()
         sc2_processes = list()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
