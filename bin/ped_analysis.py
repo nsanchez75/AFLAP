@@ -44,7 +44,7 @@ def pedigree_analysis(pedigree: str)->None:
                 elif cols[1] == '1':
                     if cols[0] not in f1_progs:
                         f1_progs.add(cols[0])
-                        # add or create new cross in crosses dictionary
+                        # create new cross in crosses dictionary
                         cross = f"{cols[3]} {cols[4]}"
                         if cross not in f1_crosses:
                             if f"{cols[4]} {cols[3]}" in f1_crosses:
@@ -58,7 +58,9 @@ def pedigree_analysis(pedigree: str)->None:
 
                     f1.write(line)
                 elif cols[1] == '2':
-                    # TODO: analyze F2 Progeny
+                    if cols[0] not in f2_progs:
+                        f2_progs.add(cols[0])
+
                     f2.write(line)
                 else:
                     raise ValueError("Pedigree file contains individual that is not F0, F1, or F2.")
