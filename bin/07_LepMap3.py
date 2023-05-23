@@ -118,22 +118,25 @@ if __name__ == "__main__":
             if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
                 # TODO: determine whether or not this should be using AFLAP_tmp/05
                 raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
-            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence', 'MarkerValue'])
+            markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerID', 'MarkerSequence', 'MarkerValue'], )
+            markerid_df['RowIndex'] = markerid_df.index
 
             lg_df = pd.DataFrame
             for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
                 if not sex_check: COLS_USED = [0, 1]
                 else: COLS_USED = [0, 2]
 
-                lg_info = pd.read_csv(glob_path, sep='\t', names=['MarkerSequence', "Position"], skiprows=3, usecols=COLS_USED)
+                lg_info = pd.read_csv(glob_path, sep='\t', names=['RowIndex', "Position"], skiprows=3, usecols=COLS_USED)
                 lg_info['LG'] = glob_path.removeprefix(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG").removesuffix(".txt")
 
                 if lg_df.empty: lg_df = lg_info
                 else: lg_df = pd.concat([lg_df, lg_info])
 
-            joined_df = pd.merge(markerid_df, lg_df, on='MarkerSequence', how='inner')
+            joined_df = pd.merge(markerid_df, lg_df, on='RowIndex', how='inner')
 
             final_lod_file = joined_df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", sep='\t', index=False)
+
+            print(markerid_df)
 
     except Exception as e:
         print(f"Error in 07_LepMap3.py: {e}")
