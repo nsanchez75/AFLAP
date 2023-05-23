@@ -16,16 +16,16 @@ def pedigree_analysis(pedigree: str)->None:
         f1_crosses = dict()
         f2_crosses = dict()
 
+        # copy pedigree file into AFLAP_Results
+        shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")        
+
         # categorize pedigree into F0, F1, F2
         with open(pedigree, 'r') as fin,                        \
-             open("AFLAP_Results/Pedigree.txt", 'w') as fpcopy, \
              open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fped,   \
              open("AFLAP_tmp/Pedigree_F0.txt", 'w') as f0,      \
              open("AFLAP_tmp/Pedigree_F1.txt", 'w') as f1,      \
              open("AFLAP_tmp/Pedigree_F2.txt", 'w') as f2:
 
-            # copy pedigree file into AFLAP_Results
-            shutil.copy2(pedigree, fpcopy)
             # write pedigree file into Pedigree.txt
             fped.write(f"Source: {pedigree}")
 
