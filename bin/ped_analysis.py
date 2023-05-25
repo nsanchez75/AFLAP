@@ -1,6 +1,27 @@
 import shutil
 import os
 
+def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
+    # parents unidentified
+    if prog_info[3] not in parents or prog_info[4] not in parents:
+        raise ValueError(f"Progeny {prog_info[0]} comes from parents not found in the pedigree file.")
+    # unknown parent
+    if "NA" in (prog_info[3], prog_info[4]):
+        raise ValueError(f"Progeny {prog_info[0]} has 'NA' parent(s).")
+    # crossing identical parent
+    if prog_info[3] == prog_info[4]:
+        raise ValueError(f"Identical crossed parents identified for {prog_info[0]}.")
+    
+    if prog_info[0] not in progs:
+        progs.add(prog_info[0])
+        # create new cross in crosses dictionary
+        cross = f"{prog_info[3]} {prog_info[4]}"
+        if cross not in cross_dict:
+            if f"{prog_info[4]} {prog_info[3]}" in cross_dict:
+                raise ValueError("A parent in the pedigree is being treated as both male and female.")
+            cross_dict[cross] = 1
+        else: cross_dict[cross] += 1
+
 def sort_ped(f_type:str)->None:
     with open(f"AFLAP_tmp/Pedigree_{f_type}.txt", 'r+') as f:
         lines = sorted(f.readlines())
@@ -42,43 +63,13 @@ def pedigree_analysis(pedigree: str)->None:
 
                     f0.write(line)
                 elif cols[1] == '1':
-                    if cols[0] not in f1_progs:
-                        f1_progs.add(cols[0])
-                        # create new cross in crosses dictionary
-                        cross = f"{cols[3]} {cols[4]}"
-                        if cross not in f1_crosses:
-                            if f"{cols[4]} {cols[3]}" in f1_crosses:
-                                raise ValueError("A parent in the pedigree is being treated as both male and female.")
-                            f1_crosses[cross] = 1
-                        else: f1_crosses[cross] += 1
-
-                    # check if progeny has duplicated parents
-                    if "NA" not in {cols[3], cols[4]} and cols[3] == cols[4]:
-                        raise ValueError(f"Identical crossed parents identified for {cols[0]}.")
-
+                    check_prog(cols, parents, f1_progs, f1_crosses)
                     f1.write(line)
                 elif cols[1] == '2':
-                    if cols[0] not in f2_progs:
-                        f2_progs.add(cols[0])
-
+                    check_prog(cols, parents, f2_progs, f2_crosses)
                     f2.write(line)
                 else:
                     raise ValueError("Pedigree file contains individual that is not F0, F1, or F2.")
-
-
-        # check Pedigree_F1.txt and Pedigree_F2.txt structure
-        if os.path.exists("AFLAP_tmp/Pedigree_F1.txt"):
-            with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as f:
-                for line in f:
-                    line = line.strip().split()
-                    if line[3] not in parents or line[4] not in parents:
-                        raise ValueError(f"F1 progeny {line[0]} descends from a parent not found in pedigree file.")
-        if os.path.exists("AFLAP_tmp/Pedigree_F2.txt"):
-            with open("AFLAP_tmp/Pedigree_F2.txt", 'r') as f:
-                for line in f:
-                    line = line.strip().split()
-                    if line[3] not in f1_progs or line[4] not in f1_progs:
-                        raise ValueError(f"F2 progeny {line[0]} descends from an F1 progeny not found in pedigree file.")
 
         # sort pedigree files
         sort_ped("F0")
@@ -104,8 +95,9 @@ def pedigree_analysis(pedigree: str)->None:
             # TODO: implement stuff below when working with F2
             print("F2 crosses that have been identified:")
             for crosses in f2_crosses:
-                print(f"\t{crosses[0]}x{crosses[1]}")
-                f.write(f"{f2_crosses[crosses]} 2 {crosses[0]} {crosses[1]}")
+                c_vals = cross.strip().split()
+                print(f"\t{c_vals[0]}x{c_vals[1]}")
+                f.write(f"{f2_crosses[crosses]} 2 {c_vals[0]} {c_vals[1]}")
 
         # perform LA analysis
         checked_parents = set()
