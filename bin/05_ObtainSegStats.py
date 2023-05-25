@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
             # check for num progs of G
             num_progs = 0
-            with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
+            with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
                 for cross in fcrosses:
                     cross = cross.strip().split()
 
