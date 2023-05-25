@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 
+from helper_funcs.yon import y_or_n
 from get_LA_info import get_LA_info
 
 #################################################
@@ -31,39 +32,29 @@ if __name__ == "__main__":
                 # check if file is empty
                 if not os.path.getsize(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
                     raise ValueError(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa is empty.")
-
-                while True:
-                    mark_again = input(f"Marker already found for {G}. Would you like to make a new one? (y/n) ")
-                    if mark_again in {"yes", "y", "ye"}:
-                        print("Performing marker assembly again...")
-                        mark_check = True
-                        break
-                    elif mark_again in {"no", "n"}:
-                        print("Skipping marker assembly.")
-                        mark_check = False
-                        break
+                mark_again = y_or_n(f"Marker already found for {G}. Would you like to make a new one? (y/n) ")
             else:
                 print("Performing marker assembly...")
-                mark_check = True
+                mark_again = True
 
-            if mark_check:
+            if mark_again:
                 # define ak
                 ak = 2 * int(args.kmer) - 1
 
                 # initialize marker stats report variables
-                ml_count   = 0      # number of k-mers inputted for assembly
-                frag_count = 0      # number of fragments assembled
-                frag61     = 0      # number of frags == ak
-                frag62     = 0      # number of frags > ak
-                mar_count  = 0      # number of markers after refiltering
-                mar61      = 0      # number of markers == ak
-                mar62      = 0      # number of markers > ak
+                ml_count   = 0  # number of k-mers inputted for assembly
+                frag_count = 0  # number of fragments assembled
+                frag61     = 0  # number of frags == ak
+                frag62     = 0  # number of frags > ak
+                mar_count  = 0  # number of markers after refiltering
+                mar61      = 0  # number of markers == ak
+                mar62      = 0  # number of markers > ak
 
                 # copy .fa file
                 if not os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
                     raise FileNotFoundError(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa not found. Rerun 02_ExtractSingleCopyMers.py.")
-                else:
-                    shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
+                shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa",
+                            f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
 
                 # filter .fa file against other parents
                 for op in P0.split():
@@ -218,7 +209,7 @@ if __name__ == "__main__":
                             f"\tNumber of markers after refiltering:            {mar_count}\n" +
                             f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                             f"\tNumber of markers > {ak} bp:                    {mar62}\n")
-   
+
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")
         exit(1)
