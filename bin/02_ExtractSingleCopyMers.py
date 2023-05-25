@@ -91,8 +91,7 @@ if __name__ == "__main__":
                 # check if histogram had been built
                 if not os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"):
                     raise FileNotFoundError(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png not found.")
-                else:
-                    print(f"\t\tHistogram for {G} constructed.")
+                print(f"\t\tHistogram for {G} constructed.")
     except Exception as e:
         print(f"Error in 02_ExtractSingleCopyMers.py: {e}")
         exit(1)
