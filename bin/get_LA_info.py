@@ -1,6 +1,6 @@
 import os
 
-def get_LA_info()->list[tuple[str, str, str, str]]:
+def get_LA_info()->list[tuple[str, int, int, str]]:
     la_filename = "AFLAP_tmp/LA.txt"
     cross_filename = "AFLAP_tmp/Crosses.txt"
 
