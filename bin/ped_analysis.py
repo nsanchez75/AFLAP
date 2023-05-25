@@ -1,5 +1,4 @@
 import shutil
-import os
 
 def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
     # parents unidentified
