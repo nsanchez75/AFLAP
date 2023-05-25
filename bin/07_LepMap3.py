@@ -28,8 +28,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # check if necessary files exist
-    if not os.path.exists("AFLAP_tmp/01/LA.txt"):
-        raise FileNotFoundError("Error: AFLAP_tmp/01/LA.txt not found.")
+    if not os.path.exists("AFLAP_tmp/LA.txt"):
+        raise FileNotFoundError("Error: AFLAP_tmp/LA.txt not found.")
 
     # TODO: check if $CONDA_PREFIX exists
 

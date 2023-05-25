@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
             # determine male and female parent
             sex_dict = {'male': None, 'female': None}
-            with open("AFLAP_tmp/01/Crosses.txt", 'r') as fcrosses:
+            with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
                 for cross in fcrosses:
                     cross = cross.strip().split()
 
