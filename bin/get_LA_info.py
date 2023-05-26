@@ -14,8 +14,8 @@ def get_LA_info()->list[tuple[str, int, int, str]]:
         for p in fla:
             p = p.strip().split()
             G = p[0]
-            LO = p[1]
-            UP = p[2]
+            LO = int(p[1])
+            UP = int(p[2])
 
             p0 = list()
             with open(cross_filename, 'r') as fc:
