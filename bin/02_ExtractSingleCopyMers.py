@@ -45,53 +45,54 @@ if __name__ == "__main__":
 
 
     # get/make histograms
-    try:
-        print("Generating F0 histograms to undergo linkage analysis...")
-        if not os.path.exists("AFLAP_tmp/LA.txt"):
-            print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
-        list_of_Gs = get_LA_info()
-        for G_info in list_of_Gs:
-            G, LO, UP, P0 = G_info
-            mer_count = 0
+    # try:
+    print("Generating F0 histograms to undergo linkage analysis...")
+    if not os.path.exists("AFLAP_tmp/LA.txt"):
+        print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
+    list_of_Gs = get_LA_info()
+    for G_info in list_of_Gs:
+        G, LO, UP, P0 = G_info
+        mer_count = 0
 
-            create_histogram(G, args.kmer)
+        create_histogram(G, args.kmer)
 
-            print(f"\t\t{G} Bounds:\n" +
-                f"\t\t\tLower: {LO}\n" +
-                f"\t\t\tUpper: {UP}\n")
+        print(f"\t\t{G} Bounds:\n" +
+            f"\t\t\tLower: {LO}\n" +
+            f"\t\t\tUpper: {UP}\n")
 
-            # extract k-mers
-            print(f"\tExtracting {args.kmer}-mers from {G}:")
-            if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
-                print(f"\t\t{args.kmer}-mers for {G} detected. Skipping.")
-                histo_same = True
+        # extract k-mers
+        print(f"\tExtracting {args.kmer}-mers from {G}:")
+        if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
+            print(f"\t\t{args.kmer}-mers for {G} detected. Skipping.")
+            histo_same = True
+        else:
+            print(f"\t\tRunning jellyfish dump for {G}...")
+            cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
+            subprocess.run(cmd, shell=True, executable="/bin/bash")
+            histo_same = False
+
+        # counting k-mers
+        print(f"\tCounting number of {args.kmer}-mers for {G}...")
+        with open(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'r') as fkmers:
+            for line in fkmers:
+                if line.startswith('>'): mer_count += 1
+            print(f"\t\t{mer_count} {args.kmer}-mers counted for {G}.")
+
+        # create histo.png
+        if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:
+            print(f"\t\tHistogram for {G} detected. Skipping.")
+        else:
+            if not histo_same:
+                print(f"\t\tMaking new histogram for {G}...")
             else:
-                print(f"\t\tRunning jellyfish dump for {G}...")
-                cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
-                subprocess.run(cmd, shell=True, executable="/bin/bash")
-                histo_same = False
+                print(f"\t\t Making histogram for {G}...")
+            histoplot(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", LO, UP, f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png")
 
-            # counting k-mers
-            print(f"\tCounting number of {args.kmer}-mers for {G}...")
-            with open(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'r') as fkmers:
-                for line in fkmers:
-                    if line.startswith('>'): mer_count += 1
-                print(f"\t\t{mer_count} {args.kmer}-mers counted for {G}.")
+            # check if histogram had been built
+            if not os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"):
+                raise FileNotFoundError(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png not found.")
+            print(f"\t\tHistogram for {G} constructed.")
 
-            # create histo.png
-            if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:
-                print(f"\t\tHistogram for {G} detected. Skipping.")
-            else:
-                if not histo_same:
-                    print(f"\t\tMaking new histogram for {G}...")
-                else:
-                    print(f"\t\t Making histogram for {G}...")
-                histoplot(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", LO, UP, f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png")
-
-                # check if histogram had been built
-                if not os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"):
-                    raise FileNotFoundError(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png not found.")
-                print(f"\t\tHistogram for {G} constructed.")
-    except Exception as e:
-        print(f"Error in 02_ExtractSingleCopyMers.py: {e}")
-        exit(1)
+    # except Exception as e:
+    #     print(f"Error in 02_ExtractSingleCopyMers.py: {e}")
+    #     exit(1)
