@@ -63,6 +63,7 @@ def pedigree_analysis(pedigree: str)->None:
                     f0.write(line)
                 elif cols[1] == '1':
                     print(cols)
+                    print(parents)
                     check_prog(cols, parents, f1_progs, f1_crosses)
                     f1.write(line)
                 elif cols[1] == '2':
