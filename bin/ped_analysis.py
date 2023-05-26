@@ -3,7 +3,7 @@ import shutil
 def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
     # parents unidentified
     if prog_info[3] not in parents or prog_info[4] not in parents:
-        raise ValueError(f"Progeny {prog_info[0]} comes from parents not found in the pedigree file.")
+        raise ValueError(f"Progeny {prog_info[0]} comes from parent not found in the pedigree file.")
     # unknown parent
     if "NA" in (prog_info[3], prog_info[4]):
         raise ValueError(f"Progeny {prog_info[0]} has 'NA' parent(s).")
@@ -62,6 +62,7 @@ def pedigree_analysis(pedigree: str)->None:
 
                     f0.write(line)
                 elif cols[1] == '1':
+                    print(cols)
                     check_prog(cols, parents, f1_progs, f1_crosses)
                     f1.write(line)
                 elif cols[1] == '2':
