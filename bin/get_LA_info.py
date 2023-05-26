@@ -17,8 +17,6 @@ def get_LA_info()->list[tuple[str, int, int, str]]:
             LO = int(p[1])
             UP = int(p[2])
 
-            print(p)
-
             p0 = list()
             with open(cross_filename, 'r') as fc:
                 for pair in fc:

@@ -115,7 +115,7 @@ def pedigree_analysis(pedigree: str)->None:
                             raise("Cannot have a lower bound higher than an upper bound.")
 
                         # write {parent} {lower bound} {upper bound} to LA.txt
-                        fla.write(f"{line[0]} {line[3]} {line[4]}")
+                        fla.write(f"{line[0]} {line[3]} {line[4]}\n")
                         checked_parents.add(line[0])
                     else:
                         raise ValueError("Invalid bound entry in Pedigree_F0.txt.")
