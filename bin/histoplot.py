@@ -18,6 +18,8 @@ def histoplot(infilepath:str, LO:int, HI:int, outfilepath:str)->None:
 
     # find maximum y bound
     max_y = 0
+    print(f"type of len(histo_y): {type(histo_y)}")
+    print(f"type of LO: {type(LO)}")
     if len(histo_y) < LO: max_y = max(histo_y)
     else:
         max_y = 0
