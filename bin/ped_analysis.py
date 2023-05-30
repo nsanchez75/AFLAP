@@ -32,41 +32,34 @@ def pedigree_analysis(pedigree: str)->None:
     # try:
         # copy pedigree file into AFLAP_Results
         shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
-        
-        # create pedigree dataframe
-        ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
 
-        # separate pedigree dataframe by generation
+        # store pedigree filename to pedinfo.txt
+        with open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fpinfo:
+            fpinfo.write(f"Source: {pedigree}")
+        
+        # create pedigree dataframe and categorize by generations
+        ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
         if not ped_df.loc[~ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
             raise ValueError("Individuals found with invalid generation type.")
         parents = ped_df.loc[ped_df["Generation"].astype(int) == 0]
         f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
         f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
 
-        # create LA.txt from parents
-        la_df = parents.loc[(parents["MP"] != "NA") & (parents["FP"] != "NA")]
-        nola_df = parents.loc[~((parents["MP"] != "NA") & (parents["FP"] != "NA"))]
-        if not la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique() == 1) and (x["FP"].nunique() == 1)).all():
-            raise ValueError("Parent given different bounds.")
-        filtered_la_df = la_df.groupby("Individual").apply(lambda x : (x["MP"].unique()), (x["FP"].unique()))
-        print(filtered_la_df)
-        # with open("AFLAP_tmp/LA.txt", 'w') as fla:
-        #     la_df.groupby("Individuals")
-        
-
-        # print(la_df)
-
-
         # create categorized pedigree files
-        # parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
-        # f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
-        # f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
+        parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
+        f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
+        f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
 
-        # initialize cross dictionaries
+        # initialize variables
+        p_set = set(parents["Individual"].unique())
+        f1_set = set(f1_progs["Individual"].unique())
+        f2_set = set(f2_progs["Individual"].unique())
         f1_crosses = dict()
         f2_crosses = dict()
 
-
+        print(p_set)
+        print(f1_set)
+        print(f2_set)
 
         # try:
         #     # initialize variables
