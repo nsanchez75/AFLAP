@@ -16,7 +16,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     with open("AFLAP_tmp/Crosses.txt", 'r+') as fc:
          for cross in crosses:
               print(cross)
-              COUNT, MP, FP = cross
+              MP, FP, COUNT = cross
               fc.write(f"{COUNT}\t{ftype}\t{MP}x{FP}\n")
 
 # def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
