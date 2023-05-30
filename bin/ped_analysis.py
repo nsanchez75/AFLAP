@@ -7,7 +7,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
         raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
     if (~prog_info["MP"].astype(str).isin(parents)).any() or (~prog_info["FP"].astype(str).isin(parents)).any():
         raise ValueError(f"An F{ftype} progeny comes from parent not found in the pedigree file.")
-    if (prog_info["MP"].astype(str) == prog_info["FP"].astype(str)).any*():
+    if (prog_info["MP"].astype(str) == prog_info["FP"].astype(str)).any():
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
 
     print("passed checks")
