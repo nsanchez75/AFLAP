@@ -46,13 +46,13 @@ def pedigree_analysis(pedigree: str)->None:
         # create LA.txt from parents
         la_df = parents.loc[(parents["MP"] != "NA") & (parents["FP"] != "NA")]
         nola_df = parents.loc[~((parents["MP"] != "NA") & (parents["FP"] != "NA"))]
-        # print("MP:")
-        # print(la_df.groupby("Individual")["MP"].nunique())
-        # print("FP:")
-        # print(la_df.groupby("Individual")["FP"].nunique())
-        result = la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique() == 0) and (x["FP"].nunique() == 1))
-        print(result)
-        print(result.all())
+        if not la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique() == 1) and (x["FP"].nunique() == 1)).all():
+            raise ValueError("Parent given different bounds.")
+        filtered_la_df = la_df[la_df.duplicated(subset=["Individual", "MP", "FP"], keep=False)]
+        print(filtered_la_df)
+        # with open("AFLAP_tmp/LA.txt", 'w') as fla:
+        #     la_df.groupby("Individuals")
+        
 
         # print(la_df)
 
