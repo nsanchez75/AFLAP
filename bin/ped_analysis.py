@@ -29,7 +29,7 @@ def sort_ped(f_type:str)->None:
         f.writelines(lines)
 
 def pedigree_analysis(pedigree: str)->None:
-    try:
+    # try:
         # copy pedigree file into AFLAP_Results
         shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
         
@@ -157,6 +157,6 @@ def pedigree_analysis(pedigree: str)->None:
 
         #     print("Finished pedigree file analysis.")
 
-    except Exception as e:
-        print(f"Error when running ped_analysis: {e}")
-        exit(1)
+    # except Exception as e:
+    #     print(f"Error when running ped_analysis: {e}")
+    #     exit(1)
