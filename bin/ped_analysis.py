@@ -29,119 +29,127 @@ def sort_ped(f_type:str)->None:
         f.writelines(lines)
 
 def pedigree_analysis(pedigree: str)->None:
-    # copy pedigree file into AFLAP_Results
-    shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
-    
-    # create pedigree dataframe
-    ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
-
-    # separate pedigree dataframe by generation
-    if not ped_df.loc[~ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
-        raise ValueError("Individuals found with invalid generation type.")
-    parents = ped_df.loc[ped_df["Generation"].astype(int) == 0]
-    f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
-    f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
-
-    print(parents)
-    print(f1_progs)
-    print(f2_progs)
-
     try:
-        # initialize variables
-        parents    = set()
-        f1_progs   = set()
-        f2_progs   = set()
+        # copy pedigree file into AFLAP_Results
+        shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
+        
+        # create pedigree dataframe
+        ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
+
+        # separate pedigree dataframe by generation
+        if not ped_df.loc[~ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
+            raise ValueError("Individuals found with invalid generation type.")
+        parents = ped_df.loc[ped_df["Generation"].astype(int) == 0]
+        f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
+        f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
+
+        # create categorized pedigree files
+        parents.to_csv(sep='\t', header=None, index=False)
+        f1_progs.to_csv(sep='\t', header=None, index=False)
+        f2_progs.to_csv(sep='\t', header=None, index=False)
+
+        # initialize cross dictionaries
         f1_crosses = dict()
         f2_crosses = dict()
 
-        # copy pedigree file into AFLAP_Results
-        shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
 
-        # FIXME: convert pedigree into pandas df to grab stuff faster
-        # categorize pedigree into F0, F1, F2
-        with open(pedigree, 'r') as fin,                        \
-             open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fped,   \
-             open("AFLAP_tmp/Pedigree_F0.txt", 'w') as f0,      \
-             open("AFLAP_tmp/Pedigree_F1.txt", 'w') as f1,      \
-             open("AFLAP_tmp/Pedigree_F2.txt", 'w') as f2:
 
-            # write pedigree file into Pedigree.txt
-            fped.write(f"Source: {pedigree}")
+        # try:
+        #     # initialize variables
+        #     parents    = set()
+        #     f1_progs   = set()
+        #     f2_progs   = set()
+        #     f1_crosses = dict()
+        #     f2_crosses = dict()
 
-            # categorize individuals by generation type
-            for line in fin:
-                cols = line.strip().split()
-                # check line size
-                if len(cols) != 5:
-                    raise ValueError("Line in pedigree file over 5 columns.")
+        #     # copy pedigree file into AFLAP_Results
+        #     shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
 
-                if cols[1] == '0':
-                    if cols[0] not in parents:
-                        parents.add(cols[0])
+        #     # FIXME: convert pedigree into pandas df to grab stuff faster
+        #     # categorize pedigree into F0, F1, F2
+        #     with open(pedigree, 'r') as fin,                        \
+        #          open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fped,   \
+        #          open("AFLAP_tmp/Pedigree_F0.txt", 'w') as f0,      \
+        #          open("AFLAP_tmp/Pedigree_F1.txt", 'w') as f1,      \
+        #          open("AFLAP_tmp/Pedigree_F2.txt", 'w') as f2:
 
-                    f0.write(line)
-                elif cols[1] == '1':
-                    print(cols)
-                    print(parents)
-                    check_prog(cols, parents, f1_progs, f1_crosses)
-                    f1.write(line)
-                elif cols[1] == '2':
-                    check_prog(cols, parents, f2_progs, f2_crosses)
-                    f2.write(line)
-                else:
-                    raise ValueError("Pedigree file contains individual that is not F0, F1, or F2.")
+        #         # write pedigree file into Pedigree.txt
+        #         fped.write(f"Source: {pedigree}")
 
-        # sort pedigree files
-        sort_ped("F0")
-        sort_ped("F1")
-        sort_ped("F2")
+        #         # categorize individuals by generation type
+        #         for line in fin:
+        #             cols = line.strip().split()
+        #             # check line size
+        #             if len(cols) != 5:
+        #                 raise ValueError("Line in pedigree file over 5 columns.")
 
-        # determine parent count
-        if len(parents) < 2:
-            raise ValueError("Pedigree file does not have at least 2 parents.")
-        elif len(parents) == 2: print("2 parents detected. This will be easy! Identifying cross(es)...")
-        else: print(f"{len(parents)} parents detected. This will not be so easy! Identifying crosses...")
+        #             if cols[1] == '0':
+        #                 if cols[0] not in parents:
+        #                     parents.add(cols[0])
 
-        # identify and print cross
-        with open("AFLAP_tmp/Crosses.txt", 'w') as f:
-            ## F1 progeny
-            print("F1 crosses that have been identified:")
-            for cross in f1_crosses:
-                c_vals = cross.strip().split()
-                print(f"\t{c_vals[0]}x{c_vals[1]}")
-                f.write(f"{f1_crosses[cross]} 1 {c_vals[0]} {c_vals[1]}")
-            print()
-            ## F2 progeny
-            # TODO: implement stuff below when working with F2
-            print("F2 crosses that have been identified:")
-            for crosses in f2_crosses:
-                c_vals = cross.strip().split()
-                print(f"\t{c_vals[0]}x{c_vals[1]}")
-                f.write(f"{f2_crosses[crosses]} 2 {c_vals[0]} {c_vals[1]}")
+        #                 f0.write(line)
+        #             elif cols[1] == '1':
+        #                 print(cols)
+        #                 print(parents)
+        #                 check_prog(cols, parents, f1_progs, f1_crosses)
+        #                 f1.write(line)
+        #             elif cols[1] == '2':
+        #                 check_prog(cols, parents, f2_progs, f2_crosses)
+        #                 f2.write(line)
+        #             else:
+        #                 raise ValueError("Pedigree file contains individual that is not F0, F1, or F2.")
 
-        # perform LA analysis
-        checked_parents = set()
-        with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
-             open("AFLAP_tmp/LA.txt", 'w') as fla,       \
-             open("AFLAP_tmp/noLA.txt", 'w') as fnola:
+        #     # sort pedigree files
+        #     sort_ped("F0")
+        #     sort_ped("F1")
+        #     sort_ped("F2")
 
-            for line in fin:
-                line = line.strip().split()
-                if line[0] not in checked_parents:
-                    if "NA" in (line[3], line[4]):
-                        fnola.write(f"{line[0]}\n")
-                        checked_parents.add(line[0])
-                    elif [isinstance(x, int) for x in [line[3], line[4]]]:
-                        if line[3] > line[4]:
-                            raise("Cannot have a lower bound higher than an upper bound.")
+        #     # determine parent count
+        #     if len(parents) < 2:
+        #         raise ValueError("Pedigree file does not have at least 2 parents.")
+        #     elif len(parents) == 2: print("2 parents detected. This will be easy! Identifying cross(es)...")
+        #     else: print(f"{len(parents)} parents detected. This will not be so easy! Identifying crosses...")
 
-                        # write {parent} {lower bound} {upper bound} to LA.txt
-                        fla.write(f"{line[0]} {line[3]} {line[4]}\n")
-                        checked_parents.add(line[0])
-                    else:
-                        raise ValueError("Invalid bound entry in Pedigree_F0.txt.")
+        #     # identify and print cross
+        #     with open("AFLAP_tmp/Crosses.txt", 'w') as f:
+        #         ## F1 progeny
+        #         print("F1 crosses that have been identified:")
+        #         for cross in f1_crosses:
+        #             c_vals = cross.strip().split()
+        #             print(f"\t{c_vals[0]}x{c_vals[1]}")
+        #             f.write(f"{f1_crosses[cross]} 1 {c_vals[0]} {c_vals[1]}")
+        #         print()
+        #         ## F2 progeny
+        #         # TODO: implement stuff below when working with F2
+        #         print("F2 crosses that have been identified:")
+        #         for crosses in f2_crosses:
+        #             c_vals = cross.strip().split()
+        #             print(f"\t{c_vals[0]}x{c_vals[1]}")
+        #             f.write(f"{f2_crosses[crosses]} 2 {c_vals[0]} {c_vals[1]}")
 
-        print("Finished pedigree file analysis.")
+        #     # perform LA analysis
+        #     checked_parents = set()
+        #     with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
+        #          open("AFLAP_tmp/LA.txt", 'w') as fla,       \
+        #          open("AFLAP_tmp/noLA.txt", 'w') as fnola:
+
+        #         for line in fin:
+        #             line = line.strip().split()
+        #             if line[0] not in checked_parents:
+        #                 if "NA" in (line[3], line[4]):
+        #                     fnola.write(f"{line[0]}\n")
+        #                     checked_parents.add(line[0])
+        #                 elif [isinstance(x, int) for x in [line[3], line[4]]]:
+        #                     if line[3] > line[4]:
+        #                         raise("Cannot have a lower bound higher than an upper bound.")
+
+        #                     # write {parent} {lower bound} {upper bound} to LA.txt
+        #                     fla.write(f"{line[0]} {line[3]} {line[4]}\n")
+        #                     checked_parents.add(line[0])
+        #                 else:
+        #                     raise ValueError("Invalid bound entry in Pedigree_F0.txt.")
+
+        #     print("Finished pedigree file analysis.")
 
     except Exception as e:
         print(f"Error when running ped_analysis: {e}")
