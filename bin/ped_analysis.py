@@ -10,8 +10,8 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
     if (prog_info["MP"].astype(str) == prog_info["FP"].astype(str)).any():
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
     
-    count_crosses = prog_info.groupby(["MP", "FP"]).size().shape[0]
-    print(count_crosses)
+    count_crosses = prog_info.groupby(["MP", "FP"]).size()
+    print(count_crosses[2])
 
     return cross_dict
 
