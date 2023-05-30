@@ -9,8 +9,8 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
         raise ValueError(f"An F{ftype} progeny comes from parent not found in the pedigree file.")
     if (prog_info["MP"].astype(str) == prog_info["FP"].astype(str)).any():
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
-
-    print("passed checks")
+    
+    count_crosses = prog_info.groupby(["MP", "FP"]).size()
 
     return cross_dict
 
