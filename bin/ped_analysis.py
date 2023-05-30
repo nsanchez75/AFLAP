@@ -1,3 +1,4 @@
+import pandas as pd
 import shutil
 
 def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
@@ -10,7 +11,7 @@ def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
     # crossing identical parent
     if prog_info[3] == prog_info[4]:
         raise ValueError(f"Identical crossed parents identified for {prog_info[0]}.")
-    
+
     if prog_info[0] not in progs:
         progs.add(prog_info[0])
         # create new cross in crosses dictionary
@@ -28,6 +29,23 @@ def sort_ped(f_type:str)->None:
         f.writelines(lines)
 
 def pedigree_analysis(pedigree: str)->None:
+    # copy pedigree file into AFLAP_Results
+    shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
+    
+    # create pedigree dataframe
+    ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
+
+    # separate pedigree dataframe by generation
+    if not ped_df.loc[ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
+        raise ValueError("Individuals found with invalid generation type.")
+    parents = ped_df.loc[ped_df["Generation"].astype(int) == 0]
+    f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
+    f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
+
+    print(parents)
+    print(f1_progs)
+    print(f2_progs)
+
     try:
         # initialize variables
         parents    = set()
@@ -37,8 +55,9 @@ def pedigree_analysis(pedigree: str)->None:
         f2_crosses = dict()
 
         # copy pedigree file into AFLAP_Results
-        shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")        
+        shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
 
+        # FIXME: convert pedigree into pandas df to grab stuff faster
         # categorize pedigree into F0, F1, F2
         with open(pedigree, 'r') as fin,                        \
              open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fped,   \
