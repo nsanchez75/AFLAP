@@ -35,9 +35,9 @@ def pedigree_analysis(pedigree: str)->None:
         # copy pedigree file into AFLAP_Results
         shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
 
-        # store pedigree filename to pedinfo.txt
-        with open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fpinfo:
-            fpinfo.write(f"Source: {pedigree}")
+        # store pedigree filename to pedigree info file
+        # with open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fpinfo:
+        #     fpinfo.write(f"Source: {pedigree}")
         
         # create pedigree dataframe and categorize by generations
         ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
