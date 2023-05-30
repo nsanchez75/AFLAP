@@ -59,9 +59,6 @@ if __name__ == "__main__":
     #     print("Remove argument passed")
     #     pass
 
-    print("finish testing ped_analysis?")
-    exit()
-
     DIR = os.path.dirname(os.path.abspath(__file__))
 
     try:
