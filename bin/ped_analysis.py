@@ -43,6 +43,12 @@ def pedigree_analysis(pedigree: str)->None:
         f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
         f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
 
+        # create LA.txt from parents
+        la_df = parents.loc[parents["MP"] != "NA" & parents["FP"] != "NA"]
+        nola_df = parents.loc[~(parents["MP"] != "NA" & parents["FP"] != "NA")]
+        print(la_df)
+        print(nola_df)
+
         # create categorized pedigree files
         parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
         f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
