@@ -1,7 +1,7 @@
 import pandas as pd
 import shutil
 
-def check_prog(prog_info:pd.DataFrame, parents:set, cross_dict:dict)->dict:
+def check_prog(prog_info:pd.DataFrame, parents:list, cross_dict:dict)->dict:
     # check if parents unidentified
     print(parents)
     print(prog_info.loc[(~prog_info["MP"].isin(parents)) | (~prog_info["FP"].isin(parents))])
@@ -54,15 +54,15 @@ def pedigree_analysis(pedigree: str)->None:
         f2_progs = f2_progs.sort_values(by="Individual")
 
         # initialize variables
-        p_set = set(parents["Individual"].unique())
-        f1_set = set(f1_progs["Individual"].unique())
-        f2_set = set(f2_progs["Individual"].unique())
+        p_list = parents["Individual"].unique()
+        f1_list = f1_progs["Individual"].unique()
+        f2_list = f2_progs["Individual"].unique()
         f1_crosses = dict()
         f2_crosses = dict()
 
         # check prog pedigrees
         ## F1
-        f1_crosses = check_prog(f1_progs, p_set, f1_crosses)
+        f1_crosses = check_prog(f1_progs, p_list, f1_crosses)
 
         # create categorized pedigree files
         # parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
