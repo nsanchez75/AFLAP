@@ -48,7 +48,7 @@ def pedigree_analysis(pedigree: str)->None:
         print(la_df)
         nola_df = parents.loc[~((parents["MP"] != "NA") & (parents["FP"] != "NA"))]
 
-        la_df = la_df["Individuals"].unique()
+        # la_df = la_df["Individuals"].unique()
 
 
         # create categorized pedigree files
