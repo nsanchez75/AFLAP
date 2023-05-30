@@ -12,8 +12,8 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
     
     # find number of crosses with the 
     count_crosses = prog_info.groupby(["MP", "FP"]).size().reset_index()
-    result_set = set(tuple(row) for row in count_crosses.itertuples(index=False))
-    print(result_set)
+    crosses = list(tuple(row) for row in count_crosses.itertuples(index=False))
+    print(crosses)
     
 
     return cross_dict
