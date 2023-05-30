@@ -11,6 +11,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
     
     count_crosses = prog_info.groupby(["MP", "FP"]).size()
+    print(count_crosses)
 
     return cross_dict
 
