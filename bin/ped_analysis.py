@@ -46,10 +46,9 @@ def pedigree_analysis(pedigree: str)->None:
         f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
 
         # order pedigrees by individual name
-        for df in [parents, f1_progs, f2_progs]:
-            print(df)
-            df = df.sort_values(by="Individual")
-            print(df)
+        parents = parents.sort_values(by="Individual")
+        f1_progs = f1_progs.sort_values(by="Individual")
+        f2_progs = f2_progs.sort_values(by="Individual")
 
         # create categorized pedigree files
         parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
