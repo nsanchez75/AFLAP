@@ -47,7 +47,7 @@ def pedigree_analysis(pedigree: str)->None:
         la_df = parents.loc[(parents["MP"] != "NA") & (parents["FP"] != "NA")]
         nola_df = parents.loc[~((parents["MP"] != "NA") & (parents["FP"] != "NA"))]
 
-        la_df = la_df["Individuals"].unique()
+        la_df = la_df["Individual"].unique()
         print(la_df)
 
 
