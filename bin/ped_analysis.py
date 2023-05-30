@@ -1,7 +1,7 @@
 import pandas as pd
 import shutil
 
-def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)->dict:
+def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     # check if parents are valid
     if (prog_info["MP"].astype(str) == "NA").any() | (prog_info["FP"].astype(str) == "NA").any():
         raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
@@ -10,13 +10,13 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)
     if (prog_info["MP"].astype(str) == prog_info["FP"].astype(str)).any():
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
     
-    # find number of crosses with the 
+    # return cross info
     count_crosses = prog_info.groupby(["MP", "FP"]).size().reset_index()
     crosses = list(tuple(row) for row in count_crosses.itertuples(index=False))
-    print(crosses)
-    
-
-    return cross_dict
+    with open("AFLAP_tmp/Crosses.txt", 'w') as fc:
+         for cross in crosses:
+              COUNT, MP, FP = cross
+              fc.write(f"{COUNT}\t{ftype}\t{MP}x{FP}")
 
 # def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
 #     # parents unidentified
@@ -65,13 +65,11 @@ def pedigree_analysis(pedigree: str)->None:
         p_list = parents["Individual"].unique()
         # f1_list = f1_progs["Individual"].unique()
         # f2_list = f2_progs["Individual"].unique()
-        f1_crosses = dict()
-        f2_crosses = dict()
 
         # check prog pedigrees
         ## F1
-        f1_crosses = check_prog(f1_progs, 1, p_list, f1_crosses)
-        f2_crosses = check_prog(f2_progs, 2, p_list, f2_crosses)
+        check_prog(f1_progs, 1, p_list)
+        check_prog(f2_progs, 2, p_list)
 
         # create categorized pedigree files
         # parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
