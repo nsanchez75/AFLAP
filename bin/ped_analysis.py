@@ -4,7 +4,8 @@ import shutil
 def check_prog(prog_info:pd.DataFrame, parents:list, cross_dict:dict)->dict:
     # check if parents unidentified
     print(parents)
-    print(prog_info.query("MP != '1306'"))
+    result = prog_info.query("MP != '1306'")
+    print(result)
     # print(prog_info.loc[~((prog_info["MP"].isin(parents)) & (prog_info["FP"].isin(parents)))])
     if prog_info.loc[(~prog_info["MP"].isin(parents)) | (~prog_info["FP"].isin(parents))].empty:
         raise ValueError(f"A progeny comes from parent not found in the pedigree file.")
