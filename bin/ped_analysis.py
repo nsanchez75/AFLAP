@@ -3,11 +3,11 @@ import shutil
 
 def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)->dict:
     # check if parents are valid
-    if prog_info.loc[(prog_info["MP"].astype(str) == "NA") | (prog_info["FP"].astype(str) == "NA")]:
+    if prog_info.loc[(prog_info["MP"].astype(str) == "NA") | (prog_info["FP"].astype(str) == "NA")].any():
         raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
-    if prog_info.loc[~((prog_info["MP"].astype(str).isin(parents)) & (prog_info["FP"].astype(str).isin(parents)))]:
+    if prog_info.loc[~((prog_info["MP"].astype(str).isin(parents)) & (prog_info["FP"].astype(str).isin(parents)))].any():
         raise ValueError(f"An F{ftype} progeny comes from parent not found in the pedigree file.")
-    if prog_info.loc[prog_info["MP"].astype(str) == prog_info["FP"].astype(str)]:
+    if prog_info.loc[prog_info["MP"].astype(str) == prog_info["FP"].astype(str)].any():
         raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
 
     print("passed checks")
