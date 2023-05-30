@@ -3,7 +3,7 @@ import shutil
 
 def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)->dict:
     # check if parents are valid
-    if prog_info.loc[(prog_info["MP"].astype(str) == "NA").amy() | (prog_info["FP"].astype(str) == "NA").any()]:
+    if prog_info.loc[(prog_info["MP"].astype(str) == "NA").any() | (prog_info["FP"].astype(str) == "NA").any()]:
         raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
     if prog_info.loc[~((prog_info["MP"].astype(str).isin(parents)) & (prog_info["FP"].astype(str).isin(parents)))]:
         raise ValueError(f"An F{ftype} progeny comes from parent not found in the pedigree file.")
