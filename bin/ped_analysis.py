@@ -64,9 +64,9 @@ def pedigree_analysis(pedigree: str)->None:
         f1_crosses = check_prog(f1_progs, p_set, f1_crosses)
 
         # create categorized pedigree files
-        parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
-        f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
-        f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
+        # parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
+        # f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
+        # f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
 
         # try:
         #     # initialize variables
