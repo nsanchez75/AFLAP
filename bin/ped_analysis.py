@@ -50,7 +50,7 @@ def pedigree_analysis(pedigree: str)->None:
         # print(la_df.groupby("Individual")["MP"].nunique())
         # print("FP:")
         # print(la_df.groupby("Individual")["FP"].nunique())
-        result = la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique() == 1) and (x["FP"].nunique() == 1))
+        result = la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique() == 0) and (x["FP"].nunique() == 1))
         print(result)
         print(result.all())
 
