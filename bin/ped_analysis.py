@@ -1,6 +1,5 @@
 import pandas as pd
 import shutil
-import os
 
 def write_cross(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     # check if parents are valid
