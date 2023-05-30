@@ -17,7 +17,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
          for cross in crosses:
               print(cross)
               MP, FP, COUNT = cross
-              fc.write(f"{COUNT}\t{ftype}\t{MP}x{FP}\n")
+              fc.write(f"{COUNT}\t{ftype}\t{MP}\t{FP}\n")
 
 # def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
 #     # parents unidentified
