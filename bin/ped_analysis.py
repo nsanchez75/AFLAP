@@ -1,32 +1,34 @@
 import pandas as pd
 import shutil
 
-def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
-    # parents unidentified
-    if prog_info[3] not in parents or prog_info[4] not in parents:
-        raise ValueError(f"Progeny {prog_info[0]} comes from parent not found in the pedigree file.")
-    # unknown parent
-    if "NA" in (prog_info[3], prog_info[4]):
-        raise ValueError(f"Progeny {prog_info[0]} has 'NA' parent(s).")
-    # crossing identical parent
-    if prog_info[3] == prog_info[4]:
-        raise ValueError(f"Identical crossed parents identified for {prog_info[0]}.")
+def check_prog(prog_info:pd.DataFrame, parents:set, cross_dict:dict)->dict:
+    # check if parents unidentified
+    print(prog_info.loc[(~prog_info["MP"].isin(parents)) or (~prog_info["FP"].isin(parents))])
+    if prog_info.loc[(~prog_info["MP"].isin(parents)) or (~prog_info["FP"].isin(parents))].empty:
+        raise ValueError(f"A progeny comes from parent not found in the pedigree file.")
+    
+    return cross_dict
 
-    if prog_info[0] not in progs:
-        progs.add(prog_info[0])
-        # create new cross in crosses dictionary
-        cross = f"{prog_info[3]} {prog_info[4]}"
-        if cross not in cross_dict:
-            if f"{prog_info[4]} {prog_info[3]}" in cross_dict:
-                raise ValueError("A parent in the pedigree is being treated as both male and female.")
-            cross_dict[cross] = 1
-        else: cross_dict[cross] += 1
+# def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
+#     # parents unidentified
+#     if prog_info[3] not in parents or prog_info[4] not in parents:
+#         raise ValueError(f"Progeny {prog_info[0]} comes from parent not found in the pedigree file.")
+#     # unknown parent
+#     if "NA" in (prog_info[3], prog_info[4]):
+#         raise ValueError(f"Progeny {prog_info[0]} has 'NA' parent(s).")
+#     # crossing identical parent
+#     if prog_info[3] == prog_info[4]:
+#         raise ValueError(f"Identical crossed parents identified for {prog_info[0]}.")
 
-def sort_ped(f_type:str)->None:
-    with open(f"AFLAP_tmp/Pedigree_{f_type}.txt", 'r+') as f:
-        lines = sorted(f.readlines())
-        f.seek(0)
-        f.writelines(lines)
+#     if prog_info[0] not in progs:
+#         progs.add(prog_info[0])
+#         # create new cross in crosses dictionary
+#         cross = f"{prog_info[3]} {prog_info[4]}"
+#         if cross not in cross_dict:
+#             if f"{prog_info[4]} {prog_info[3]}" in cross_dict:
+#                 raise ValueError("A parent in the pedigree is being treated as both male and female.")
+#             cross_dict[cross] = 1
+#         else: cross_dict[cross] += 1
 
 def pedigree_analysis(pedigree: str)->None:
     # try:
@@ -50,20 +52,21 @@ def pedigree_analysis(pedigree: str)->None:
         f1_progs = f1_progs.sort_values(by="Individual")
         f2_progs = f2_progs.sort_values(by="Individual")
 
-        # create categorized pedigree files
-        parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
-        f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
-        f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
-
         # initialize variables
         p_set = set(parents["Individual"].unique())
         f1_set = set(f1_progs["Individual"].unique())
         f2_set = set(f2_progs["Individual"].unique())
         f1_crosses = dict()
         f2_crosses = dict()
-    
-        # check prog pedigree files
+
+        # check prog pedigrees
         ## F1
+        f1_crosses = check_prog(f1_progs, p_set, f1_crosses)
+
+        # create categorized pedigree files
+        parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
+        f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
+        f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
 
         # try:
         #     # initialize variables
