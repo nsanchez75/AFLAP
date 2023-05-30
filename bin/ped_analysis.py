@@ -1,13 +1,17 @@
 import pandas as pd
 import shutil
 
-def check_prog(prog_info:pd.DataFrame, parents:list, cross_dict:dict)->dict:
-    # check if parents unidentified
-    print(parents)
-    print(prog_info.loc[~((prog_info["MP"].astype(str).isin(parents)) & (prog_info["FP"].astype(str).isin(parents)))])
-    if prog_info.loc[(~prog_info["MP"].isin(parents)) | (~prog_info["FP"].isin(parents))].empty:
-        raise ValueError(f"A progeny comes from parent not found in the pedigree file.")
-    
+def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list, cross_dict:dict)->dict:
+    # check if parents are valid
+    if prog_info.loc[(prog_info["MP"].astype(str) == "NA") | (prog_info["FP"].astype(str) == "NA")]:
+        raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
+    if prog_info.loc[~((prog_info["MP"].astype(str).isin(parents)) & (prog_info["FP"].astype(str).isin(parents)))]:
+        raise ValueError(f"An F{ftype} progeny comes from parent not found in the pedigree file.")
+    if prog_info.loc[prog_info["MP"].astype(str) == prog_info["FP"].astype(str)]:
+        raise ValueError(f"Identical crossed parents for an F{ftype} progeny identified.")
+
+    print("passed checks")
+
     return cross_dict
 
 # def check_prog(prog_info:list, parents:set, progs:set, cross_dict:dict)->None:
@@ -55,19 +59,21 @@ def pedigree_analysis(pedigree: str)->None:
 
         # initialize variables
         p_list = parents["Individual"].unique()
-        f1_list = f1_progs["Individual"].unique()
-        f2_list = f2_progs["Individual"].unique()
+        # f1_list = f1_progs["Individual"].unique()
+        # f2_list = f2_progs["Individual"].unique()
         f1_crosses = dict()
         f2_crosses = dict()
 
         # check prog pedigrees
         ## F1
-        f1_crosses = check_prog(f1_progs, p_list, f1_crosses)
+        f1_crosses = check_prog(f1_progs, 1, p_list, f1_crosses)
+        f2_crosses = check_prog(f2_progs, 2, p_list, f2_crosses)
 
         # create categorized pedigree files
         # parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
         # f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
         # f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
+
 
         # try:
         #     # initialize variables
