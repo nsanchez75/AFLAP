@@ -13,7 +13,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     # return cross info
     count_crosses = prog_info.groupby(["MP", "FP"]).size().reset_index()
     crosses = list(tuple(row) for row in count_crosses.itertuples(index=False))
-    with open("AFLAP_tmp/Crosses.txt", 'w') as fc:
+    with open("AFLAP_tmp/Crosses.txt", 'r+') as fc:
          for cross in crosses:
               print(cross)
               COUNT, MP, FP = cross
