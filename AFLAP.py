@@ -60,6 +60,7 @@ if __name__ == "__main__":
     #     pass
 
     print("finish testing ped_analysis?")
+    exit()
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
