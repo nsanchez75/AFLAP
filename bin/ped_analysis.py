@@ -36,7 +36,7 @@ def pedigree_analysis(pedigree: str)->None:
     ped_df = pd.read_csv(pedigree, sep='\t', header=None, names=["Individual", "Generation", "Path", "MP", "FP"])
 
     # separate pedigree dataframe by generation
-    print(ped_df.loc[ped_df["Generation"].astype(int).isin([0, 1, 2])])
+    print(ped_df.loc[~ped_df["Generation"].astype(int).isin([0, 1, 2])])
     
     if not ped_df.loc[ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
         raise ValueError("Individuals found with invalid generation type.")
