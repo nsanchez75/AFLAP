@@ -3,8 +3,8 @@ import shutil
 
 def check_prog(prog_info:pd.DataFrame, parents:set, cross_dict:dict)->dict:
     # check if parents unidentified
-    print(prog_info.loc[(~prog_info["MP"].isin(parents)) or (~prog_info["FP"].isin(parents))])
-    if prog_info.loc[(~prog_info["MP"].isin(parents)) or (~prog_info["FP"].isin(parents))].empty:
+    print(prog_info.loc[(~prog_info["MP"].isin(parents)) | (~prog_info["FP"].isin(parents))])
+    if prog_info.loc[(~prog_info["MP"].isin(parents)) | (~prog_info["FP"].isin(parents))].empty:
         raise ValueError(f"A progeny comes from parent not found in the pedigree file.")
     
     return cross_dict
