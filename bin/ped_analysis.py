@@ -1,7 +1,8 @@
 import pandas as pd
 import shutil
+import os
 
-def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
+def write_cross(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     # check if parents are valid
     if (prog_info["MP"].astype(str) == "NA").any() | (prog_info["FP"].astype(str) == "NA").any():
         raise ValueError(f"There is an F{ftype} progeny that has 'NA' parent(s).")
@@ -50,9 +51,11 @@ def pedigree_analysis(pedigree: str)->None:
         elif p_len == 2: print("2 parents detected. This will be easy! Identifying cross(es)...")
         else: print(f"{p_len} parents detected. This will not be so easy! Identifying crosses...")
 
-        # check prog pedigrees
-        check_prog(f1_progs, 1, p_list)
-        check_prog(f2_progs, 2, p_list)
+        # check prog pedigrees and write to cross file
+        with open("AFLAP_tmp/Crosses.txt", 'w') as fc:
+            pass
+        write_cross(f1_progs, 1, p_list)
+        write_cross(f2_progs, 2, p_list)
 
         # create categorized pedigree files
         parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
