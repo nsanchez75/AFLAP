@@ -15,6 +15,7 @@ def check_prog(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     crosses = list(tuple(row) for row in count_crosses.itertuples(index=False))
     with open("AFLAP_tmp/Crosses.txt", 'w') as fc:
          for cross in crosses:
+              print(cross)
               COUNT, MP, FP = cross
               fc.write(f"{COUNT}\t{ftype}\t{MP}x{FP}")
 
