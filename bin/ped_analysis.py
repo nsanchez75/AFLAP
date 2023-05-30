@@ -46,7 +46,7 @@ def pedigree_analysis(pedigree: str)->None:
         # create LA.txt from parents
         la_df = parents.loc[(parents["MP"] != "NA") & (parents["FP"] != "NA")]
         nola_df = parents.loc[~((parents["MP"] != "NA") & (parents["FP"] != "NA"))]
-        result = la_df.groupby("Individual")
+        result = la_df.groupby("Individual").apply(lambda x : (x["MP"].nunique == 1) and (x["FP"].nunique == 1))
         print(result)
         # print(la_df)
 
