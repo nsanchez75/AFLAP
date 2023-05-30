@@ -45,6 +45,10 @@ def pedigree_analysis(pedigree: str)->None:
         f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
         f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
 
+        # order pedigrees by individual name
+        for df in [parents, f1_progs, f2_progs]:
+            df = df.sort_values(by="Individual")
+
         # create categorized pedigree files
         parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
         f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
@@ -56,10 +60,9 @@ def pedigree_analysis(pedigree: str)->None:
         f2_set = set(f2_progs["Individual"].unique())
         f1_crosses = dict()
         f2_crosses = dict()
-
-        print(p_set)
-        print(f1_set)
-        print(f2_set)
+    
+        # check prog pedigree files
+        ## F1
 
         # try:
         #     # initialize variables
