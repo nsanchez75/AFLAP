@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
-                        if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_LOD{args.LOD}.txt"):
+                        if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
                             raise FileNotFoundError(f"Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
 
                         # initialize variables
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                         cov = 0
 
                         # determine m_count based on F1 progeny's call file
-                        with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_LOD{args.LOD}.txt", 'r') as fpcall:
+                        with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcall:
                             for call in fpcall:
                                 m_count += int(call.strip())
 

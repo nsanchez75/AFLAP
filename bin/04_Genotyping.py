@@ -17,7 +17,7 @@ def tsv_sort(line:str)->str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
     parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
-    parser.add_argument('-L', '--LOD', default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
+    parser.add_argument('-x', '--LowCov', type=int, default=2, action='store_true', help='Run with low coverage parameters.')
     args = parser.parse_args()
 
 
@@ -48,8 +48,8 @@ if __name__ == "__main__":
             h_list = []
 
             # run jellyfish on F1 and F2 individuals who descend from F0
-            h_list += genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F1")
-            h_list += genotype_jfq(args.kmer, args.LOD, G, LO, UP, P0, "F2")
+            h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
+            h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
 
             # extract info from MARKERS file
             with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:
@@ -72,7 +72,7 @@ if __name__ == "__main__":
             # get data
             data = {"MarkerSequence": seq_list, "MarkerID": head_list}
             for h in h_list:
-                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_LOD{args.LOD}.txt", 'r') as fcall:
+                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
                     b_vals = []
                     for b_val in fcall: b_vals.append(b_val.strip())
                 data[h] = b_vals

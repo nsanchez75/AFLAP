@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
+def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
     # declare which F type is being worked on
     print(f"\tWorking on {f_type}...")
 
@@ -48,11 +48,11 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
             if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
                 print(f"\t\t\tCall for {h} detected. Skipping.")
             else:
-                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}_LOD{LOD}.txt", 'w') as fcall:
+                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}", 'w') as fcall:
                     for line in fcount:
                         line = line.strip().split()
 
-                        if int(line[1]) >= int(LOD): fcall.write(f"1\n")
+                        if int(line[1]) >= int(LowCov): fcall.write(f"1\n")
                         else: fcall.write(f"0\n")
 
     return h_list
