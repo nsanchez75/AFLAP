@@ -72,8 +72,20 @@ if __name__ == "__main__":
             ftsv = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t')
             ftsv.insert(0, "MarkerLoc", ftsv["MarkerID"].astype(str) + '_' + ftsv["MarkerLength"].astype(str))
             ftsv = ftsv.drop(["MarkerID", "MarkerLength"], axis=1)
-            ftsv.insert(2, "Male Parent", 0)
-            ftsv.insert(3, "Female Parent", 1)
+            
+            with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
+                for cross in fcrosses:
+                    cross = cross.strip().split()
+                    if (cross[2] == G):
+                        ftsv.insert(2, "Male Parent", 1)
+                        ftsv.insert(3, "Female Parent", 0)
+                    elif (cross[3] == G):
+                        ftsv.insert(2, "Male Parent", 0)
+                        ftsv.insert(3, "Female Parent", 1)
+                    else:
+                        continue
+                    break
+    
             ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
             ## set columns of ftsv DataFrame to match df's column names
             ftsv = ftsv.set_axis(list(df.columns), axis=1)
