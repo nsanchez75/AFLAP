@@ -6,7 +6,7 @@ from get_LA_info import get_LA_info
 from genotype_jf import genotype_jfq
 
 #################################################
-#	A Python script to call genotypes of progeny using makrers derived from a parent and progeny JELLYFISH hashes.
+#	A Python script to call genotypes of progeny using markers derived from a parent and progeny JELLYFISH hashes.
 #	For optimal calls, a k-mer should be observed twice.
 #################################################
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
             # get data
             data = {"MarkerSequence": seq_list, "MarkerID": head_list}
             for h in h_list:
-                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_LOD{args.LOD}.txt", 'r') as fcall:
                     b_vals = []
                     for b_val in fcall: b_vals.append(b_val.strip())
                 data[h] = b_vals

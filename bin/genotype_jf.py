@@ -48,7 +48,7 @@ def genotype_jfq(kmer:str, LOD:str, parent:str, lo:str, up:str, p0:str, f_type:s
             if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
                 print(f"\t\t\tCall for {h} detected. Skipping.")
             else:
-                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as fcall:
+                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}_LOD{LOD}.txt", 'w') as fcall:
                     for line in fcount:
                         line = line.strip().split()
 
