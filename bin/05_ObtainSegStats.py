@@ -26,6 +26,9 @@ if __name__ == "__main__":
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
     args = parser.parse_args()
 
+    # create directory
+    os.makedirs("AFLAP_tmp/05", exist_ok=True)
+
     # initialize variables
     ak = 2 * int(args.kmer) - 1
 
