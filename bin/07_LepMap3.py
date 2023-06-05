@@ -136,6 +136,7 @@ if __name__ == "__main__":
 
             final_lod_file = joined_df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", sep='\t', index=False)
 
+            print(lg_df)
             print(markerid_df)
 
     except Exception as e:
