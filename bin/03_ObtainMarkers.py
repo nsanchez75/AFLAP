@@ -104,27 +104,27 @@ if __name__ == "__main__":
                     while True:
                         m = fab.readline()
                         if not m: break
+                        if not m.startswith('>'): continue
 
-                        if m.startswith('>'):
-                            # increment frag stats
-                            frag_count += 1
+                        # increment frag stats
+                        frag_count += 1
 
-                            # subsequence to abyss subsequence file
-                            m = m.strip().replace('>', '').split()
-                            if int(m[1]) >= ak:
-                                fabsub.write(f">{m[0]}_{m[1]}\n")
+                        # subsequence to abyss subsequence file
+                        m = m.strip().replace('>', '').split()
+                        if int(m[1]) >= ak:
+                            fabsub.write(f">{m[0]}_{m[1]}\n")
 
-                                # define subsequence and its reverse complement
-                                subseq = fab.readline().strip()[9:(9 + int(args.kmer))]
-                                rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
+                            # define subsequence and its reverse complement
+                            subseq = fab.readline().strip()[9:(9 + int(args.kmer))]
+                            rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
 
-                                # compare subsequence and its reverse complement (choose first typographically)
-                                if subseq <= rc_subseq: fabsub.write(f"{subseq}\n")
-                                else: fabsub.write(f"{rc_subseq}\n")
+                            # compare subsequence and its reverse complement (choose first typographically)
+                            if subseq <= rc_subseq: fabsub.write(f"{subseq}\n")
+                            else: fabsub.write(f"{rc_subseq}\n")
 
-                                # update frag61 and frag62
-                                if int(m[1]) == ak: frag61 += 1
-                                else: frag62 += 1
+                            # update frag61 and frag62
+                            if int(m[1]) == ak: frag61 += 1
+                            else: frag62 += 1
 
                 # refilter against self
                 print("\tRefiltering against self...")

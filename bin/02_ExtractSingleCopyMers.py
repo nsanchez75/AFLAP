@@ -46,7 +46,7 @@ if __name__ == "__main__":
     try:
         print("Generating F0 histograms to undergo linkage analysis...")
         if not os.path.exists("AFLAP_tmp/LA.txt"):
-            print("Error in 02_ExtractSingleCopyMers.py: AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
+            raise FileNotFoundError("AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
         list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
