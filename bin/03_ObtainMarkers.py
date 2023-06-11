@@ -1,6 +1,5 @@
 import argparse
 import os
-import pandas as pd
 import shutil
 import subprocess
 
@@ -16,19 +15,14 @@ from get_LA_info import get_LA_info
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     args = parser.parse_args()
 
     # make directories
     os.makedirs("AFLAP_tmp/03/F0Markers", exist_ok=True)
-    os.makedirs("AFLAP_tmp/03/SimGroups", exist_ok=True)
 
     # assemble for markers for parents whose bounds are identified
     try:
-
-        # initialize a sequence grouper dataframe
-        seq_groups = pd.DataFrame(columns=["Sequence", "Parent", "Identifier"])
-
         list_of_Gs = get_LA_info()
         for G_info in list_of_Gs:
             G, LO, UP, P0 = G_info
@@ -115,19 +109,13 @@ if __name__ == "__main__":
                         # increment frag stats
                         frag_count += 1
 
-                        # get sequence
-                        seq = fab.readline().strip()
-
-                        # add (k-mer - 1) of each end of sequence to sequence group dataframe
-                        seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G, f">{m[0]}_{m[1]}"]
-
                         # subsequence to abyss subsequence file
                         m = m.strip().replace('>', '').split()
                         if int(m[1]) >= ak:
                             fabsub.write(f">{m[0]}_{m[1]}\n")
 
                             # define subsequence and its reverse complement
-                            subseq = seq[9:(9 + int(args.kmer))]
+                            subseq = fab.readline().strip()[9:(9 + int(args.kmer))]
                             rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
 
                             # compare subsequence and its reverse complement (choose first typographically)
@@ -221,23 +209,6 @@ if __name__ == "__main__":
                             f"\tNumber of markers after refiltering:            {mar_count}\n" +
                             f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                             f"\tNumber of markers > {ak} bp:                    {mar62}\n")
-
-        # find homozygous sequences
-        ## get parents categorized by sex
-        parents_sets = set()
-        with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-            for cross in fcrosses:
-                cross = cross.strip().split()
-                parents_sets.add({cross[3], cross[4]})
-        ## create file of sequences
-        unique_seqs = pd.DataFrame(columns=["Identifier", "Sequence"])
-        seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
-        for useq in seq_groups["Sequence"].unique():
-            useq_df = seq_groups[seq_groups["Sequence"] == useq]
-            for pset in parents_sets:
-                if set(useq_df["Parent"].unique()) == pset:
-                    unique_seqs.loc[len(unique_seqs.index)] = [useq_df["Identifier"], useq_df["Sequence"]]
-        unique_seqs.to_csv("AFLAP_tmp/03/HomozygousSeqs.tsv", sep='\t', index=False)
 
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")

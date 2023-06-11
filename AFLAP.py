@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--SDL', type=float, default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
     parser.add_argument('-k', '--kinship', action='store_true', help='Run kinship estimation.')
-    parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
+    parser.add_argument('-x', '--LowCov', type=int, default=2, action='store_true', help='Run with low coverage parameters.')
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
 

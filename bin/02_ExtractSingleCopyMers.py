@@ -35,7 +35,7 @@ def create_histogram(G:int, kmer:int)->None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExtractingSingleCopyMers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
     args = parser.parse_args()
 
     #  make directories
