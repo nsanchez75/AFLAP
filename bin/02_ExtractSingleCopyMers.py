@@ -79,18 +79,18 @@ if __name__ == "__main__":
 
             # create histo.png
             if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:
-                print(f"\t\tHistogram for {G} detected. Skipping.")
+                print(f"\tHistogram for {G} detected. Skipping.")
             else:
                 if not histo_same:
-                    print(f"\t\tMaking new histogram for {G}...")
+                    print(f"\tMaking new histogram for {G}...")
                 else:
-                    print(f"\t\t Making histogram for {G}...")
+                    print(f"\t Making histogram for {G}...")
                 histoplot(f"AFLAP_tmp/02/F0Histo/{G}.{args.kmer}.histo", LO, UP, f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png")
 
                 # check if histogram had been built
                 if not os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"):
                     raise FileNotFoundError(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png not found.")
-                print(f"\t\tHistogram for {G} constructed.")
+                print(f"\tHistogram for {G} constructed.")
 
     except Exception as e:
         print(f"Error in 02_ExtractSingleCopyMers.py: {e}")
