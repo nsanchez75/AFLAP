@@ -229,7 +229,7 @@ if __name__ == "__main__":
     with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
         for cross in fcrosses:
             cross = cross.strip().split()
-            parents_sets.add({cross[3], cross[4]})
+            parents_sets.add({cross[2], cross[3]})
     ## create file of sequences
     unique_seqs = pd.DataFrame(columns=["Identifier", "Sequence"])
     seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
