@@ -223,6 +223,7 @@ if __name__ == "__main__":
                             f"\tNumber of markers > {ak} bp:                    {mar62}\n")
 
         # find homozygous sequences
+        print("Finding homozygous sequences...")
         ## get parents categorized by sex
         parents_sets = set()
         with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
@@ -238,6 +239,7 @@ if __name__ == "__main__":
                 if set(useq_df["Parent"].unique()) == pset:
                     unique_seqs.loc[len(unique_seqs.index)] = [useq_df["Identifier"], useq_df["Sequence"]]
         unique_seqs.to_csv("AFLAP_tmp/03/HomozygousSeqs.tsv", sep='\t', index=False)
+        print(f"{len(unique_seqs.index)} homozygous sequences found.")
 
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")
