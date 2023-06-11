@@ -16,8 +16,8 @@ def tsv_sort(line:str)->str:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
-    parser.add_argument('-m', '--kmer', default=31, help='K-mer size (optional). Default [31].')
-    parser.add_argument('-x', '--LowCov', type=int, default=2, action='store_true', help='Run with low coverage parameters.')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     args = parser.parse_args()
 
 
