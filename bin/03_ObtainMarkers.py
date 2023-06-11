@@ -225,18 +225,18 @@ if __name__ == "__main__":
     # find homozygous sequences
     print("Finding homozygous sequences...")
     ## get parents categorized by sex
-    parents_sets = set()
+    parents_lists = set()
     with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
         for cross in fcrosses:
             cross = cross.strip().split()
-            parents_sets.add({cross[2], cross[3]})
+            parents_lists.add([cross[2], cross[3]])
     ## create file of sequences
     unique_seqs = pd.DataFrame(columns=["Identifier", "Sequence"])
     seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
     for useq in seq_groups["Sequence"].unique():
         useq_df = seq_groups[seq_groups["Sequence"] == useq]
-        for pset in parents_sets:
-            if set(useq_df["Parent"].unique()) == pset:
+        for plist in parents_lists:
+            if set(useq_df["Parent"].unique()) == set(plist):
                 unique_seqs.loc[len(unique_seqs.index)] = [useq_df["Identifier"], useq_df["Sequence"]]
     unique_seqs.to_csv("AFLAP_tmp/03/HomozygousSeqs.tsv", sep='\t', index=False)
     print(f"{len(unique_seqs.index)} homozygous sequences found.")
