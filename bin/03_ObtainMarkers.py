@@ -44,7 +44,7 @@ if __name__ == "__main__":
         #     mark_again = True
 
         # if mark_again:
-        print("Performing marker assembly...")
+        print(f"Performing marker assembly on {G}...")
         # define ak
         ak = 2 * int(args.kmer) - 1
 
