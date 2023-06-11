@@ -41,18 +41,19 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
                     for line in jf_out:
                         # disregard empty lines FIXME: determine why this happens
                         if not len(line): continue
-
                         f.write(f"{line}\n")
+                print(f"\t\t\tCount for {h} created.")
 
             # create calls of progeny
             if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
                 print(f"\t\t\tCall for {h} detected. Skipping.")
             else:
-                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}", 'w') as fcall:
+                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as fcall:
                     for line in fcount:
                         line = line.strip().split()
 
                         if int(line[1]) >= int(LowCov): fcall.write(f"1\n")
                         else: fcall.write(f"0\n")
+                print(f"\t\t\tCall for {h} created.")
 
     return h_list
