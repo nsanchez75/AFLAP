@@ -72,10 +72,6 @@ if __name__ == "__main__":
             # counting k-mers
             print(f"\tCounting number of {args.kmer}-mers for {G}...")
             print(f"\t\t{int(os.path.getsize(f'AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa') / 2)} {args.kmer}-mers counted for {G}")
-            # with open(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'r') as fkmers:
-            #     for line in fkmers:
-            #         if line.startswith('>'): mer_count += 1
-            #     print(f"\t\t{mer_count} {args.kmer}-mers counted for {G}.")
 
             # create histo.png
             if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:
