@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 
 def normalize_data(markers:pd.DataFrame)->pd.DataFrame:
     return markers["Frequency Count"] / markers["Frequency Count"].sum()

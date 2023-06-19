@@ -4,18 +4,17 @@ import subprocess
 import sys
 
 from bin.ped_analysis import pedigree_analysis
-from bin.helper_funcs.yon import y_or_n
+from bin.marker_reduction import marker_reduction
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='AFLAP', description="A script to run all stages of AFLAP.")
     parser.add_argument('-P', '--Pedigree', type=str, required=True, help="Pedigree file (required). See AFLAP README for more information.")
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
     parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting (optional). Default [4].')
-    # parser.add_argument('-r', '--remove', help='Individual to remove. All other options will be ignored.')
+    parser.add_argument('-r', '--remove', type=str, help='Individual to remove. All other options will be ignored.')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
     parser.add_argument('-d', '--SDL', type=float, default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
-    parser.add_argument('-k', '--kinship', action='store_true', help='Run kinship estimation.')
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
@@ -39,19 +38,10 @@ if __name__ == "__main__":
     if os.path.exists("AFLAP_tmp/PedigreeInfo.txt"):
         with open("AFLAP_tmp/PedigreeInfo.txt") as fped:
             src = fped.readline().strip().split()[1]
-            if args.Pedigree == src:
-                print(f"\t{args.Pedigree} had already been analyzed. Skipping pedigree analysis.")
-            else:
-                overwrite_check = y_or_n(f"\t{src}, not {args.Pedigree}, had previously been analyzed. Would you like to overwrite the analysis of {src}? (y/n)")
-                if overwrite_check:
-                    print(f"\tOverwriting {src}...")
-                    pedigree_analysis(args.Pedigree)
-                else:
-                    print(f"\tNot overwriting {src}. Use it as the pedigree input instead.")
-                    sys.exit(0)
-    else:
-        print(f"\tAnalyzing {args.Pedigree}...")
-        pedigree_analysis(args.Pedigree)
+            print(f"\tWARNING: You are overwriting the analysis of {src}.")
+            print(f"\tOverwriting {src}...")
+    print(f"\tAnalyzing {args.Pedigree}...")
+    pedigree_analysis(args.Pedigree)
 
     # # run programs (#TODO?: allow user to specify what programs to run)
     # if args.remove:
@@ -77,11 +67,8 @@ if __name__ == "__main__":
         # 05_ObtainSegStats.py
         os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
 
-        if (args.kinship):
-            # TODO: implement 05b
-            pass
-        elif (args.Max is not None):
-            # TODO: implement 05c
+        if (args.Max is not None):
+            marker_reduction(args.kmer, args.Max)
             pass
 
         # 06_ExportToLepMap3.py

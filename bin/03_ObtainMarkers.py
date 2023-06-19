@@ -4,7 +4,6 @@ import pandas as pd
 import shutil
 import subprocess
 
-from helper_funcs.yon import y_or_n
 from get_LA_info import get_LA_info
 
 #################################################
@@ -24,143 +23,111 @@ if __name__ == "__main__":
     os.makedirs("AFLAP_tmp/03/SimGroups", exist_ok=True)
 
     # assemble for markers for parents whose bounds are identified
-    # try:
+    try:
+        # initialize a sequence grouper dataframe
+        seq_groups = pd.DataFrame(columns=["Sequence", "Parent", "Identifier"])
 
-    # initialize a sequence grouper dataframe
-    seq_groups = pd.DataFrame(columns=["Sequence", "Parent", "Identifier"])
+        for G_info in get_LA_info():
+            G, LO, UP, P0 = G_info
 
-    list_of_Gs = get_LA_info()
-    for G_info in list_of_Gs:
-        G, LO, UP, P0 = G_info
+            print(f"Performing marker assembly on {G}...")
+            # define ak
+            ak = 2 * int(args.kmer) - 1
 
-        # # check if marker for G exists
-        # if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
-        #     # check if file is empty
-        #     if not os.path.getsize(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
-        #         raise ValueError(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa is empty.")
-        #     mark_again = y_or_n(f"Marker already found for {G}. Would you like to make a new one? (y/n) ")
-        # else:
-        #     print("Performing marker assembly...")
-        #     mark_again = True
+            # initialize marker stats report variables
+            ml_count   = 0  # number of k-mers inputted for assembly
+            frag_count = 0  # number of fragments assembled
+            frag61     = 0  # number of frags == ak
+            frag62     = 0  # number of frags > ak
+            mar_count  = 0  # number of markers after refiltering
+            mar61      = 0  # number of markers == ak
+            mar62      = 0  # number of markers > ak
 
-        # if mark_again:
-        print(f"Performing marker assembly on {G}...")
-        # define ak
-        ak = 2 * int(args.kmer) - 1
+            # copy .fa file
+            if not os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
+                raise FileNotFoundError(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa not found. Rerun 02_ExtractSingleCopyMers.py.")
+            shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa",
+                        f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
 
-        # initialize marker stats report variables
-        ml_count   = 0  # number of k-mers inputted for assembly
-        frag_count = 0  # number of fragments assembled
-        frag61     = 0  # number of frags == ak
-        frag62     = 0  # number of frags > ak
-        mar_count  = 0  # number of markers after refiltering
-        mar61      = 0  # number of markers == ak
-        mar62      = 0  # number of markers > ak
+            # filter .fa file against other parents
+            for op in P0.split():
+                op = op.strip()
 
-        # copy .fa file
-        if not os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
-            raise FileNotFoundError(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa not found. Rerun 02_ExtractSingleCopyMers.py.")
-        shutil.copy(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa",
-                    f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa")
+                # check if .jf for other parent exists
+                if not os.path.exists(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"):
+                    raise FileNotFoundError(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
 
-        # filter .fa file against other parents
-        for op in P0.split():
-            op = op.strip()
+                # filter and overwrite .fa file
+                print(f"\tFiltering and overwriting AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa...")
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
+                jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'w') as ffa:
+                    for line in jf_out:
+                        line = line.strip().split()
 
-            # check if .jf for other parent exists
-            if not os.path.exists(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"):
-                raise FileNotFoundError(f"AFLAP_tmp/01/F0Count/{op}.jf{args.kmer} not found. Rerun 01_JELLYFISH.py.")
+                        # disregard empty lines FIXME: determine why this happens
+                        if not len(line): continue
 
-            # filter and overwrite .fa file
-            print(f"\tFiltering and overwriting AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa...")
-            jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
-            jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-            with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa", 'w') as ffa:
-                for line in jf_out:
-                    line = line.strip().split()
+                        # write unique sequences into .fa file
+                        if not int(line[1]):
+                            # update ml_count in stats
+                            ffa.write(f">{ml_count}\n{line[0]}\n")
+                            ml_count += 1
 
-                    # disregard empty lines FIXME: determine why this happens
-                    if not len(line): continue
+                    print(f"\t{ml_count} {G} {args.kmer}-mers remain after filtering against {op}.")
 
-                    # write unique sequences into .fa file
-                    if not int(line[1]):
-                        # update ml_count in stats
-                        ffa.write(f">{ml_count}\n{line[0]}\n")
-                        ml_count += 1
+            # initialize k variable
+            if   int(args.kmer) == 31: k = 25
+            elif int(args.kmer) == 25: k = 19
+            else: k = int(args.kmer) - 2
 
-                print(f"\t{ml_count} {G} {args.kmer}-mers remain after filtering against {op}.")
+            # perform ABySS assembly
+            print(f"\tRunning ABySS with -k set to {k}...\n")
+            abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa -o AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"
+            subprocess.run(abyss_cmd, shell=True)
+            # check if abyss ran properly
+            if not os.path.exists(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"):
+                raise FileNotFoundError(f"ABySS did not create {G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa.")
+            elif not os.path.getsize(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"):
+                raise ValueError(f"{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa is empty.")
 
-        # initialize k variable
-        if   int(args.kmer) == 31: k = 25
-        elif int(args.kmer) == 25: k = 19
-        else: k = int(args.kmer) - 2
+            # extract subsequences
+            print("\tExtracting subsequences...")
+            with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa", 'r') as fab, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'w') as fabsub:
+                while True:
+                    m = fab.readline()
+                    if not m: break
+                    if not m.startswith('>'): continue
 
-        # perform ABySS assembly
-        print(f"\tRunning ABySS with -k set to {k}...\n")
-        abyss_cmd = f"ABYSS -k {k} -c 0 -e 0 AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}.fa -o AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"
-        subprocess.run(abyss_cmd, shell=True)
-        # check if abyss ran properly
-        if not os.path.exists(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"):
-            raise FileNotFoundError(f"ABySS did not create {G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa.")
-        elif not os.path.getsize(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa"):
-            raise ValueError(f"{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa is empty.")
+                    # increment frag stats
+                    frag_count += 1
 
-        # extract subsequences
-        print("\tExtracting subsequences...")
-        with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa", 'r') as fab, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'w') as fabsub:
-            while True:
-                m = fab.readline()
-                if not m: break
-                if not m.startswith('>'): continue
+                    # get sequence
+                    seq = fab.readline().strip()
 
-                # increment frag stats
-                frag_count += 1
+                    # add (k-mer - 1) of each end of sequence to sequence group dataframe
+                    seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G, f">{m[0]}_{m[1]}"]
 
-                # get sequence
-                seq = fab.readline().strip()
+                    # subsequence to abyss subsequence file
+                    m = m.strip().replace('>', '').split()
+                    if int(m[1]) >= ak:
+                        fabsub.write(f">{m[0]}_{m[1]}\n")
 
-                # add (k-mer - 1) of each end of sequence to sequence group dataframe
-                seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G, f">{m[0]}_{m[1]}"]
+                        # define subsequence and its reverse complement
+                        subseq = seq[9:(9 + int(args.kmer))]
+                        rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
 
-                # subsequence to abyss subsequence file
-                m = m.strip().replace('>', '').split()
-                if int(m[1]) >= ak:
-                    fabsub.write(f">{m[0]}_{m[1]}\n")
+                        # compare subsequence and its reverse complement (choose first typographically)
+                        if subseq <= rc_subseq: fabsub.write(f"{subseq}\n")
+                        else: fabsub.write(f"{rc_subseq}\n")
 
-                    # define subsequence and its reverse complement
-                    subseq = seq[9:(9 + int(args.kmer))]
-                    rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
+                        # update frag61 and frag62
+                        if int(m[1]) == ak: frag61 += 1
+                        else: frag62 += 1
 
-                    # compare subsequence and its reverse complement (choose first typographically)
-                    if subseq <= rc_subseq: fabsub.write(f"{subseq}\n")
-                    else: fabsub.write(f"{rc_subseq}\n")
-
-                    # update frag61 and frag62
-                    if int(m[1]) == ak: frag61 += 1
-                    else: frag62 += 1
-
-        # refilter against self
-        print("\tRefiltering against self...")
-        jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
-        jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-        with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
-            i = 1
-            for line in jf_out:
-                line = line.strip().split()
-
-                # disregard empty lines FIXME: determine why this happens
-                if not len(line): continue
-
-                if int(line[1]) >= int(LO) and int(line[1]) <= int(UP):
-                    fjq.write(f">{i}\n{line[0]}\n")
-                    i += 1
-
-        # refilter against other parents
-        print("\tRefiltering against other parents...")
-        for op in P0.split():
-            op = op.strip()
-
-            jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
+            # refilter against self
+            print("\tRefiltering against self...")
+            jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
             jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
             with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
                 i = 1
@@ -170,78 +137,99 @@ if __name__ == "__main__":
                     # disregard empty lines FIXME: determine why this happens
                     if not len(line): continue
 
-                    # write unique sequences back into file
-                    if not int(line[1]):
+                    if int(line[1]) >= int(LO) and int(line[1]) <= int(UP):
                         fjq.write(f">{i}\n{line[0]}\n")
                         i += 1
 
-        # create final marker
-        print("\tCreating final marker...")
-        with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'r') as fabsub, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'r') as fjq, open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'w') as fmark:
-            # create set of sequences from jf_query file
-            fjq_set = set()
-            for line in fjq:
-                if line.startswith('>'): continue
-                fjq_set.add(line.strip())
+            # refilter against other parents
+            print("\tRefiltering against other parents...")
+            for op in P0.split():
+                op = op.strip()
 
-            while True:
-                head = fabsub.readline().strip()
-                if not head: break
+                jf_cmd = f"jellyfish query -s AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa AFLAP_tmp/01/F0Count/{op}.jf{args.kmer}"
+                jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+                with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'w') as fjq:
+                    i = 1
+                    for line in jf_out:
+                        line = line.strip().split()
 
-                # add sequence to markers file if found in jf_query file
-                seq = fabsub.readline().strip()
-                if seq in fjq_set:
-                    fmark.write(f"{head}\n{seq}\n")
+                        # disregard empty lines FIXME: determine why this happens
+                        if not len(line): continue
 
-                    # update stats
-                    mar_count += 1
-                    head = head.split('_')
+                        # write unique sequences back into file
+                        if not int(line[1]):
+                            fjq.write(f">{i}\n{line[0]}\n")
+                            i += 1
 
-                    if int(head[1]) == ak:
-                        mar61 += 1
-                    elif int(head[1]) > ak:
-                        mar62 += 1
+            # create final marker
+            print("\tCreating final marker...")
+            with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'r') as fabsub, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_jf_query.fa", 'r') as fjq, open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'w') as fmark:
+                # create set of sequences from jf_query file
+                fjq_set = set()
+                for line in fjq:
+                    if line.startswith('>'): continue
+                    fjq_set.add(line.strip())
 
-        # print stats
-        print(f"Report for {G}:\n" +
-            f"\tNumber of {args.kmer}-mers input into assembly: {ml_count}\n" +
-            f"\tNumber of fragments assembled: {frag_count}\n" +
-            f"\tNumber of fragments == {ak} bp: {frag61}\n" +
-            f"\tNumber of fragments > {ak} bp: {frag62}\n" +
-            f"\tNumber of markers after refiltering: {mar_count}\n" +
-            f"\tNumber of markers == {ak} bp: {mar61}\n" +
-            f"\tNumber of markers > {ak} bp: {mar62}\n")
+                while True:
+                    head = fabsub.readline().strip()
+                    if not head: break
 
-        # write to G's MarkerReport.txt
-        with open(f"{G}.MarkerReport.txt", 'w') as f:
-            f.write(f"Report for {G}:\n" +
-                    f"\tNumber of {args.kmer}-mers input into assembly: {ml_count}\n" +
-                    f"\tNumber of fragments assembled:                  {frag_count}\n" +
-                    f"\tNumber of fragments == {ak} bp:                 {frag61}\n" +
-                    f"\tNumber of fragments > {ak} bp:                  {frag62}\n" +
-                    f"\tNumber of markers after refiltering:            {mar_count}\n" +
-                    f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
-                    f"\tNumber of markers > {ak} bp:                    {mar62}\n")
+                    # add sequence to markers file if found in jf_query file
+                    seq = fabsub.readline().strip()
+                    if seq in fjq_set:
+                        fmark.write(f"{head}\n{seq}\n")
 
-    # find homozygous sequences
-    print("Finding homozygous sequences...")
-    ## get parents categorized by sex
-    parents_lists = list()
-    with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-        for cross in fcrosses:
-            cross = cross.strip().split()
-            parents_lists.append([cross[2], cross[3]])
-    ## create file of sequences
-    unique_seqs = pd.DataFrame(columns=["Identifier", "Sequence"])
-    seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
-    for useq in seq_groups["Sequence"].unique():
-        useq_df = seq_groups[seq_groups["Sequence"] == useq]
-        for plist in parents_lists:
-            if set(useq_df["Parent"].unique()) == set(plist):
-                unique_seqs.loc[len(unique_seqs.index)] = [useq_df["Identifier"], useq_df["Sequence"]]
-    unique_seqs.to_csv("AFLAP_tmp/03/HomozygousSeqs.tsv", sep='\t', index=False)
-    print(f"{len(unique_seqs.index)} homozygous sequences found.")
+                        # update stats
+                        mar_count += 1
+                        head = head.split('_')
 
-    # except Exception as e:
-    #     print(f"Error in 03_ObtainMarkers.py: {e}")
-    #     exit(1)
+                        if int(head[1]) == ak:
+                            mar61 += 1
+                        elif int(head[1]) > ak:
+                            mar62 += 1
+
+            # print stats
+            print(f"Report for {G}:\n" +
+                f"\tNumber of {args.kmer}-mers input into assembly: {ml_count}\n" +
+                f"\tNumber of fragments assembled: {frag_count}\n" +
+                f"\tNumber of fragments == {ak} bp: {frag61}\n" +
+                f"\tNumber of fragments > {ak} bp: {frag62}\n" +
+                f"\tNumber of markers after refiltering: {mar_count}\n" +
+                f"\tNumber of markers == {ak} bp: {mar61}\n" +
+                f"\tNumber of markers > {ak} bp: {mar62}\n")
+
+            # write to G's MarkerReport.txt
+            with open(f"{G}.MarkerReport.txt", 'w') as f:
+                f.write(f"Report for {G}:\n" +
+                        f"\tNumber of {args.kmer}-mers input into assembly: {ml_count}\n" +
+                        f"\tNumber of fragments assembled:                  {frag_count}\n" +
+                        f"\tNumber of fragments == {ak} bp:                 {frag61}\n" +
+                        f"\tNumber of fragments > {ak} bp:                  {frag62}\n" +
+                        f"\tNumber of markers after refiltering:            {mar_count}\n" +
+                        f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
+                        f"\tNumber of markers > {ak} bp:                    {mar62}\n")
+
+        # # find identical loci
+        # print("Finding homozygous sequences...")
+        # ## get parents categorized by sex
+        # parents_lists = list()
+        # with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
+        #     for cross in fcrosses:
+        #         cross = cross.strip().split()
+        #         parents_lists.append([cross[2], cross[3]])
+        # ## create file of sequences
+        # unique_seqs = pd.DataFrame(columns=["Male Identifier", "Female Identifier", "Sequence"])
+        # seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
+        # for useq in seq_groups["Sequence"].unique():
+        #     useq_df = seq_groups[seq_groups["Sequence"] == useq]
+        #     for plist in parents_lists:
+        #         if set(useq_df["Parent"].unique()) == set(plist):
+        #             male_identifier = useq_df[useq_df["Parent"] == plist[0]]["Identifier"]
+        #             female_identifier = useq_df[useq_df["Parent"] == plist[1]]["Identifier"]
+        #             unique_seqs.loc[len(unique_seqs.index)] = [, useq]
+        # unique_seqs.to_csv("AFLAP_tmp/03/Locus.tsv", sep='\t', index=False)
+        # print(f"{len(unique_seqs.index)} common loci found.")
+
+    except Exception as e:
+        print(f"Error in 03_ObtainMarkers.py: {e}")
+        exit(1)
