@@ -1,7 +1,6 @@
 import argparse
 import os
 import subprocess
-import sys
 
 from bin.ped_analysis import pedigree_analysis
 from bin.marker_reduction import marker_reduction
@@ -26,7 +25,7 @@ if __name__ == "__main__":
             subprocess.check_output(args=f"ls $CONDA_PREFIX/bin | grep {module}", shell=True)
         except:
             print(f"Error: {module} not detected.")
-            sys.exit(1)
+            exit(1)
     print("All dependencies found.")
 
     # make directories if necessary

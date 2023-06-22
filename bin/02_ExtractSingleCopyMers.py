@@ -39,7 +39,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     #  make directories
-    os.makedirs("AFLAP_Results/Plots", exist_ok=True)
+    os.makedirs("AFLAP_Results/Plots")
     os.makedirs("AFLAP_tmp/02/F0Histo", exist_ok=True)
 
     # get/make histograms
@@ -60,18 +60,18 @@ if __name__ == "__main__":
 
             # extract k-mers
             print(f"\tExtracting {args.kmer}-mers from {G}:")
-            if os.path.exists(f"AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
+            if os.path.exists(f"AFLAP_tmp/02/{G}_m{args.kmer}_L{LO}_U{UP}.fa"):
                 print(f"\t\t{args.kmer}-mers for {G} detected. Skipping.")
                 histo_same = True
             else:
                 print(f"\t\tRunning jellyfish dump for {G}...")
-                cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
+                cmd = f"jellyfish dump -U {UP} -L {LO} -o AFLAP_tmp/02/{G}_m{args.kmer}_L{LO}_U{UP}.fa AFLAP_tmp/01/F0Count/{G}.jf{args.kmer}"
                 subprocess.run(cmd, shell=True, executable="/bin/bash")
                 histo_same = False
 
             # counting k-mers
             print(f"\tCounting number of {args.kmer}-mers for {G}...")
-            print(f"\t\t{int(os.path.getsize(f'AFLAP_tmp/02/F0Histo/{G}_m{args.kmer}_L{LO}_U{UP}.fa') / 2)} {args.kmer}-mers counted for {G}")
+            print(f"\t\t{int(os.path.getsize(f'AFLAP_tmp/02/{G}_m{args.kmer}_L{LO}_U{UP}.fa') / 2)} {args.kmer}-mers counted for {G}")
 
             # create histo.png
             if os.path.exists(f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png") and histo_same:

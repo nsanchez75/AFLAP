@@ -5,6 +5,7 @@ import shutil
 import subprocess
 
 from get_LA_info import get_LA_info
+from find_identical_loci import find_identical_loci
 
 #################################################
 #	A Python script to derive single copy k-mers that are unique to a parent. These are then used a markers.
@@ -198,7 +199,7 @@ if __name__ == "__main__":
                 f"\tNumber of markers == {ak} bp: {mar61}\n" +
                 f"\tNumber of markers > {ak} bp: {mar62}\n")
 
-            # write to G's MarkerReport.txt
+            # write to parent's MarkerReport.txt
             with open(f"{G}.MarkerReport.txt", 'w') as f:
                 f.write(f"Report for {G}:\n" +
                         f"\tNumber of {args.kmer}-mers input into assembly: {ml_count}\n" +
@@ -209,26 +210,8 @@ if __name__ == "__main__":
                         f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                         f"\tNumber of markers > {ak} bp:                    {mar62}\n")
 
-        # # find identical loci
-        # print("Finding homozygous sequences...")
-        # ## get parents categorized by sex
-        # parents_lists = list()
-        # with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-        #     for cross in fcrosses:
-        #         cross = cross.strip().split()
-        #         parents_lists.append([cross[2], cross[3]])
-        # ## create file of sequences
-        # unique_seqs = pd.DataFrame(columns=["Male Identifier", "Female Identifier", "Sequence"])
-        # seq_groups = seq_groups[seq_groups.duplicated("Sequence", keep=False)]
-        # for useq in seq_groups["Sequence"].unique():
-        #     useq_df = seq_groups[seq_groups["Sequence"] == useq]
-        #     for plist in parents_lists:
-        #         if set(useq_df["Parent"].unique()) == set(plist):
-        #             male_identifier = useq_df[useq_df["Parent"] == plist[0]]["Identifier"]
-        #             female_identifier = useq_df[useq_df["Parent"] == plist[1]]["Identifier"]
-        #             unique_seqs.loc[len(unique_seqs.index)] = [, useq]
-        # unique_seqs.to_csv("AFLAP_tmp/03/Locus.tsv", sep='\t', index=False)
-        # print(f"{len(unique_seqs.index)} common loci found.")
+        # identify sequences of identical loci
+        find_identical_loci(seq_groups)
 
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")
