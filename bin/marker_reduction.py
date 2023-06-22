@@ -1,7 +1,7 @@
 import os
 import random
 
-from get_LA_info import get_LA_info
+from bin.get_LA_info import get_LA_info
 
 def marker_reduction(kmer:int, max_markers:int)->None:
     if not os.path.exists("AFLAP_tmp/LA.txt"):
