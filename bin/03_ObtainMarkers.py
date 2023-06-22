@@ -5,6 +5,7 @@ import shutil
 import subprocess
 
 from get_LA_info import get_LA_info
+from find_identical_loci import find_identical_loci
 
 #################################################
 #	A Python script to derive single copy k-mers that are unique to a parent. These are then used a markers.
@@ -208,6 +209,9 @@ if __name__ == "__main__":
                         f"\tNumber of markers after refiltering:            {mar_count}\n" +
                         f"\tNumber of markers == {ak} bp:                   {mar61}\n" +
                         f"\tNumber of markers > {ak} bp:                    {mar62}\n")
+
+        # identify sequences of identical loci
+        find_identical_loci(seq_groups)
 
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")

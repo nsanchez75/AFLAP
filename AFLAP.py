@@ -1,6 +1,5 @@
 import argparse
 import os
-import shutil
 import subprocess
 
 from bin.ped_analysis import pedigree_analysis
@@ -31,8 +30,7 @@ if __name__ == "__main__":
 
     # make directories if necessary
     os.makedirs("AFLAP_tmp", exist_ok=True)
-    if os.path.isdir("AFLAP_Results"): shutil.rmtree("AFLAP_Results")
-    os.makedirs("AFLAP_Results")
+    os.makedirs("AFLAP_Results", exist_ok=True)
 
     # perform Pedigree file analysis
     print("Performing pedigree file analysis...")
