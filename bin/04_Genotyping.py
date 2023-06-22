@@ -20,11 +20,9 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     args = parser.parse_args()
 
-
     # make directories
     os.makedirs("AFLAP_tmp/04/Count", exist_ok=True)
     os.makedirs("AFLAP_tmp/04/Call", exist_ok=True)
-
 
     # check for markers
     try:

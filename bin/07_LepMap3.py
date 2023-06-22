@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # TODO: check if $CONDA_PREFIX exists
 
     # make directory
-    os.makedirs(f"AFLAP_Results/LOD{args.LOD}", exist_ok=True)
+    os.makedirs(f"AFLAP_Results/LOD{args.LOD}")
 
     # run LepMap3 on parents
     try:
