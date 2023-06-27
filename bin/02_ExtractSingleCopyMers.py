@@ -39,7 +39,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     #  make directories
-    os.makedirs("AFLAP_Results/Plots")
+    os.makedirs("AFLAP_Results/Plots", exist_ok=True)
     os.makedirs("AFLAP_tmp/02/F0Histo", exist_ok=True)
 
     # get/make histograms
