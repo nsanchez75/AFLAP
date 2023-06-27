@@ -1,7 +1,7 @@
 import pandas as pd
 
 def find_identifier(parents_set:set, useq_df:pd.DataFrame)->str:
-    identifier = useq_df["Parent"][useq_df["Parent"].isin(parents_set)].tolist()
+    identifier = useq_df["Identifier"][useq_df["Parent"].isin(parents_set)].tolist()
     if len(identifier) != 1: raise ValueError("Invalid number of parents of the same sex for one individual.")
     return identifier[0]
 
