@@ -45,35 +45,44 @@ if __name__ == "__main__":
         with open("AFLAP_tmp/PedigreeInfo.txt") as fped:
             src = fped.readline().strip().split()[1]
             print(f"\tWARNING: You are overwriting the analysis of {src}.")
-            print(f"\tOverwriting {src}...")
     print(f"\tAnalyzing {args.Pedigree}...")
     pedigree_analysis(args.Pedigree)
+    print("Information from pedigree file extracted.")
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
     try:
         # 01_JELLYFISH.py
+        print("\nStep 1/6: Jellyfish Counting\n")
         subprocess.run(f"python3 {DIR}/bin/01_JELLYFISH.py -t {args.threads} -m {args.kmer}",
                        check=True, shell=True)
         # 02_ExtractSingleCopyMers.py
+        print("\nStep 2/6: Extracting Single-Copy K-Mers\n")
         subprocess.run(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}",
                        check=True, shell=True)
         # 03_ObtainMarkers.py
+        print("\nStep 3/6: Obtaining Markers\n")
         subprocess.run(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}",
                        check=True, shell=True)
         # 04_Genotyping.py
+        print("\nStep 4/6: Creating Genotype Table\n")
         subprocess.run(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -x {args.LowCov}",
                        check=True, shell=True)
         # 05_ObtainSegStats.py
+        print("\nStep 5/6: Obtaining Segment Statistics\n")
         subprocess.run(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}",
                        check=True, shell=True)
 
-        if (args.Max is not None): marker_reduction(args.kmer, args.Max)
+        if (args.Max is not None):
+            print("\nExtra Step 5/6: Reducing Number of Markers\n")
+            marker_reduction(args.kmer, args.Max)
 
         # 06_ExportToLepMap3.py
+        print("\nStep 6/6: Making Information Usable for LepMap3\n")
         subprocess.run(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}",
                        check=True, shell=True)
         # 07_LepMap3.py
+        print("\nRunning LepMap3\n")
         subprocess.run(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}",
                        check=True, shell=True)
 
