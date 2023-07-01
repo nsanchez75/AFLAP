@@ -78,5 +78,6 @@ if __name__ == "__main__":
                        check=True, shell=True)
 
         print("AFLAP complete!")
+
     except subprocess.CalledProcessError as e:
         exit(f"An error occurred: {e}")
