@@ -53,28 +53,30 @@ if __name__ == "__main__":
 
     try:
         # 01_JELLYFISH.py
-        os.system(f"python3 {DIR}/bin/01_JELLYFISH.py -t {args.threads} -m {args.kmer}")
-
+        subprocess.run(f"python3 {DIR}/bin/01_JELLYFISH.py -t {args.threads} -m {args.kmer}",
+                       check=True, shell=True)
         # 02_ExtractSingleCopyMers.py
-        os.system(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}")
-
+        subprocess.run(f"python3 {DIR}/bin/02_ExtractSingleCopyMers.py -m {args.kmer}",
+                       check=True, shell=True)
         # 03_ObtainMarkers.py
-        os.system(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}")
-
+        subprocess.run(f"python3 {DIR}/bin/03_ObtainMarkers.py -m {args.kmer}",
+                       check=True, shell=True)
         # 04_Genotyping.py
-        os.system(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -x {args.LowCov}")
-
+        subprocess.run(f"python3 {DIR}/bin/04_Genotyping.py -m {args.kmer} -x {args.LowCov}",
+                       check=True, shell=True)
         # 05_ObtainSegStats.py
-        os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
+        subprocess.run(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}",
+                       check=True, shell=True)
 
         if (args.Max is not None): marker_reduction(args.kmer, args.Max)
 
         # 06_ExportToLepMap3.py
-        os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
-
+        subprocess.run(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}",
+                       check=True, shell=True)
         # 07_LepMap3.py
-        os.system(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}")
+        subprocess.run(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}",
+                       check=True, shell=True)
 
         print("AFLAP complete!")
-    except:
-        exit(1)
+    except subprocess.CalledProcessError as e:
+        exit(f"An error occurred: {e}")
