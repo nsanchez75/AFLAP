@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # TODO: check if $CONDA_PREFIX exists
 
     # make directory
-    os.makedirs(f"AFLAP_Results/LOD{args.LOD}")
+    os.makedirs(f"AFLAP_Results/LOD{args.LOD}", exist_ok=True)
 
     # run LepMap3 on parents
     try:
@@ -118,9 +118,12 @@ if __name__ == "__main__":
             if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
                 # TODO: determine whether or not this should be using AFLAP_tmp/05
                 raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
+
+            # get row indices of marker sequences
             markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerSequence', 'MarkerID', 'MarkerLength'], )
             markerid_df['RowIndex'] = markerid_df.index + 1
 
+            # identify linkage groups to marker sequences
             lg_df = pd.DataFrame
             for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
                 if not sex_check: COLS_USED = [0, 1]
