@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # assemble for markers for parents whose bounds are identified
     try:
         # initialize a sequence grouper dataframe
-        seq_groups = pd.DataFrame(columns=["Sequence", "Parent", "Identifier"])
+        seq_groups = pd.DataFrame(columns=["Sequence", "Parent"])
 
         for G_info in get_LA_info():
             G, LO, UP, P0 = G_info
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                     seq = fab.readline().strip()
 
                     # add (k-mer - 1) of each end of sequence to sequence group dataframe
-                    seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G, f">{m[0]}_{m[1]}"]
+                    seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G]
 
                     # subsequence to abyss subsequence file
                     m = m.strip().replace('>', '').split()
@@ -211,7 +211,7 @@ if __name__ == "__main__":
                         f"\tNumber of markers > {ak} bp:                    {mar62}\n")
 
         # identify sequences of identical loci
-        find_identical_loci(seq_groups)
+        # find_identical_loci(seq_groups)
 
     except Exception as e:
         print(f"Error in 03_ObtainMarkers.py: {e}")
