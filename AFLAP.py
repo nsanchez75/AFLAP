@@ -4,6 +4,7 @@ import subprocess
 
 from bin.ped_analysis import pedigree_analysis
 from bin.marker_reduction import marker_reduction
+from bin.update_individual import update_individual
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='AFLAP', description="A script to run all stages of AFLAP.")
@@ -17,6 +18,13 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
+
+    # run update function if necessary
+    if args.remove:
+        print("Performing individual removal...")
+        update_individual(args.remove, args.Pedigree)
+        print(f"Successfully removed individual {args.remove}. Rerun AFLAP to regenerate the removed files.")
+        exit(0)
 
     # check for dependencies
     print("Checking for dependencies used in AFLAP...")
@@ -66,16 +74,14 @@ if __name__ == "__main__":
         # 05_ObtainSegStats.py
         os.system(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}")
 
-        if (args.Max is not None):
-            marker_reduction(args.kmer, args.Max)
-            pass
+        if (args.Max is not None): marker_reduction(args.kmer, args.Max)
 
         # 06_ExportToLepMap3.py
         os.system(f"python3 {DIR}/bin/06_ExportToLepMap3.py -m {args.kmer}")
 
         # 07_LepMap3.py
         os.system(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}")
-    
+
         print("AFLAP complete!")
     except:
         exit(1)
