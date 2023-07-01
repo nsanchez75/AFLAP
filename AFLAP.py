@@ -19,22 +19,21 @@ if __name__ == "__main__":
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
 
-    # run update function if necessary
-    if args.remove:
-        print("Performing individual removal...")
-        update_individual(args.remove, args.Pedigree)
-        print(f"Successfully removed individual {args.remove}. Rerun AFLAP to regenerate the removed files.")
-        exit(0)
-
     # check for dependencies
     print("Checking for dependencies used in AFLAP...")
     for module in ["jellyfish", "ABYSS", "lepmap3"]:
         try:
             subprocess.check_output(args=f"ls $CONDA_PREFIX/bin | grep {module}", shell=True)
         except:
-            print(f"Error: {module} not detected.")
-            exit(1)
+            exit(f"An error occurred: {module} not detected.")
     print("All dependencies found.")
+
+    # run update function if necessary
+    if args.remove:
+        print("Performing individual removal...")
+        update_individual(args.remove, args.Pedigree)
+        print(f"Successfully removed individual {args.remove}. Rerun AFLAP to regenerate the removed files.")
+        exit(0)
 
     # make directories if necessary
     os.makedirs("AFLAP_tmp", exist_ok=True)
@@ -49,12 +48,6 @@ if __name__ == "__main__":
             print(f"\tOverwriting {src}...")
     print(f"\tAnalyzing {args.Pedigree}...")
     pedigree_analysis(args.Pedigree)
-
-    # # run programs (#TODO?: allow user to specify what programs to run)
-    # if args.remove:
-    #     # TODO: figure out what args.remove does
-    #     print("Remove argument passed")
-    #     pass
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
