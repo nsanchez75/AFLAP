@@ -82,7 +82,8 @@ def pedigree_analysis(pedigree: str)->None:
                     fnola.write(f"{line[0]}\n")
                     checked_parents.add(line[0])
                 elif [isinstance(x, int) for x in [line[3], line[4]]]:
-                    if line[3] > line[4]:
+                    if int(line[3]) > int(line[4]):
+                        print(f"{line[3]} | {line[4]}")
                         exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
 
                     # write {parent} {lower bound} {upper bound} to LA.txt
