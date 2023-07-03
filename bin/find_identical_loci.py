@@ -28,7 +28,7 @@ def find_identical_loci(seq_groups:pd.DataFrame)->None:
                     seqs_df.loc[len(seqs_df.index)] = [seq]
 
     # produce a tsv file of same-loci sequences
-    seqs_df.to_csv("AFLAP_tmp/03/SameLociSeqs.tsv", sep='\t', index=False)
+    seqs_df.to_csv("AFLAP_tmp/03/SameLociSeqs.tsv", sep='\t', index=False, header=False)
 
 # TESTING PURPOSES
 if __name__ == "__main__":
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         print(f"Analyzing sequences from parent {G}...")
         with open(f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_abyss.fa", 'r') as fab:
-            while True:
+            for i in range(500):
                 id = fab.readline().strip()
                 seq = fab.readline().strip()
                 if not id or not seq: break

@@ -27,6 +27,8 @@ def pedigree_analysis(pedigree: str)->None:
     with open(pedigree, 'r+') as f:
         lines = f.readlines()
         lines = [line for line in lines if not re.match(r'^\s*#', line)]
+        f.seek(0)
+        f.writelines(lines)
 
     # store pedigree filename to pedigree info file
     with open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fpinfo:
