@@ -26,7 +26,8 @@ if __name__ == "__main__":
     # assemble for markers for parents whose bounds are identified
     try:
         # initialize a sequence grouper dataframe
-        seq_groups = pd.DataFrame(columns=["Sequence", "Parent"])
+        # TODO: determine if these are good header names
+        seq_groups = pd.DataFrame(columns=["Sequence", "Locus Sequence", "Parent"])
 
         for G_info in get_LA_info():
             G, LO, UP, P0 = G_info
@@ -96,34 +97,31 @@ if __name__ == "__main__":
             print("\tExtracting subsequences...")
             with open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss.fa", 'r') as fab, open(f"AFLAP_tmp/03/{G}_m{args.kmer}_L{LO}_U{UP}_abyss_subseqs.fa", 'w') as fabsub:
                 while True:
-                    m = fab.readline()
-                    if not m: break
-                    if not m.startswith('>'): continue
+                    id = fab.readline().strip()
+                    seq = fab.readline().strip()
+                    if not id or not seq: break
 
                     # increment frag stats
                     frag_count += 1
 
-                    # get sequence
-                    seq = fab.readline().strip()
-
-                    # add (k-mer - 1) of each end of sequence to sequence group dataframe
-                    seq_groups.loc[len(seq_groups.index)] = [seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G]
-
-                    # subsequence to abyss subsequence file
-                    m = m.strip().replace('>', '').split()
-                    if int(m[1]) >= ak:
-                        fabsub.write(f">{m[0]}_{m[1]}\n")
-
-                        # define subsequence and its reverse complement
+                    # analyze sequence if passes against ak
+                    id = id.replace('>', '').split()
+                    if int(id[1]) >= ak:
+                        # get id
+                        fabsub.write(f">{id[0]}_{id[1]}\n")
+                        
+                        # get subsequence and its reverse complement
                         subseq = seq[9:(9 + int(args.kmer))]
                         rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
+                        # choose subsequence by first alphabetically
+                        if subseq > rc_subseq: subseq = rc_subseq
+                        fabsub.write(f"{subseq}\n")
 
-                        # compare subsequence and its reverse complement (choose first typographically)
-                        if subseq <= rc_subseq: fabsub.write(f"{subseq}\n")
-                        else: fabsub.write(f"{rc_subseq}\n")
+                        # get sequence locus via first and last couple of base pairs
+                        seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(int(args.kmer) - 1)] + seq[(len(seq) - int(args.kmer) + 1):], G]
 
                         # update frag61 and frag62
-                        if int(m[1]) == ak: frag61 += 1
+                        if int(id[1]) == ak: frag61 += 1
                         else: frag62 += 1
 
             # refilter against self
