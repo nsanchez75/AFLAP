@@ -30,13 +30,18 @@ def find_identical_loci(seq_groups:pd.DataFrame)->None:
     # produce a tsv file of same-loci sequences
     seqs_df.to_csv("AFLAP_tmp/03/SameLociSeqs.tsv", sep='\t', index=False)
 
+# TESTING PURPOSES
 if __name__ == "__main__":
     seq_groups = pd.DataFrame(columns=["Sequence", "Locus Sequence", "Parent"])
     kmer = 31
     ak = 2 * kmer - 1
 
+    print("Running test on find_identical_loci.py")
+
     for G_info in get_LA_info():
         G, LO, UP, P0 = G_info
+
+        print(f"Analyzing sequences from parent {G}...")
         with open(f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_abyss.fa", 'r') as fab:
             while True:
                 id = fab.readline().strip()
@@ -48,7 +53,14 @@ if __name__ == "__main__":
                     subseq = seq[9:(9 + kmer)]
                     rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
                     if subseq > rc_subseq: subseq = rc_subseq
-                
+
                     seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(kmer - 1)] + seq[(len(seq) - kmer + 1):], G]
-    
+        
+        print(f"Finished analyzing sequences from parent {G}.")
+
+    print("Sequence groups:")
+    print(seq_groups)
+
+    print("Finding identical loci...")
     find_identical_loci(seq_groups)
+    print("Test complete")
