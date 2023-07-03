@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 import shutil
 
 def write_cross(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
@@ -21,6 +22,11 @@ def write_cross(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
 def pedigree_analysis(pedigree: str)->None:
     # copy pedigree file into AFLAP_Results
     shutil.copy2(pedigree, "AFLAP_Results/Pedigree.txt")
+
+    # remove comments in pedigree files (start with '#)
+    with open(pedigree, 'r+') as f:
+        lines = f.readlines()
+        lines = [line for line in lines if not re.match(r'^\s*#', line)]
 
     # store pedigree filename to pedigree info file
     with open("AFLAP_tmp/PedigreeInfo.txt", 'w') as fpinfo:
