@@ -14,6 +14,8 @@ def find_identical_loci(seq_groups:pd.DataFrame)->None:
     seqs_df = pd.DataFrame(columns=["Sequence"])
     for useq in seq_groups["Locus Sequence"].unique():
         useq_df = seq_groups[seq_groups["Locus Sequence"] == useq]
+        if len(useq_df.index) < 2: continue
+        print(useq_df)
         parents = useq_df["Parent"].unique().tolist()
         # detect if both parents identified to locus sequence
         mpcheck = False
@@ -55,7 +57,7 @@ if __name__ == "__main__":
                     if subseq > rc_subseq: subseq = rc_subseq
 
                     seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(kmer - 1)] + seq[(len(seq) - kmer + 1):], G]
-        
+
         print(f"Finished analyzing sequences from parent {G}.")
 
     print("Sequence groups:")
