@@ -16,8 +16,8 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
         # check if individual's count exists
         if os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
             if not os.path.getsize(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-                raise ValueError(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty. " +
-                                 f"Delete it and restart.")
+                exit(f"An error occurred: AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty. " +
+                     f"Delete it and restart.")
             print(f"\tHash detected for {ind}. Skipping.")
             continue
 
@@ -28,7 +28,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
         jfin = list()
         for file in ind_df['File'].unique():
             if not os.path.exists(file):
-                raise FileNotFoundError(f"{file} for {ind} not found.")
+                exit(f"An error occurred: {file} for {ind} not found.")
             jfin.append(file)
         jfin = ' '.join(jfin)
 
@@ -38,7 +38,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
 
         # check if jellyfish worked
         if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-            raise FileNotFoundError(f"Jellyfish for {ind} did not complete.")
+            exit(f"An error occurred: Jellyfish for {ind} did not complete.")
         print(f"\tHash for {ind} performed.")
 
     print(f"Jellyfish {f_type} count complete.")
