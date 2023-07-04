@@ -7,7 +7,7 @@ def get_LA_info()->list[tuple[str, int, int, str]]:
     # check if files exist
     for file in (la_filename, cross_filename):
         if (not os.path.exists(file)):
-            raise FileNotFoundError(f"Error: {file} not found.")
+            exit(f"An error occurred: {file} not found.")
 
     with open(la_filename, 'r') as fla:
         ret_list = list()

@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
                     if G in (cross[2], cross[3]):
                         num_progs += int(cross[0])
-            if not num_progs: raise ValueError("Invalid number of progeny.")
+            if not num_progs: exit("An error occurred: Invalid number of progeny.")
 
             print(f"\t\t{num_progs} Genotype calls for {G} detected. Summarizing...")
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                     if G in {f1_prog[3], f1_prog[4]}:
                         # check if call for F1 progeny exists
                         if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
-                            raise FileNotFoundError(f"Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
+                            exit(f"An error occurred: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
 
                         # initialize variables
                         m_count = 0

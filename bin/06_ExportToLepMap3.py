@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
                 # add rows from filtered tsv file to df
                 if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
-                    raise FileNotFoundError("Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
+                    exit("An error occurred: Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
                 ftsv = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t')
                 ftsv.insert(0, "MarkerLoc", ftsv["MarkerID"].astype(str) + '_' + ftsv["MarkerLength"].astype(str))
                 ftsv = ftsv.drop(["MarkerID", "MarkerLength"], axis=1)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
                 # export df DataFrame to tsv dedicated to LepMap3
                 df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sep='\t', header=False, index=False)
                 if not os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):
-                    raise FileNotFoundError(f"tsv file for {G} has not been created.")
+                    exit(f"An error occurred: tsv file for {G} has not been created.")
 
                 print(f"\tCompleted making a LepMap3 tsv file for {G}.")
 

@@ -25,71 +25,66 @@ if __name__ == "__main__":
     os.makedirs("AFLAP_tmp/04/Call", exist_ok=True)
 
     # check for markers
-    try:
-        list_of_Gs = get_LA_info()
-        for G_info in list_of_Gs:
-            G, LO, UP, P0 = G_info
+    list_of_Gs = get_LA_info()
+    for G_info in list_of_Gs:
+        G, LO, UP, P0 = G_info
 
-            # check if marker exists
-            if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
-                with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as fmark:
-                    m_count = 0
-                    for m in fmark:
-                        if m.startswith('>'):
-                            m_count += 1
+        # check if marker exists
+        if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
+            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as fmark:
+                m_count = 0
+                for m in fmark:
+                    if m.startswith('>'):
+                        m_count += 1
 
-                    print(f"\t{m_count} markers identified in AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa. These will be surveyed against progeny.")
-            else:
-                raise FileNotFoundError(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not found. Rerun 03_ObtainMarkers.py.")
+                print(f"\t{m_count} markers identified in AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa. These will be surveyed against progeny.")
+        else:
+            (f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not found. Rerun 03_ObtainMarkers.py.")
 
-            # initialize list consisting of F0's progeny
-            h_list = []
+        # initialize list consisting of F0's progeny
+        h_list = []
 
-            # run jellyfish on F1 and F2 individuals who descend from F0
-            h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
-            h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
+        # run jellyfish on F1 and F2 individuals who descend from F0
+        h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
+        h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
 
-            # extract info from MARKERS file
-            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:
-                head_list = []
-                seq_list = []
+        # extract info from MARKERS file
+        with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:
+            head_list = []
+            seq_list = []
 
-                while True:
-                    head = f.readline().strip().replace('>', '')
-                    if not head: break
+            while True:
+                head = f.readline().strip().replace('>', '')
+                if not head: break
 
-                    seq = f.readline().strip()
+                seq = f.readline().strip()
 
-                    head_list.append(head)
-                    seq_list.append(seq)
+                head_list.append(head)
+                seq_list.append(seq)
 
-                # check if head_list and seq_list are same size
-                if len(head_list) != len(seq_list):
-                    raise ValueError(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
+            # check if head_list and seq_list are same size
+            if len(head_list) != len(seq_list):
+                exit(f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
 
-            # get data
-            data = {"MarkerSequence": seq_list, "MarkerID": head_list}
-            for h in h_list:
-                with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
-                    b_vals = []
-                    for b_val in fcall: b_vals.append(b_val.strip())
-                data[h] = b_vals
+        # get data
+        data = {"MarkerSequence": seq_list, "MarkerID": head_list}
+        for h in h_list:
+            with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+                b_vals = []
+                for b_val in fcall: b_vals.append(b_val.strip())
+            data[h] = b_vals
 
-            matrix = pd.DataFrame(data=data)
+        matrix = pd.DataFrame(data=data)
 
-            # split marker sequence and value and reorder
-            matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
-            matrix = matrix.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(matrix.columns[2:-1]))
+        # split marker sequence and value and reorder
+        matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
+        matrix = matrix.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(matrix.columns[2:-1]))
 
-            # create tsv file
-            matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
+        # create tsv file
+        matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
 
-            # check tsv file status
-            if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
-                raise FileNotFoundError("Genotypes.MarkerID.tsv was not made.")
-            else:
-                print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
-
-    except Exception as e:
-        print(f"Error in 04_Genotyping.py: {e}")
-        exit(1)
+        # check tsv file status
+        if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
+            exit("An error occurred: Genotypes.MarkerID.tsv was not made.")
+        else:
+            print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")

@@ -2,6 +2,8 @@ import pandas as pd
 
 from get_LA_info import get_LA_info
 
+# TODO: create 2 separate dataframes by parent and compare them to find equivalent locus sequences
+
 def find_identical_loci(seq_groups:pd.DataFrame)->None:
     print("Finding identical sequence loci...")
 

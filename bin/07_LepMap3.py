@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # check if necessary files exist
     if not os.path.exists("AFLAP_tmp/LA.txt"):
-        raise FileNotFoundError("Error: AFLAP_tmp/LA.txt not found.")
+        ("An error occurred: AFLAP_tmp/LA.txt not found.")
 
     # TODO: check if $CONDA_PREFIX exists
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
             # check if tsv file for G exists
             if not os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):
-                raise FileNotFoundError(f"Error: LepMap-ready genotype table fo {G} not found.")
+                exit(f"An error occurred: LepMap-ready genotype table fo {G} not found.")
 
             # begin LepMap3 analysis
             print(f"Initiating LepMap3 analysis on {G}...")
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
             if not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv"):
                 # TODO: determine whether or not this should be using AFLAP_tmp/05
-                raise FileNotFoundError(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
+                exit(f"An error occurred: AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv not found. Rerun 05_ExportToLepMap3.py")
 
             # get row indices of marker sequences
             markerid_df = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', usecols=['MarkerSequence', 'MarkerID', 'MarkerLength'], )
