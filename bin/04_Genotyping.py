@@ -49,7 +49,7 @@ if __name__ == "__main__":
         h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
 
         # extract info from MARKERS file
-        with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa") as f:
+        with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
             head_list = []
             seq_list = []
 
