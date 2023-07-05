@@ -150,14 +150,14 @@ def get_markers(G_info:tuple, kmer:int)->None:
             if not head or not seq: break
             if seq not in fjq_set: continue
 
+            fmark.write(f"{head}\n{seq}\n")
+
             marker_count += 1
             head = head.split('_')
             if int(head[1]) == ak:
                 markers_eq_ak += 1
             elif int(head[1]) > ak:
                 markers_over_ak += 1
-
-            fmark.write(f"{head}\n{seq}\n")
 
     stats = f"Report for {G}:\n" + \
             f"\tNumber of {kmer}-mers input into assembly:      {ml_count}\n" + \
