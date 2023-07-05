@@ -105,7 +105,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
                 fabsub.write(f"{subseq}\n")
 
                 # get sequence locus via first and last couple of base pairs
-                seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(int(kmer) - 1)] + seq[(len(seq) - int(kmer) + 1):], G]
+                seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(int(kmer) - 1)] + seq[(len(seq) - int(kmer) + 1):]]
 
                 # update frag61 and frag62
                 if int(id[1]) == ak: frag61 += 1
