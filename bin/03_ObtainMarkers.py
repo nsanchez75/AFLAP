@@ -21,9 +21,11 @@ def abyss_assembly(k:int, G:str, LO:int, UP:int, kmer:int, abyss_file:str, fafil
         print(f"ABySS files for {G} detected. Skipping...")
     # run abyss otherwise
     else:
-        print(f"\tRunning ABySS with -k set to {k}...\n")
+        frep = open(f"AFLAP_tmp/03/ReportLogs/{G}_abyss_report.txt", 'w+')
+        frep.write(f"Running ABySS with -k set to {k}...\n")
         subprocess.run(args=f"ABYSS -k {k} -c 0 -e 0 {fafile} -o AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_abyss.fa",
-                    shell=True)
+                    shell=True, stdout=frep)
+        frep.close()
         # check if abyss ran properly
         if not os.path.exists(abyss_file):
             exit(f"An error occurred: ABySS did not create {abyss_file}.")
@@ -37,8 +39,9 @@ def get_markers(G_info:tuple, kmer:int)->None:
 
     print(f"Performing marker assembly on {G}...")
 
-    # initialize marker stats report variables
-    ml_count = frag_count = frag61 = frag62 = mar_count = mar61 = mar62 = 0
+    # initialize stats report variables
+    ml_count = fragment_count = fragments_eq_ak = fragments_over_ak \
+        = marker_count = markers_eq_ak = markers_over_ak = 0
 
     # copy .fa file
     fafile_02 = f"AFLAP_tmp/02/{G}_m{kmer}_L{LO}_U{UP}.fa"
@@ -57,7 +60,6 @@ def get_markers(G_info:tuple, kmer:int)->None:
             exit(f"An error occurred: {opfile} not found. Rerun 01_JELLYFISH.py.")
 
         # filter and overwrite .fa file
-        print(f"\tFiltering and overwriting {fafile_03}...")
         jf_out = subprocess.run(args=f"jellyfish query -s {fafile_03} {opfile}",
                                 shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
         with open(f"{fafile_03}", 'w') as ffa:
@@ -70,8 +72,6 @@ def get_markers(G_info:tuple, kmer:int)->None:
                     ffa.write(f">{ml_count}\n{line[0]}\n")
                     ml_count += 1
 
-            print(f"\t{ml_count} {G} {kmer}-mers remain after filtering against {op}.")
-
     # perform ABySS assembly
     if   int(kmer) == 31: k = 25
     elif int(kmer) == 25: k = 19
@@ -79,8 +79,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
     abyss_file = f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_abyss.fa"
     abyss_assembly(k, G, LO, UP, kmer, abyss_file, fafile_03)
 
-    # extract subsequences
-    print("\tExtracting subsequences...")
+    # extract fragments/subsequences
     abyss_subseq_file = f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_abyss_subseqs.fa"
     with open(abyss_file, 'r') as fab, open(abyss_subseq_file, 'w') as fabsub:
         while True:
@@ -88,31 +87,26 @@ def get_markers(G_info:tuple, kmer:int)->None:
             seq = fab.readline().strip()
             if not id or not seq: break
 
-            # increment frag stats
-            frag_count += 1
+            fragment_count += 1
 
             # analyze sequence if passes against ak
             id = id.replace('>', '').split()
             if int(id[1]) >= ak:
+                if int(id[1]) == ak: fragments_eq_ak += 1
+                else: fragments_over_ak += 1
+
                 # get id
                 fabsub.write(f">{id[0]}_{id[1]}\n")
-
                 # get subsequence and its reverse complement
                 subseq = seq[9:(9 + int(kmer))]
                 rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
                 # choose subsequence by first alphabetically
                 if subseq > rc_subseq: subseq = rc_subseq
                 fabsub.write(f"{subseq}\n")
-
                 # get sequence locus via first and last couple of base pairs
                 seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(int(kmer) - 1)] + seq[(len(seq) - int(kmer) + 1):]]
 
-                # update frag61 and frag62
-                if int(id[1]) == ak: frag61 += 1
-                else: frag62 += 1
-
     # refilter against self
-    print("\tRefiltering against self...")
     jf_cmd = f"jellyfish query -s {abyss_subseq_file} AFLAP_tmp/01/F0Count/{G}.jf{kmer}"
     jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
     jfqfile = f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}_jf_query.fa"
@@ -126,7 +120,6 @@ def get_markers(G_info:tuple, kmer:int)->None:
                 i += 1
 
     # refilter against other parents
-    print("\tRefiltering against other parents...")
     for op in P0.split():
         op = op.strip()
 
@@ -142,47 +135,45 @@ def get_markers(G_info:tuple, kmer:int)->None:
                     fjq.write(f">{i}\n{line[0]}\n")
                     i += 1
 
-    # create final marker
-    print("\tCreating final marker...")
+    # create final marker file
     with open(abyss_subseq_file, 'r') as fabsub, open(jfqfile, 'r') as fjq, open(f"AFLAP_tmp/03/F0Markers/{G}_m{kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'w') as fmark:
-        # create set of sequences from jf_query file
+        # identify markers from jf_query
         fjq_set = set()
         for line in fjq:
             if line.startswith('>'): continue
             fjq_set.add(line.strip())
 
+        # add fabsub markers found in jf_query to final marker file
         while True:
             head = fabsub.readline().strip()
-            if not head: break
-
-            # add sequence to markers file if found in jf_query file
             seq = fabsub.readline().strip()
-            if seq in fjq_set:
-                fmark.write(f"{head}\n{seq}\n")
+            if not head or not seq: break
+            if seq not in fjq_set: continue
 
-                # update stats
-                mar_count += 1
-                head = head.split('_')
-                if int(head[1]) == ak:
-                    mar61 += 1
-                elif int(head[1]) > ak:
-                    mar62 += 1
+            marker_count += 1
+            head = head.split('_')
+            if int(head[1]) == ak:
+                markers_eq_ak += 1
+            elif int(head[1]) > ak:
+                markers_over_ak += 1
+
+            fmark.write(f"{head}\n{seq}\n")
 
     stats = f"Report for {G}:\n" + \
             f"\tNumber of {kmer}-mers input into assembly:      {ml_count}\n" + \
-            f"\tNumber of fragments assembled:                  {frag_count}\n" + \
-            f"\tNumber of fragments == {ak} bp:                 {frag61}\n" + \
-            f"\tNumber of fragments > {ak} bp:                  {frag62}\n" + \
-            f"\tNumber of markers after refiltering:            {mar_count}\n" + \
-            f"\tNumber of markers == {ak} bp:                   {mar61}\n" + \
-            f"\tNumber of markers > {ak} bp:                    {mar62}\n"
+            f"\tNumber of fragments assembled:                  {fragment_count}\n" + \
+            f"\tNumber of fragments == {ak} bp:                 {fragments_eq_ak}\n" + \
+            f"\tNumber of fragments > {ak} bp:                  {fragments_over_ak}\n" + \
+            f"\tNumber of markers after refiltering:            {marker_count}\n" + \
+            f"\tNumber of markers == {ak} bp:                   {markers_eq_ak}\n" + \
+            f"\tNumber of markers > {ak} bp:                    {markers_over_ak}\n"
 
     # print and write stats to parent's MarkerReport.txt
     print(stats)
     with open(f"{G}.MarkerReport.txt", 'w') as f: f.write(stats)
 
     # convert seq_groups dataframe to txt file
-    seq_groups.to_csv(f"AFLAP_tmp/04/SimGroups/{G}_locus_seqs.txt", sep='\t', index=False)
+    seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{G}_locus_seqs.txt", sep='\t', index=False)
 
 
 if __name__ == "__main__":
@@ -192,6 +183,7 @@ if __name__ == "__main__":
 
     # make directories
     os.makedirs("AFLAP_tmp/03/F0Markers", exist_ok=True)
+    os.makedirs("AFLAP_tmp/03/ReportLogs", exist_ok=True)
     os.makedirs("AFLAP_tmp/03/SimGroups", exist_ok=True)
 
     # assemble for markers for parents whose bounds are identified
