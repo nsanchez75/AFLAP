@@ -42,7 +42,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
 
     # copy .fa file
     fafile_02 = f"AFLAP_tmp/02/F0Histo/{G}_m{kmer}_L{LO}_U{UP}.fa"
-    fafile_03 = f"{fafile_03}"
+    fafile_03 = f"AFLAP_tmp/03/{G}_m{kmer}_L{LO}_U{UP}.fa"
     if not os.path.exists(fafile_02):
         exit(f"An error occurred: {fafile_02} not found. Rerun 02_ExtractSingleCopyMers.py.")
     shutil.copy(fafile_02, fafile_03)
