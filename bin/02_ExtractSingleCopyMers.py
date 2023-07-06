@@ -79,4 +79,5 @@ if __name__ == "__main__":
             # check if histogram had been built
             if not os.path.exists(png_file) or not os.path.getsize(png_file):
                 exit(f"An error occurred: {png_file} not found.")
+
             print(f"\tHistogram for {G} constructed.")
