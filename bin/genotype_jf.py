@@ -32,12 +32,13 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
                 sys.exit(1)
 
             # create counts of progeny
-            if os.path.exists(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
+            count_file = f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
+            if os.path.exists(count_file) and os.path.getsize(count_file):
                 print(f"\t\t\tCount for {h} detected. Skipping")
             else:
                 jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
                 jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as f:
+                with open(count_file, 'w') as f:
                     for line in jf_out:
                         # disregard empty lines FIXME: determine why this happens
                         if not len(line): continue
@@ -45,10 +46,11 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
                 print(f"\t\t\tCount for {h} created.")
 
             # create calls of progeny
-            if os.path.exists(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"):
+            call_file = f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
+            if os.path.exists(call_file) and os.path.getsize(call_file):
                 print(f"\t\t\tCall for {h} detected. Skipping.")
             else:
-                with open(f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'r') as fcount, open(f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt", 'w') as fcall:
+                with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
                     for line in fcount:
                         line = line.strip().split()
 
