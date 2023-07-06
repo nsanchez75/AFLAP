@@ -13,14 +13,10 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
 
     # run jellyfish count on each individual
     for ind in ped_df['Individual'].unique():
-        # check if individual's count exists
-        if os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-            if not os.path.getsize(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
-                exit(f"An error occurred: AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} is empty. " +
-                     f"Delete it and restart.")
+        jc_file = f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"
+        if os.path.exists(jc_file) and os.path.getsize(jc_file):
             print(f"\tHash detected for {ind}. Skipping.")
             continue
-
         print(f"\tRunning jellyfish count for {ind}...")
         ind_df = ped_df.where(ped_df['Individual'] == ind).dropna()
 
@@ -32,12 +28,10 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
             jfin.append(file)
         jfin = ' '.join(jfin)
 
-        # run jellyfish count
-        cmd = f"jellyfish count -m {kmer} -C -s 1G -t {threads} -o AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} <(zcat {jfin})"
-        subprocess.run(cmd, shell=True, executable="/bin/bash")
-
+        subprocess.run(args=f"jellyfish count -m {kmer} -C -s 1G -t {threads} -o AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} <(zcat {jfin})",
+                       shell=True, executable="/bin/bash")
         # check if jellyfish worked
-        if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"):
+        if not os.path.exists(jc_file) or not os.path.getsize(jc_file):
             exit(f"An error occurred: Jellyfish for {ind} did not complete.")
         print(f"\tHash for {ind} performed.")
 
