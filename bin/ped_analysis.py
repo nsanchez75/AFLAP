@@ -39,7 +39,7 @@ def pedigree_analysis(pedigree: str)->None:
     print(ped_df)
     if not ped_df.loc[~ped_df["Generation"].astype(int).isin([0, 1, 2])].empty:
         exit("An error occurred: Individuals found with invalid generation type.")
-    parents = ped_df.loc[ped_df["Generation"].astype(int) == 0]
+    parents = ped_df.loc[ped_df["Generation"].astype(int) == 0].rename(columns={"MP": "LB", "FP": "UB"})
     f1_progs = ped_df.loc[ped_df["Generation"].astype(int) == 1]
     f2_progs = ped_df.loc[ped_df["Generation"].astype(int) == 2]
 
@@ -47,6 +47,13 @@ def pedigree_analysis(pedigree: str)->None:
     parents = parents.sort_values(by="Individual")
     f1_progs = f1_progs.sort_values(by="Individual")
     f2_progs = f2_progs.sort_values(by="Individual")
+
+    # check if same individual does not have different parents
+    for df in {f1_progs, f2_progs}:
+        for ind in df["Individual"].unique():
+            if df[df["Individual"] == ind]["MP"].unique().size != 1 or \
+               df[df["Individual"] == ind]["FP"].unique().size != 1:
+                exit("An error occurred: More than one parent detected for an individual.")
 
     # initialize variables
     p_list = parents["Individual"].unique()
@@ -65,9 +72,9 @@ def pedigree_analysis(pedigree: str)->None:
     write_cross(f2_progs, 2, p_list)
 
     # create categorized pedigree files
-    parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=None, index=False)
-    f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=None, index=False)
-    f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=None, index=False)
+    parents.to_csv("AFLAP_tmp/Pedigree_F0.txt", sep='\t', header=True, index=False)
+    f1_progs.to_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=True, index=False)
+    f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=True, index=False)
 
     # perform LA analysis
     checked_parents = set()

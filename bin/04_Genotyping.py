@@ -14,22 +14,15 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     # declare which F type is being worked on
     print(f"\tWorking on {f_type}...")
 
-    # define list variable
-    h_list = []
-
     # add progeny of parent to list
     ped_file = f"AFLAP_tmp/Pedigree_{f_type}.txt"
     if not os.path.exists(ped_file):
         exit(f"An error occurred: {ped_file} not found. Rerun AFLAP.py")
 
-    with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
-        prog_set = set()
-        for prog in f:
-            prog = prog.strip().split()
-
-            if parent in {prog[3], prog[4]} and prog[0] not in prog_set:
-                h_list.append(prog[0])
-                prog_set.add(prog[0])
+    ped_df = pd.read_csv(ped_file, sep='\t', header=True)
+    # TODO: if this works then refactor all '.loc' stuff
+    prog_df = ped_df[(ped_df["MP"] == parent) | (ped_df["FP"] == parent)]
+    h_list = prog_df["Individual"].unique().to_list()
 
     # check if any progeny found
     if not len(h_list):
@@ -50,7 +43,6 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
             jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
             with open(count_file, 'w') as f:
                 for line in jf_out:
-                    # disregard empty lines FIXME: determine why this happens
                     if not len(line): continue
                     f.write(f"{line}\n")
             print(f"\t\t\tCount for {h} created.")

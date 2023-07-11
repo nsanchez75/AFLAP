@@ -8,8 +8,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
         return
     print(f"Performing jellyfish {f_type} count:")
 
-    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t',
-                         names=['Individual', 'Generation', 'File', 'LB', 'UB'])
+    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t', header=True, index=False)
 
     # run jellyfish count on each individual
     for ind in ped_df['Individual'].unique():

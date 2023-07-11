@@ -47,26 +47,35 @@ if __name__ == "__main__":
                         break
 
                 data =  [["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
-                        ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
-                        ["CHR", "POS", '0'                                       , '0'                                       ],
-                        ["CHR", "POS", '0'                                       , '0'                                       ],
-                        ["CHR", "POS", '1'                                       , '2'                                       ],
-                        ["CHR", "POS", '0'                                       , '0'                                       ]]
-
+                         ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
+                         ["CHR", "POS", '0'                                       , '0'                                       ],
+                         ["CHR", "POS", '0'                                       , '0'                                       ],
+                         ["CHR", "POS", '1'                                       , '2'                                       ],
+                         ["CHR", "POS", '0'                                       , '0'                                       ]]
                 df = pd.DataFrame(data)
 
+                f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=True)
+                f1_progs = f1_progs_df["Individual"].unique().to_list()
+                for f1_prog in f1_progs:
+                    if not f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].any(): continue
+
+                    added_data = [f"{sex_dict['male']}x{sex_dict['female']}", f1_prog,
+                                     sex_dict['male'], sex_dict['female'], '0', '0']
+                    df.insert(len(df.columns), len(df.columns), added_data)
+
                 # put all F1 progeny of parent G into data header
-                with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
-                    p1_set = set()
-                    for p1 in fprog1:
-                        p1 = p1.strip().split()
+                # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
+                #     p1_set = set()
+                #     fprog1.readline()   # TODO: delete later after finished refactoring to implement df
+                #     for p1 in fprog1:
+                #         p1 = p1.strip().split()
 
-                        if G in (p1[3], p1[4]) and p1[0] not in p1_set:
-                            added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
-                                            sex_dict['male'], sex_dict['female'], '0', '0']
-                            df.insert(len(df.columns), len(df.columns), added_data)
+                #         if G in (p1[3], p1[4]) and p1[0] not in p1_set:
+                #             added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
+                #                             sex_dict['male'], sex_dict['female'], '0', '0']
+                #             df.insert(len(df.columns), len(df.columns), added_data)
 
-                        p1_set.add(p1[0])
+                #         p1_set.add(p1[0])
 
                 # add rows from filtered tsv file to df
                 if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
@@ -74,7 +83,7 @@ if __name__ == "__main__":
                 ftsv = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t')
                 ftsv.insert(0, "MarkerLoc", ftsv["MarkerID"].astype(str) + '_' + ftsv["MarkerLength"].astype(str))
                 ftsv = ftsv.drop(["MarkerID", "MarkerLength"], axis=1)
-                
+
                 with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
                     for cross in fcrosses:
                         cross = cross.strip().split()
@@ -87,7 +96,7 @@ if __name__ == "__main__":
                         else:
                             continue
                         break
-        
+
                 ftsv = ftsv.replace([0, 1], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0'], regex=True)
                 ## set columns of ftsv DataFrame to match df's column names
                 ftsv = ftsv.set_axis(list(df.columns), axis=1)

@@ -73,69 +73,112 @@ if __name__ == "__main__":
             mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
 
             # perform analysis on progeny of G
-            with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
-                f1_prog_set = set()
-                for f1_prog in ff1:
-                    f1_prog = f1_prog.strip().split()
-                    # skip over if f1_prog encountered already
-                    if f1_prog[0] in f1_prog_set: continue
-                    f1_prog_set.add(f1_prog[0])
+            f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t', header=True)
+            f1_progs = f1_progs_df["Individual"].unique().to_list()
+            for f1_prog in f1_progs:
+                if not f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].any(): continue
+                if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
+                    exit(f"An error occurred: Count for {f1_prog} could not be found. Rerun 04_Genotyping.py.")
 
-                    if G in {f1_prog[3], f1_prog[4]}:
-                        # check if call for F1 progeny exists
-                        if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
-                            exit(f"An error occurred: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
+                # find individual marker count
+                call_df = pd.read_csv(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", header=None, names=["Call"], dtype=int)
+                marker_count = call_df["Call"].sum()
 
-                        # initialize variables
-                        m_count = 0
-                        cov = 0
+                # find individual coverage value
+                coverage = 0
+                count_df = pd.read_csv(f"AFLAP_tmp/04/Count/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", sep=' ', header=None, names=["Sequence", "Count"])
+                c_dict = count_df.groupby("Count").value_counts(dropna=True, sort=True).to_frame()["Count"].to_dict()
+                del c_dict[0]   # remove 0 from dictionary
+                ## find most frequent  count
+                max = -math.inf
+                for c in c_dict:
+                    if c_dict[c] > max:
+                        max = c_dict[c]
+                        coverage = c
 
-                        # determine m_count based on F1 progeny's call file
-                        with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcall:
-                            for call in fpcall:
-                                m_count += int(call.strip())
+                # confirm if cov's peak is 1
+                if coverage == 1:
+                    not1 = is1 = 0
+                    for c in c_dict:
+                        if c == 1: is1 = c_dict[c]
+                        if c > 5:  not1 += c_dict[c]
+                        else: del c_dict[c]
 
-                        # determine cov based on F1 progeny's count file
-                        with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcount:
-                            c_dict = dict()
-                            for count in fpcount:
-                                if not len(count.strip()): continue     # skip empty lines
-                                cval = int(count.strip().split()[1])
+                    if not1 > is1:
+                        del c_dict[1]
+                        # find most frequent count again
+                        max = -math.inf
+                        for c in c_dict:
+                            if c_dict[c] > max:
+                                max = c_dict[c]
+                                coverage = c
 
-                                if cval not in c_dict: c_dict[cval] = 1
-                                else: c_dict[cval] += 1
+                mc_df.loc[len(mc_df.index)] = [f1_prog, marker_count, coverage]
 
-                            # delete 0 from c_dict
-                            del c_dict[0]
+            # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
+            #     f1_prog_set = set()
+            #     ff1.readline()  # TODO: delete later when finished with df refactoring
+            #     for f1_prog in ff1:
+            #         f1_prog = f1_prog.strip().split()
+            #         # skip over if f1_prog encountered already
+            #         if f1_prog[0] in f1_prog_set: continue
+            #         f1_prog_set.add(f1_prog[0])
 
-                            # find most frequent count
-                            max = -math.inf
-                            for c in c_dict:
-                                if c_dict[c] > max:
-                                    max = c_dict[c]
-                                    cov = c
+            #         if G in {f1_prog[3], f1_prog[4]}:
+            #             # check if call for F1 progeny exists
+            #             if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
+            #                 exit(f"An error occurred: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
 
-                            # confirm if cov's peak is 1
-                            if cov == 1:
-                                not1 = 0
-                                is1 = 0
-                                for c in c_dict:
-                                    if c == 1: is1 = c_dict[c]
-                                    if c > 5:  not1 += c_dict[c]
+            #             # initialize variables
+            #             m_count = 0
+            #             cov = 0
 
-                                # remove data for coverage counts 1 - 5
-                                if not1 > is1:
-                                    for i in range(1, 6):
-                                        del c_dict[i]
+            #             # determine m_count based on F1 progeny's call file
+            #             with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcall:
+            #                 for call in fpcall:
+            #                     m_count += int(call.strip())
 
-                                    # find most frequent count again
-                                    max = -math.inf
-                                    for c in c_dict:
-                                        if c_dict[c] > max:
-                                            max = c_dict[c]
-                                            cov = c
+            #             # determine cov based on F1 progeny's count file
+            #             with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcount:
+            #                 c_dict = dict()
+            #                 for count in fpcount:
+            #                     if not len(count.strip()): continue     # skip empty lines
+            #                     cval = int(count.strip().split()[1])
 
-                        mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
+            #                     if cval not in c_dict: c_dict[cval] = 1
+            #                     else: c_dict[cval] += 1
+
+            #                 # delete 0 from c_dict
+            #                 del c_dict[0]
+
+            #                 # find most frequent count
+            #                 max = -math.inf
+            #                 for c in c_dict:
+            #                     if c_dict[c] > max:
+            #                         max = c_dict[c]
+            #                         cov = c
+
+            #                 # confirm if cov's peak is 1
+            #                 if cov == 1:
+            #                     not1 = 0
+            #                     is1 = 0
+            #                     for c in c_dict:
+            #                         if c == 1: is1 = c_dict[c]
+            #                         if c > 5:  not1 += c_dict[c]
+
+            #                     # remove data for coverage counts 1 - 5
+            #                     if not1 > is1:
+            #                         for i in range(1, 6):
+            #                             del c_dict[i]
+
+            #                         # find most frequent count again
+            #                         max = -math.inf
+            #                         for c in c_dict:
+            #                             if c_dict[c] > max:
+            #                                 max = c_dict[c]
+            #                                 cov = c
+
+            #             mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
 
             # plot k-mer coverage and marker count
             plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
