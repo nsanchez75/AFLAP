@@ -77,26 +77,45 @@ def pedigree_analysis(pedigree: str)->None:
     f2_progs.to_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t', header=True, index=False)
 
     # perform LA analysis
-    checked_parents = set()
-    with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
-            open("AFLAP_tmp/LA.txt", 'w') as fla,       \
-            open("AFLAP_tmp/noLA.txt", 'w') as fnola:
+    with open("AFLAP_tmp/LA.txt", 'w') as fla, open("AFLAP_tmp/noLA.txt", 'w') as fnola:
+        for parent in parents["Individual"].unique():
+            parent_df = parents[parents["Individual"] == parent]
+            if parent_df["LB"].unique().size != 1:
+                exit(f"An error occurred: There must be only one lower bound for {parent}.")
+            if parent_df["UB"].unique().size != 1:
+                exit(f"An error occurred: There must be only one upper bound for {parent}.")
 
-        for line in fin:
-            line = line.strip().split()
-            if line[0] not in checked_parents:
-                if "NA" in (line[3], line[4]):
-                    fnola.write(f"{line[0]}\n")
-                    checked_parents.add(line[0])
-                elif [isinstance(x, int) for x in [line[3], line[4]]]:
-                    if int(line[3]) > int(line[4]):
-                        print(f"{line[3]} | {line[4]}")
-                        exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
+            lower_bound = parent_df["LB"].unique()[0]
+            upper_bound = parent_df["UB"].unique()[0]
+            if "NA" in (lower_bound, upper_bound):
+                fnola.write(f"{parent}\n")
+            elif [isinstance(x, int) for x in [lower_bound, upper_bound]]:
+                if int(lower_bound) > int(upper_bound):
+                    exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
+                fla.write(f"{parent}\t{lower_bound}\t{upper_bound}\n")
+            else:
+                exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
 
-                    # write {parent} {lower bound} {upper bound} to LA.txt
-                    fla.write(f"{line[0]}\t{line[3]}\t{line[4]}\n")
-                    checked_parents.add(line[0])
-                else:
-                    exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
+    # checked_parents = set()
+    # with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
+    #         open("AFLAP_tmp/LA.txt", 'w') as fla,       \
+    #         open("AFLAP_tmp/noLA.txt", 'w') as fnola:
+
+    #     for line in fin:
+    #         line = line.strip().split()
+    #         if line[0] not in checked_parents:
+    #             if "NA" in (line[3], line[4]):
+    #                 fnola.write(f"{line[0]}\n")
+    #                 checked_parents.add(line[0])
+    #             elif [isinstance(x, int) for x in [line[3], line[4]]]:
+    #                 if int(line[3]) > int(line[4]):
+    #                     print(f"{line[3]} | {line[4]}")
+    #                     exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
+
+    #                 # write {parent} {lower bound} {upper bound} to LA.txt
+    #                 fla.write(f"{line[0]}\t{line[3]}\t{line[4]}\n")
+    #                 checked_parents.add(line[0])
+    #             else:
+    #                 exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
 
     print("Finished pedigree file analysis.")
