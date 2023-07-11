@@ -8,6 +8,8 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
         return
     print(f"Performing jellyfish {f_type} count:")
 
+    print("current directory:", os.path.curdir)
+
     ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t', header=True, index=False)
 
     # run jellyfish count on each individual
@@ -17,7 +19,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
             print(f"\tHash detected for {ind}. Skipping.")
             continue
         print(f"\tRunning jellyfish count for {ind}...")
-        ind_df = ped_df.where(ped_df['Individual'] == ind).dropna()
+        ind_df = ped_df[ped_df['Individual'] == ind].dropna()
 
         # get files to pass into jellyfish count
         jfin = list()
