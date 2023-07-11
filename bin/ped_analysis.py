@@ -96,26 +96,4 @@ def pedigree_analysis(pedigree: str)->None:
             else:
                 exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
 
-    # checked_parents = set()
-    # with open("AFLAP_tmp/Pedigree_F0.txt", 'r') as fin, \
-    #         open("AFLAP_tmp/LA.txt", 'w') as fla,       \
-    #         open("AFLAP_tmp/noLA.txt", 'w') as fnola:
-
-    #     for line in fin:
-    #         line = line.strip().split()
-    #         if line[0] not in checked_parents:
-    #             if "NA" in (line[3], line[4]):
-    #                 fnola.write(f"{line[0]}\n")
-    #                 checked_parents.add(line[0])
-    #             elif [isinstance(x, int) for x in [line[3], line[4]]]:
-    #                 if int(line[3]) > int(line[4]):
-    #                     print(f"{line[3]} | {line[4]}")
-    #                     exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
-
-    #                 # write {parent} {lower bound} {upper bound} to LA.txt
-    #                 fla.write(f"{line[0]}\t{line[3]}\t{line[4]}\n")
-    #                 checked_parents.add(line[0])
-    #             else:
-    #                 exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
-
     print("Finished pedigree file analysis.")
