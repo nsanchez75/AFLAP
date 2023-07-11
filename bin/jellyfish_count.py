@@ -19,11 +19,11 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
             print(f"\tHash detected for {ind}. Skipping.")
             continue
         print(f"\tRunning jellyfish count for {ind}...")
-        ind_df = ped_df[ped_df['Individual'] == ind].dropna()
+        ind_df = ped_df[ped_df["Individual"] == ind].dropna()
 
         # get files to pass into jellyfish count
         jfin = list()
-        for file in ind_df['File'].unique():
+        for file in ind_df["Path"].unique():
             if not os.path.exists(file):
                 exit(f"An error occurred: {file} for {ind} not found.")
             jfin.append(file)
