@@ -57,22 +57,16 @@ if __name__ == "__main__":
             ## get frequencies (sum of calls / number of progeny)
             tsv["Frequency"] = tsv.iloc[:, 3:].sum(axis=1).div(num_progs)
 
-            ## MarkerAll
-            mal = get_count_frequency(tsv)
-            ## MarkerEquals
-            meq = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
-            meq = get_count_frequency(meq)
-            ## MarkerOver
-            mov = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
-            mov = get_count_frequency(mov)
+            marker_all = get_count_frequency(tsv)
+            marker_equals = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
+            marker_equals = get_count_frequency(marker_equals)
+            marker_over = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
+            marker_over = get_count_frequency(marker_over)
 
-            # get segment statistics
-            get_seg_stats(mal, meq, mov, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
-
-            # initialize dataframe of marker counts
-            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
+            get_seg_stats(marker_all, marker_equals, marker_over, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
 
             # perform analysis on progeny of G
+            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
             f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
             f1_progs = f1_progs_df["Individual"].unique().to_list()
             for f1_prog in f1_progs:
