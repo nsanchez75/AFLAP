@@ -27,14 +27,10 @@ def jellyfish_count(kmer:str, threads:str, f_type:str, ped_df:pd.DataFrame)->Non
 
         # get files to pass into jellyfish count
         jfin = list()
-        for file in ind_df["Path"].unique():
-            file = os.getcwd() + '/' + file
-            print(file)
-            # print("current path: " + os.getcwd()) # FIXME: get current path
-            # print("the path " + file + ' exists? -> ' + str(os.path.exists(file)))
-            if not os.path.exists(file):
-                exit(f"An error occurred: {file} for {ind} not found. Make sure that your files' root path is in your current directory.")
-            jfin.append(file)
+        for path in ind_df["Path"].unique():
+            if not os.path.exists(path):
+                exit(f"An error occurred: {path} for {ind} not found. Make sure that your files' root path is in your current directory.")
+            jfin.append(path)
         jfin = ' '.join(jfin)
 
         subprocess.run(args=f"jellyfish count -m {kmer} -C -s 1G -t {threads} -o AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer} <(zcat {jfin})",
