@@ -49,7 +49,7 @@ def pedigree_analysis(pedigree: str)->None:
     f2_progs = f2_progs.sort_values(by="Individual")
 
     # check if same individual does not have different parents
-    for df in {f1_progs, f2_progs}:
+    for df in [f1_progs, f2_progs]:
         for ind in df["Individual"].unique():
             if df[df["Individual"] == ind]["MP"].unique().size != 1 or \
                df[df["Individual"] == ind]["FP"].unique().size != 1:
