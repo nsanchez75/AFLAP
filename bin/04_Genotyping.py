@@ -19,7 +19,7 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     if not os.path.exists(ped_file):
         exit(f"An error occurred: {ped_file} not found. Rerun AFLAP.py")
 
-    ped_df = pd.read_csv(ped_file, sep='\t', header=True)
+    ped_df = pd.read_csv(ped_file, sep='\t')
     # TODO: if this works then refactor all '.loc' stuff
     prog_df = ped_df[(ped_df["MP"] == parent) | (ped_df["FP"] == parent)]
     h_list = prog_df["Individual"].unique().to_list()
