@@ -10,14 +10,13 @@ import subprocess
 #	The script will detect previous results and used them when able.
 ###########################################################
 
-def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
+def jellyfish_count(kmer:str, threads:str, f_type:str, ped_df:pd.DataFrame)->None:
     if not os.path.getsize(f"AFLAP_tmp/Pedigree_{f_type}.txt"):
         print(f"No {f_type} individuals detected.")
         return
     print(f"Performing jellyfish {f_type} count:")
 
     # run jellyfish count on each individual
-    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t')
     for ind in ped_df['Individual'].unique():
         jc_file = f"AFLAP_tmp/01/{f_type}Count/{ind}.jf{kmer}"
         if os.path.exists(jc_file) and os.path.getsize(jc_file):
@@ -29,6 +28,7 @@ def jellyfish_count(kmer:str, threads:str, f_type:str)->None:
         # get files to pass into jellyfish count
         jfin = list()
         for file in ind_df["Path"].unique():
+            os.getcwd() # FIXME: get current path
             if not os.path.exists(file):
                 exit(f"An error occurred: {file} for {ind} not found.")
             jfin.append(file)
@@ -56,8 +56,11 @@ if __name__ == "__main__":
 
     # perform jellyfish counting
     ## parents
-    jellyfish_count(args.kmer, args.threads, "F0")
+    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_F0.txt", sep='\t')
+    jellyfish_count(args.kmer, args.threads, "F0", ped_df)
     ## F1 progeny
-    jellyfish_count(args.kmer, args.threads, "F1")
+    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_F1.txt", sep='\t')
+    jellyfish_count(args.kmer, args.threads, "F1", ped_df)
     ## F2 progeny
-    jellyfish_count(args.kmer, args.threads, "F2")
+    ped_df = pd.read_csv(f"AFLAP_tmp/Pedigree_F2.txt", sep='\t')
+    jellyfish_count(args.kmer, args.threads, "F2", ped_df)
