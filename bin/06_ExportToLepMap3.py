@@ -57,7 +57,7 @@ if __name__ == "__main__":
                 f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
                 f1_progs = f1_progs_df["Individual"].unique().tolist()
                 for f1_prog in f1_progs:
-                    if not f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].any(): continue
+                    if f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].empty: continue
 
                     added_data = [f"{sex_dict['male']}x{sex_dict['female']}", f1_prog,
                                      sex_dict['male'], sex_dict['female'], '0', '0']

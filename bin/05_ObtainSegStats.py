@@ -33,168 +33,163 @@ if __name__ == "__main__":
     ak = 2 * int(args.kmer) - 1
 
     # analyze all parents whom we can create a genetic map for
-    try:
-        print("Performing segment statistics analysis...")
-        list_of_Gs = get_LA_info()
-        for G_info in list_of_Gs:
-            G, LO, UP, P0 = G_info
+    print("Performing segment statistics analysis...")
+    list_of_Gs = get_LA_info()
+    for G_info in list_of_Gs:
+        G, LO, UP, P0 = G_info
 
-            # check for num progs of G
-            num_progs = 0
-            with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-                for cross in fcrosses:
-                    cross = cross.strip().split()
+        # check for num progs of G
+        num_progs = 0
+        with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
+            for cross in fcrosses:
+                cross = cross.strip().split()
 
-                    if G in (cross[2], cross[3]):
-                        num_progs += int(cross[0])
-            if not num_progs: exit("An error occurred: Invalid number of progeny.")
+                if G in (cross[2], cross[3]):
+                    num_progs += int(cross[0])
+        if not num_progs: exit("An error occurred: Invalid number of progeny.")
 
-            print(f"\t\t{num_progs} Genotype calls for {G} detected. Summarizing...")
+        print(f"\t\t{num_progs} Genotype calls for {G} detected. Summarizing...")
 
-            # get marker stats
-            tsv = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t')
+        # get marker stats
+        tsv = pd.read_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t')
 
-            ## get frequencies (sum of calls / number of progeny)
-            tsv["Frequency"] = tsv.iloc[:, 3:].sum(axis=1).div(num_progs)
+        ## get frequencies (sum of calls / number of progeny)
+        tsv["Frequency"] = tsv.iloc[:, 3:].sum(axis=1).div(num_progs)
 
-            marker_all = get_count_frequency(tsv)
-            marker_equals = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
-            marker_equals = get_count_frequency(marker_equals)
-            marker_over = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
-            marker_over = get_count_frequency(marker_over)
+        marker_all = get_count_frequency(tsv)
+        marker_equals = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
+        marker_equals = get_count_frequency(marker_equals)
+        marker_over = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
+        marker_over = get_count_frequency(marker_over)
 
-            get_seg_stats(marker_all, marker_equals, marker_over, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
+        get_seg_stats(marker_all, marker_equals, marker_over, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
 
-            # perform analysis on progeny of G
-            mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
-            f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
-            f1_progs = f1_progs_df["Individual"].unique().tolist()
-            for f1_prog in f1_progs:
-                if not f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].any(): continue
-                if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
-                    exit(f"An error occurred: Count for {f1_prog} could not be found. Rerun 04_Genotyping.py.")
+        # perform analysis on progeny of G
+        mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
+        f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
+        f1_progs = f1_progs_df["Individual"].unique().tolist()
+        for f1_prog in f1_progs:
+            if f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].empty: continue
+            if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
+                exit(f"An error occurred: Count for {f1_prog} could not be found. Rerun 04_Genotyping.py.")
 
-                # find individual marker count
-                call_df = pd.read_csv(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", header=None, names=["Call"], dtype=int)
-                marker_count = call_df["Call"].sum()
+            # find individual marker count
+            call_df = pd.read_csv(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", header=None, names=["Call"], dtype=int)
+            marker_count = call_df["Call"].sum()
 
-                # find individual coverage value
-                coverage = 0
-                count_df = pd.read_csv(f"AFLAP_tmp/04/Count/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", sep=' ', header=None, names=["Sequence", "Count"])
-                c_dict = count_df.groupby("Count").value_counts(dropna=True, sort=True).to_frame()["Count"].to_dict()
-                del c_dict[0]   # remove 0 from dictionary
-                ## find most frequent  count
-                max = -math.inf
+            # find individual coverage value
+            coverage = 0
+            count_df = pd.read_csv(f"AFLAP_tmp/04/Count/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", sep=' ', header=None, names=["Sequence", "Count"])
+            c_dict = count_df.groupby("Count").value_counts(dropna=True, sort=True).to_frame()["Count"].to_dict()
+            del c_dict[0]   # remove 0 from dictionary
+            ## find most frequent  count
+            max = -math.inf
+            for c in c_dict:
+                if c_dict[c] > max:
+                    max = c_dict[c]
+                    coverage = c
+
+            # confirm if cov's peak is 1
+            if coverage == 1:
+                not1 = is1 = 0
                 for c in c_dict:
-                    if c_dict[c] > max:
-                        max = c_dict[c]
-                        coverage = c
+                    if c == 1: is1 = c_dict[c]
+                    if c > 5:  not1 += c_dict[c]
+                    else: del c_dict[c]
 
-                # confirm if cov's peak is 1
-                if coverage == 1:
-                    not1 = is1 = 0
+                if not1 > is1:
+                    del c_dict[1]
+                    # find most frequent count again
+                    max = -math.inf
                     for c in c_dict:
-                        if c == 1: is1 = c_dict[c]
-                        if c > 5:  not1 += c_dict[c]
-                        else: del c_dict[c]
+                        if c_dict[c] > max:
+                            max = c_dict[c]
+                            coverage = c
 
-                    if not1 > is1:
-                        del c_dict[1]
-                        # find most frequent count again
-                        max = -math.inf
-                        for c in c_dict:
-                            if c_dict[c] > max:
-                                max = c_dict[c]
-                                coverage = c
+            mc_df.loc[len(mc_df.index)] = [f1_prog, marker_count, coverage]
 
-                mc_df.loc[len(mc_df.index)] = [f1_prog, marker_count, coverage]
+        # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
+        #     f1_prog_set = set()
+        #     ff1.readline()  # TODO: delete later when finished with df refactoring
+        #     for f1_prog in ff1:
+        #         f1_prog = f1_prog.strip().split()
+        #         # skip over if f1_prog encountered already
+        #         if f1_prog[0] in f1_prog_set: continue
+        #         f1_prog_set.add(f1_prog[0])
 
-            # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as ff1:
-            #     f1_prog_set = set()
-            #     ff1.readline()  # TODO: delete later when finished with df refactoring
-            #     for f1_prog in ff1:
-            #         f1_prog = f1_prog.strip().split()
-            #         # skip over if f1_prog encountered already
-            #         if f1_prog[0] in f1_prog_set: continue
-            #         f1_prog_set.add(f1_prog[0])
+        #         if G in {f1_prog[3], f1_prog[4]}:
+        #             # check if call for F1 progeny exists
+        #             if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
+        #                 exit(f"An error occurred: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
 
-            #         if G in {f1_prog[3], f1_prog[4]}:
-            #             # check if call for F1 progeny exists
-            #             if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
-            #                 exit(f"An error occurred: Count for {f1_prog[0]} could not be found. Rerun 04_Genotyping.py.")
+        #             # initialize variables
+        #             m_count = 0
+        #             cov = 0
 
-            #             # initialize variables
-            #             m_count = 0
-            #             cov = 0
+        #             # determine m_count based on F1 progeny's call file
+        #             with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcall:
+        #                 for call in fpcall:
+        #                     m_count += int(call.strip())
 
-            #             # determine m_count based on F1 progeny's call file
-            #             with open(f"AFLAP_tmp/04/Call/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcall:
-            #                 for call in fpcall:
-            #                     m_count += int(call.strip())
+        #             # determine cov based on F1 progeny's count file
+        #             with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcount:
+        #                 c_dict = dict()
+        #                 for count in fpcount:
+        #                     if not len(count.strip()): continue     # skip empty lines
+        #                     cval = int(count.strip().split()[1])
 
-            #             # determine cov based on F1 progeny's count file
-            #             with open(f"AFLAP_tmp/04/Count/{f1_prog[0]}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fpcount:
-            #                 c_dict = dict()
-            #                 for count in fpcount:
-            #                     if not len(count.strip()): continue     # skip empty lines
-            #                     cval = int(count.strip().split()[1])
+        #                     if cval not in c_dict: c_dict[cval] = 1
+        #                     else: c_dict[cval] += 1
 
-            #                     if cval not in c_dict: c_dict[cval] = 1
-            #                     else: c_dict[cval] += 1
+        #                 # delete 0 from c_dict
+        #                 del c_dict[0]
 
-            #                 # delete 0 from c_dict
-            #                 del c_dict[0]
+        #                 # find most frequent count
+        #                 max = -math.inf
+        #                 for c in c_dict:
+        #                     if c_dict[c] > max:
+        #                         max = c_dict[c]
+        #                         cov = c
 
-            #                 # find most frequent count
-            #                 max = -math.inf
-            #                 for c in c_dict:
-            #                     if c_dict[c] > max:
-            #                         max = c_dict[c]
-            #                         cov = c
+        #                 # confirm if cov's peak is 1
+        #                 if cov == 1:
+        #                     not1 = 0
+        #                     is1 = 0
+        #                     for c in c_dict:
+        #                         if c == 1: is1 = c_dict[c]
+        #                         if c > 5:  not1 += c_dict[c]
 
-            #                 # confirm if cov's peak is 1
-            #                 if cov == 1:
-            #                     not1 = 0
-            #                     is1 = 0
-            #                     for c in c_dict:
-            #                         if c == 1: is1 = c_dict[c]
-            #                         if c > 5:  not1 += c_dict[c]
+        #                     # remove data for coverage counts 1 - 5
+        #                     if not1 > is1:
+        #                         for i in range(1, 6):
+        #                             del c_dict[i]
 
-            #                     # remove data for coverage counts 1 - 5
-            #                     if not1 > is1:
-            #                         for i in range(1, 6):
-            #                             del c_dict[i]
+        #                         # find most frequent count again
+        #                         max = -math.inf
+        #                         for c in c_dict:
+        #                             if c_dict[c] > max:
+        #                                 max = c_dict[c]
+        #                                 cov = c
 
-            #                         # find most frequent count again
-            #                         max = -math.inf
-            #                         for c in c_dict:
-            #                             if c_dict[c] > max:
-            #                                 max = c_dict[c]
-            #                                 cov = c
+        #             mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
 
-            #             mc_df.loc[len(mc_df.index)] = [f1_prog[0], m_count, cov]
+        # plot k-mer coverage and marker count
+        plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
 
-            # plot k-mer coverage and marker count
-            plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
+        if (not args.LOD == 2):
+            print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
+                f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
+                "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
 
-            if (not args.LOD == 2):
-                print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
-                    f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
-                    "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
+        # filter out progeny with coverage < LOD
+        low_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
+        for i in low_cov.index:
+            print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
 
-            # filter out progeny with coverage < LOD
-            low_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
-            for i in low_cov.index:
-                print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
+        # create filtered tsv file
+        tsv_filtered = tsv.loc[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
+        # remove Frequency column from tsv file
+        tsv_filtered = tsv_filtered.iloc[:, :-1]
+        tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
 
-            # create filtered tsv file
-            tsv_filtered = tsv.loc[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
-            # remove Frequency column from tsv file
-            tsv_filtered = tsv_filtered.iloc[:, :-1]
-            tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
-
-            print(f"\tFinished obtaining segment statistics for {G}.")
-
-    except Exception as e:
-        print(f"Error in 05_ObtainSegStats.py: {e}")
-        exit(1)
+        print(f"\tFinished obtaining segment statistics for {G}.")
