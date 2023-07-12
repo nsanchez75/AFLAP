@@ -22,7 +22,7 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     ped_df = pd.read_csv(ped_file, sep='\t')
     # TODO: if this works then refactor all '.loc' stuff
     prog_df = ped_df[(ped_df["MP"] == parent) | (ped_df["FP"] == parent)]
-    h_list = prog_df["Individual"].unique().to_list()
+    h_list = prog_df["Individual"].unique().tolist()
 
     # check if any progeny found
     if not len(h_list):

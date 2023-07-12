@@ -68,7 +68,7 @@ if __name__ == "__main__":
             # perform analysis on progeny of G
             mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
             f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
-            f1_progs = f1_progs_df["Individual"].unique().to_list()
+            f1_progs = f1_progs_df["Individual"].unique().tolist()
             for f1_prog in f1_progs:
                 if not f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].any(): continue
                 if not os.path.exists(f"AFLAP_tmp/04/Call/{f1_prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt"):
