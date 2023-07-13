@@ -21,14 +21,9 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
 
     ped_df = pd.read_csv(ped_file, sep='\t')
     # TODO: if this works then refactor all '.loc' stuff
-    print(ped_file)
-    print(ped_df)
     print(f"parent: {parent}")
     prog_df = ped_df[(ped_df["MP"].astype(str) == parent) | (ped_df["FP"].astype(str) == parent)]
-    print(prog_df)
     h_list = prog_df["Individual"].unique().tolist()
-
-    print(h_list)
 
     # check if any progeny found
     if not len(h_list):
@@ -101,6 +96,8 @@ if __name__ == "__main__":
         # run jellyfish on F1 and F2 individuals who descend from F0
         h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
         h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
+
+        print(h_list)
 
         # extract info from MARKERS file
         with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
