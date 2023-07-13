@@ -24,6 +24,8 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     prog_df = ped_df[(ped_df["MP"].astype(str) == parent) | (ped_df["FP"].astype(str) == parent)]
     h_list = prog_df["Individual"].unique().tolist()
 
+    print(h_list)
+
     # check if any progeny found
     if not len(h_list):
         print(f"\t\tNo progeny of {parent} found among given {f_type}.")
