@@ -21,6 +21,7 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
 
     ped_df = pd.read_csv(ped_file, sep='\t')
     # TODO: if this works then refactor all '.loc' stuff
+    print(ped_file)
     print(ped_df)
     print(f"parent: {parent}")
     prog_df = ped_df[(ped_df["MP"].astype(str) == parent) | (ped_df["FP"].astype(str) == parent)]
