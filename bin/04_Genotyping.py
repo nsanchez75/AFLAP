@@ -23,7 +23,7 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     # TODO: if this works then refactor all '.loc' stuff
     print(ped_df)
     print(parent)
-    prog_df = ped_df[(ped_df["MP"] == parent) | (ped_df["FP"] == parent)]
+    prog_df = ped_df[(ped_df["MP"].astype(str) == parent) | (ped_df["FP"].astype(str) == parent)]
     print(prog_df)
     h_list = prog_df["Individual"].unique().tolist()
 
