@@ -97,8 +97,6 @@ if __name__ == "__main__":
         h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
         h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
 
-        print(h_list)
-
         # extract info from MARKERS file
         with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
             head_list = []
@@ -124,6 +122,8 @@ if __name__ == "__main__":
                 b_vals = []
                 for b_val in fcall: b_vals.append(b_val.strip())
             data[h] = b_vals
+
+        print(data)
 
         matrix = pd.DataFrame(data=data)
 
