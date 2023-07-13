@@ -132,6 +132,8 @@ if __name__ == "__main__":
             if lg_df.empty: lg_df = lg_info
             else: lg_df = pd.concat([lg_df, lg_info])
 
+        print(type(markerid_df))
+        print(type(lg_df))
         joined_df = pd.merge(markerid_df, lg_df, on='RowIndex', how='inner')
 
         final_lod_file = joined_df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.txt", sep='\t', index=False)
