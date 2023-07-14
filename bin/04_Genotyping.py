@@ -69,9 +69,9 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
 
 
         count_file = f"AFLAP_tmp/04/Count/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        create_count(count_file, h, f_type, parent, kmer, lo, up, p0)
+        create_count(count_file, prog, f_type, parent, kmer, lo, up, p0)
         call_file = f"AFLAP_tmp/04/Call/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        create_call(call_file, count_file, h, int(LowCov))
+        create_call(call_file, count_file, prog, int(LowCov))
 
     return prog_list
 
