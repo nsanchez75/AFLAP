@@ -1,4 +1,5 @@
 import argparse
+import multiprocessing as mp
 import pandas as pd
 import os
 import subprocess
@@ -10,18 +11,45 @@ from get_LA_info import get_LA_info
 #	For optimal calls, a k-mer should be observed twice.
 #################################################
 
+def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:int, up:int, p0:str)->None:
+    if os.path.exists(count_file) and os.path.getsize(count_file):
+        print(f"\t\t\tCount for {prog} detected. Skipping")
+        return
+
+    jf_out = subprocess.run(f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}",
+                            shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
+    with open(count_file, 'w') as f:
+        for line in jf_out:
+            if len(line): f.write(f"{line}\n")
+
+    if not os.path.getsize(count_file):
+        exit(f"An error occurred: Count file for {prog} was not created properly.")
+    print(f"\t\t\tCount for {h} created.")
+
+def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
+    if os.path.exists(call_file) and os.path.getsize(call_file):
+        print(f"\t\t\tCall for {h} detected. Skipping.")
+        return
+
+    with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
+        for line in fcount:
+            line = line.strip().split()
+            fcall.write(f"1\n") if (int(line[1]) >= low_cov) else fcall.write(f"0\n")
+
+    if not os.path.getsize(call_file):
+        exit(f"An error occurred: Call file for {prog} was not created properly.")
+    print(f"\t\t\tCall for {h} created.")
+
 def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
     # declare which F type is being worked on
     print(f"\tWorking on {f_type}...")
-
-    # define list variable
-    h_list = []
 
     # add progeny of parent to list
     ped_file = f"AFLAP_tmp/Pedigree_{f_type}.txt"
     if not os.path.exists(ped_file):
         exit(f"An error occurred: {ped_file} not found. Rerun AFLAP.py")
 
+    h_list = []
     with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
         f.readline()
         prog_set = set()
@@ -31,43 +59,25 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
             if parent in {prog[3], prog[4]} and prog[0] not in prog_set:
                 h_list.append(prog[0])
                 prog_set.add(prog[0])
-
-    # check if any progeny found
     if not len(h_list):
         print(f"\t\tNo progeny of {parent} found among given {f_type}.")
 
-    # perform jellyfish query if necessary
+    # perform jellyfish query
     for h in h_list:
         print(f"\t\tCreating Count and Call for {h}...")
         if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"):
             exit(f"An error occurred: {h} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
 
-        # create counts of progeny
+
         count_file = f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        if os.path.exists(count_file) and os.path.getsize(count_file):
-            print(f"\t\t\tCount for {h} detected. Skipping")
-        else:
-            jf_cmd = f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"
-            jf_out = subprocess.run(jf_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
-            with open(count_file, 'w') as f:
-                for line in jf_out:
-                    # disregard empty lines FIXME: determine why this happens
-                    if not len(line): continue
-                    f.write(f"{line}\n")
-            print(f"\t\t\tCount for {h} created.")
-
-        # create calls of progeny
+        p_count = mp.Process(target=create_count, args=(count_file, h, f_type, parent, kmer, lo, up, p0))
+        p_count.start()
         call_file = f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        if os.path.exists(call_file) and os.path.getsize(call_file):
-            print(f"\t\t\tCall for {h} detected. Skipping.")
-        else:
-            with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
-                for line in fcount:
-                    line = line.strip().split()
+        p_call = mp.Process(target=create_call, args=(call_file, count_file, h, int(LowCov)))
+        p_call.start()
 
-                    if int(line[1]) >= int(LowCov): fcall.write(f"1\n")
-                    else: fcall.write(f"0\n")
-            print(f"\t\t\tCall for {h} created.")
+        for p in [p_count, p_call]:
+            p.join()
 
     return h_list
 
