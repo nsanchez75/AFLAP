@@ -23,7 +23,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
 
     if not os.path.getsize(count_file):
         exit(f"An error occurred: Count file for {prog} was not created properly.")
-    print(f"\t\t\tCount for {h} created.")
+    print(f"\t\t\tCount for {prog} created.")
 
 def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
@@ -37,7 +37,7 @@ def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
 
     if not os.path.getsize(call_file):
         exit(f"An error occurred: Call file for {prog} was not created properly.")
-    print(f"\t\t\tCall for {h} created.")
+    print(f"\t\t\tCall for {prog} created.")
 
 def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
     # declare which F type is being worked on
@@ -48,7 +48,7 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
     if not os.path.exists(ped_file):
         exit(f"An error occurred: {ped_file} not found. Rerun AFLAP.py")
 
-    h_list = []
+    prog_list = []
     with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
         f.readline()
         prog_set = set()
@@ -56,24 +56,24 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
             prog = prog.strip().split()
 
             if parent in {prog[3], prog[4]} and prog[0] not in prog_set:
-                h_list.append(prog[0])
+                prog_list.append(prog[0])
                 prog_set.add(prog[0])
-    if not len(h_list):
+    if not len(prog_list):
         print(f"\t\tNo progeny of {parent} found among given {f_type}.")
 
     # perform jellyfish query
-    for h in h_list:
-        print(f"\t\tCreating Count and Call for {h}...")
-        if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}"):
-            exit(f"An error occurred: {h} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
+    for prog in prog_list:
+        print(f"\t\tCreating Count and Call for {prog}...")
+        if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
+            exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
 
 
-        count_file = f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
+        count_file = f"AFLAP_tmp/04/Count/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
         create_count(count_file, h, f_type, parent, kmer, lo, up, p0)
-        call_file = f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
+        call_file = f"AFLAP_tmp/04/Call/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
         create_call(call_file, count_file, h, int(LowCov))
 
-    return h_list
+    return prog_list
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
