@@ -28,7 +28,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
 
 def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
-        print(f"\t\t\tCall for {h} detected. Skipping.")
+        print(f"\t\t\tCall for {prog} detected. Skipping.")
         return
 
     with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
