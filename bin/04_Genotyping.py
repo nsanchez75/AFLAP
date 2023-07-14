@@ -1,5 +1,4 @@
 import argparse
-import multiprocessing as mp
 import pandas as pd
 import os
 import subprocess
@@ -70,16 +69,9 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
 
 
         count_file = f"AFLAP_tmp/04/Count/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        p_count = mp.Process(target=create_count, args=(count_file, h, f_type, parent, kmer, lo, up, p0))
-        p_count.start()
+        create_count(count_file, h, f_type, parent, kmer, lo, up, p0)
         call_file = f"AFLAP_tmp/04/Call/{h}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        p_call = mp.Process(target=create_call, args=(call_file, count_file, h, int(LowCov)))
-        p_call.start()
-
-        for p in [p_count, p_call]:
-            p.join()
-            if p.exitcode == 1:
-                exit(f"An error occurred: Count or Call creation did not work for {h}.")
+        create_call(call_file, count_file, h, int(LowCov))
 
     return h_list
 
