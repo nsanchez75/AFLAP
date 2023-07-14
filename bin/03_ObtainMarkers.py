@@ -1,4 +1,5 @@
 import argparse
+import glob
 import multiprocessing as mp
 import os
 import pandas as pd
@@ -172,9 +173,15 @@ def get_markers(G_info:tuple, kmer:int)->None:
     print(stats)
     with open(f"{G}.MarkerReport.txt", 'w') as f: f.write(stats)
 
+    # determine if G is male or female
+    if not os.path.exists("AFLAP_tmp/Crosses.txt"):
+        exit("An error occurred: Could not find AFLAP_tmp/Crosses.txt. Rerun AFLAP.py.")
+    crosses_df = pd.read_csv("AFLAP_tmp/Crosses.txt", sep='\t', header=None)
+    if G in crosses_df[2].unique(): sex = "male"
+    elif G in crosses_df[3].unique(): sex = "female"
+    else: exit(f"An error occurred: Could not find {G} in AFLAP_tmp/Crosses.txt.")
     # convert seq_groups dataframe to txt file
-    seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{G}_locus_seqs.txt", sep='\t', index=False)
-
+    seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{sex}_{G}_locus_seqs.txt", sep='\t', index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
@@ -196,4 +203,15 @@ if __name__ == "__main__":
         p.join()
     print("Identified markers for all parents.")
 
-    # TODO: find sequences of identical loci
+    # find sequences of identical loci
+    mp_seqs = pd.DataFrame(columns=["Male Sequence", "Locus Sequence"])
+    for glob_path in glob.glob("AFLAP_tmp/03/SimGroups/male*"):
+        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Male Sequence"})
+        mp_seqs = pd.concat([mp_seqs, glob_path_seqs])
+    fp_seqs = pd.DataFrame(columns=["Female Sequence", "Locus Sequence"])
+    for glob_path in glob.glob("AFLAP_tmp/03/SimGroups/female*"):
+        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Female Sequence"})
+        mp_seqs = pd.concat([mp_seqs, glob_path_seqs])
+
+    comb_seqs = pd.merge(mp_seqs, fp_seqs, on="Locus Sequence", how='inner')
+    comb_seqs.to_csv(f"AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
