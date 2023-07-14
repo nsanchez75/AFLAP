@@ -99,16 +99,15 @@ if __name__ == "__main__":
         G, LO, UP, P0 = G_info
 
         # check if marker exists
-        if os.path.exists(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"):
-            with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as fmark:
-                m_count = 0
-                for m in fmark:
-                    if m.startswith('>'):
-                        m_count += 1
-
-                print(f"\t{m_count} markers identified in AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa. These will be surveyed against progeny.")
-        else:
-            (f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not found. Rerun 03_ObtainMarkers.py.")
+        marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
+        if not os.path.exists(marker_file): 
+            exit(f"An error occurred: {marker_file} not found. Rerun 03_ObtainMarkers.py.")
+        with open(marker_file, 'r') as fmark:
+            m_count = 0
+            for m in fmark:
+                if m.startswith('>'):
+                    m_count += 1
+            print(f"\t{m_count} markers identified in {marker_file}. These will be surveyed against progeny.")
 
         # initialize list consisting of F0's progeny
         h_list = []
