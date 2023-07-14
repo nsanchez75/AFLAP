@@ -121,7 +121,7 @@ if __name__ == "__main__":
         markerid_df['RowIndex'] = markerid_df.index + 1
 
         # identify linkage groups to marker sequences
-        lg_df = pd.DataFrame
+        lg_df = pd.DataFrame()
         for glob_path in glob.glob(f"AFLAP_Results/LOD{args.LOD}/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.LOD{args.LOD}.LG*.txt"):
             if not sex_check: COLS_USED = [0, 1]
             else: COLS_USED = [0, 2]
