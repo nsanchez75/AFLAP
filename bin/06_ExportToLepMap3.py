@@ -50,28 +50,33 @@ if __name__ == "__main__":
                         ["CHR", "POS", '0'                                       , '0'                                       ]]
             df = pd.DataFrame(data)
 
-            # f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
-            # f1_progs = f1_progs_df["Individual"].unique().tolist()
-            # for f1_prog in f1_progs:
-            #     if f1_progs_df[(f1_progs_df["MP"] == G) | (f1_progs_df["FP"] == G)].empty: continue
+            f1_progs_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
+            f1_progs = f1_progs_df["Individual"].unique().tolist()
+            p1_set = set()
 
-            #     added_data = [f"{sex_dict['male']}x{sex_dict['female']}", f1_prog,
-            #                         sex_dict['male'], sex_dict['female'], '0', '0']
-            #     df.insert(len(df.columns), len(df.columns), added_data)
+            for _, row in f1_progs_df.iterrows():
+                p1 = row.to_dict()
+
+                if G in (p1["MP"], p1["FP"]) and p1["Individual"] not in p1_set:
+                    added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1["Individual"],
+                                    sex_dict['male'], sex_dict['female'], '0', '0']
+                    df.insert(len(df.columns), len(df.columns), added_data)
+
+                p1_set.add(p1["Individual"])
 
             # put all F1 progeny of parent G into data header
-            with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
-                p1_set = set()
-                fprog1.readline()   # TODO: delete later after finished refactoring to implement df
-                for p1 in fprog1:
-                    p1 = p1.strip().split()
+            # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
+            #     p1_set = set()
+            #     fprog1.readline()   # TODO: delete later after finished refactoring to implement df
+            #     for p1 in fprog1:
+            #         p1 = p1.strip().split()
 
-                    if G in (p1[3], p1[4]) and p1[0] not in p1_set:
-                        added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
-                                        sex_dict['male'], sex_dict['female'], '0', '0']
-                        df.insert(len(df.columns), len(df.columns), added_data)
+            #         if G in (p1[3], p1[4]) and p1[0] not in p1_set:
+            #             added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
+            #                             sex_dict['male'], sex_dict['female'], '0', '0']
+            #             df.insert(len(df.columns), len(df.columns), added_data)
 
-                    p1_set.add(p1[0])
+            #         p1_set.add(p1[0])
 
             # add rows from filtered tsv file to df
             if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
