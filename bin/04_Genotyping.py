@@ -78,6 +78,8 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
 
         for p in [p_count, p_call]:
             p.join()
+            if p.exitcode == 1:
+                exit(f"An error occurred: Count or Call creation did not work for {h}.")
 
     return h_list
 
