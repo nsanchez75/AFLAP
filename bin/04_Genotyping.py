@@ -16,7 +16,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
         print(f"\t\t\tCount for {prog} detected. Skipping")
         return
 
-    jf_out = subprocess.run(f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{h}.jf{kmer}",
+    jf_out = subprocess.run(f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}",
                             shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
     with open(count_file, 'w') as f:
         for line in jf_out:
