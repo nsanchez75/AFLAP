@@ -177,8 +177,8 @@ def get_markers(G_info:tuple, kmer:int)->None:
     if not os.path.exists("AFLAP_tmp/Crosses.txt"):
         exit("An error occurred: Could not find AFLAP_tmp/Crosses.txt. Rerun AFLAP.py.")
     crosses_df = pd.read_csv("AFLAP_tmp/Crosses.txt", sep='\t', header=None)
-    if G in crosses_df[2].unique(): sex = "male"
-    elif G in crosses_df[3].unique(): sex = "female"
+    if str(G) in set(crosses_df[2].astype(str).unique()): sex = "male"
+    elif str(G) in set(crosses_df[3].astype(str).unique()): sex = "female"
     else: exit(f"An error occurred: Could not find {G} in AFLAP_tmp/Crosses.txt.")
     # convert seq_groups dataframe to txt file
     seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{sex}_{G}_locus_seqs.txt", sep='\t', index=False)
