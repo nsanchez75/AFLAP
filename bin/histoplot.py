@@ -4,12 +4,10 @@ import os
 def histoplot(infilepath:str, LO:int, HI:int, outfilepath:str)->None:
     # check if file exists
     if not os.path.exists(infilepath):
-        raise FileNotFoundError(f"Error: {infilepath} not found.")
-
-    histo_x = list()
-    histo_y = list()
+        exit(f"An error occurred: {infilepath} not found.")
 
     # get data
+    histo_x = histo_y = list()
     with open(infilepath) as fin:
         for line in fin:
             line = line.strip().split()
@@ -23,7 +21,7 @@ def histoplot(infilepath:str, LO:int, HI:int, outfilepath:str)->None:
     if len(histo_y) < LO: max_y = max(histo_y)
     else:
         max_y = 0
-        for i in range(LO, HI):
+        for i in range(LO, HI + 1):
             if max_y < histo_y[i]: max_y = histo_y[i]
 
     # plot histogram
