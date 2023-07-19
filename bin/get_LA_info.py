@@ -32,6 +32,6 @@ def get_LA_info()->list[tuple[str, int, int, str]]:
             p0 = '_'.join(p0)
 
             # create tuple
-            ret_list.append((G, LO, UP, p0))
+            ret_list.append((G, LO, UP, p0, SEX))
 
     return ret_list
