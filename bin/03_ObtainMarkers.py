@@ -141,8 +141,9 @@ def get_markers(G_info:tuple, kmer:int)->None:
         # identify markers from jf_query
         fjq_set = set()
         for line in fjq:
-            if line.startswith('>'): continue
-            fjq_set.add(line.strip())
+            if not line.startswith('>'): fjq_set.add(line.strip())
+
+        # TODO: refactor MARKERS file to involve dataframes for 03 and 04's use
 
         # add fabsub markers found in jf_query to final marker file
         while True:
@@ -211,7 +212,7 @@ if __name__ == "__main__":
     fp_seqs = pd.DataFrame(columns=["Female Sequence", "Locus Sequence"])
     for glob_path in glob.glob("AFLAP_tmp/03/SimGroups/female*"):
         glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Female Sequence"})
-        mp_seqs = pd.concat([mp_seqs, glob_path_seqs])
+        fp_seqs = pd.concat([fp_seqs, glob_path_seqs])
 
     comb_seqs = pd.merge(mp_seqs, fp_seqs, on="Locus Sequence", how='inner')
     comb_seqs.to_csv(f"AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
