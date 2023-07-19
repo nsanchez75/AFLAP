@@ -16,6 +16,7 @@ def get_LA_info()->list[tuple[str, int, int, str]]:
             G = p[0]
             LO = int(p[1])
             UP = int(p[2])
+            SEX = str(p[3])
 
             p0 = list()
             with open(cross_filename, 'r') as fc:

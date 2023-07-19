@@ -40,7 +40,7 @@ if __name__ == "__main__":
         exit("An error occurred: AFLAP_tmp/LA.txt not found. Rerun 01_JELLYFISH.py.")
     list_of_Gs = get_LA_info()
     for G_info in list_of_Gs:
-        G, LO, UP, P0 = G_info
+        G, LO, UP, P0, SEX = G_info
         mer_count = 0
 
         create_histogram(G, args.kmer)

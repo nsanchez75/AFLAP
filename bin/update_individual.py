@@ -36,8 +36,6 @@ def update_individual(rem_ind:str, pedigree:str)->None:
             remove_files([f"AFLAP_tmp/04/{rem_ind}*"], "AFLAP_tmp/04")
             # TODO: add removal of simgroups and reportlogs in 03
             # TODO: add removal of count and call related to parent in 04 (_<parent>_ in filename)
-            # TODO: add removal of filtered tsv in 05
-            # TODO: add removal of AFLAP_Results files related to parent
         case 1:
             # remove jellyfish count
             remove_files([f"AFLAP_tmp/01/F1Count/{rem_ind}*"], "AFLAP_tmp/01")

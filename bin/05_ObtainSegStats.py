@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print("Performing segment statistics analysis...")
     list_of_Gs = get_LA_info()
     for G_info in list_of_Gs:
-        G, LO, UP, P0 = G_info
+        G, LO, UP, P0, SEX = G_info
 
         # check for num progs of G
         num_progs = 0

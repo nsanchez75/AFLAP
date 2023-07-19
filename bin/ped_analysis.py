@@ -15,9 +15,9 @@ def write_cross(prog_info:pd.DataFrame, ftype:int, parents:list)->None:
     count_crosses = prog_info.groupby(["MP", "FP"]).size().reset_index()
     crosses = list(tuple(row) for row in count_crosses.itertuples(index=False))
     with open("AFLAP_tmp/Crosses.txt", 'r+') as fc:
-         for cross in crosses:
-              MP, FP, COUNT = cross
-              fc.write(f"{COUNT}\t{ftype}\t{MP}\t{FP}\n")
+        for cross in crosses:
+            MP, FP, COUNT = cross
+            fc.write(f"{COUNT}\t{ftype}\t{MP}\t{FP}\n")
 
 def pedigree_analysis(pedigree: str)->None:
     # copy pedigree file into AFLAP_Results
@@ -86,12 +86,18 @@ def pedigree_analysis(pedigree: str)->None:
 
             lower_bound = parent_df["LB"].unique()[0]
             upper_bound = parent_df["UB"].unique()[0]
+
+            crosses_df = pd.read_csv("AFLAP_tmp/Crosses.txt", sep='\t', header=None)
+            if str(parent) in set(crosses_df[2].astype(str).unique()): sex = "male"
+            elif str(parent) in set(crosses_df[3].astype(str).unique()): sex = "female"
+            else: exit(f"An error occurred: Could not find {parent} in AFLAP_tmp/Crosses.txt.")
+
             if "NA" in (lower_bound, upper_bound):
                 fnola.write(f"{parent}\n")
             elif [isinstance(x, int) for x in [lower_bound, upper_bound]]:
                 if int(lower_bound) > int(upper_bound):
                     exit("An error occurred: Cannot have a lower bound higher than an upper bound.")
-                fla.write(f"{parent}\t{lower_bound}\t{upper_bound}\n")
+                fla.write(f"{parent}\t{lower_bound}\t{upper_bound}\t{sex}\n")
             else:
                 exit("An error occurred: Invalid bound entry in Pedigree_F0.txt.")
 

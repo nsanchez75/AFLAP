@@ -28,13 +28,11 @@ def abyss_assembly(k:int, G:str, LO:int, UP:int, kmer:int, abyss_file:str, fafil
                     shell=True, stdout=frep)
         frep.close()
         # check if abyss ran properly
-        if not os.path.exists(abyss_file):
-            exit(f"An error occurred: ABySS did not create {abyss_file}.")
-        elif not os.path.getsize(abyss_file):
-            exit(f"An error occurred: {abyss_file} is empty.")
+        if not os.path.exists(abyss_file): exit(f"An error occurred: ABySS did not create {abyss_file}.")
+        elif not os.path.getsize(abyss_file): exit(f"An error occurred: {abyss_file} is empty.")
 
 def get_markers(G_info:tuple, kmer:int)->None:
-    G, LO, UP, P0 = G_info
+    G, LO, UP, P0, SEX = G_info
     seq_groups = pd.DataFrame(columns=["Sequence", "Locus Sequence"])
     ak = 2 * int(kmer) - 1
 
@@ -143,8 +141,6 @@ def get_markers(G_info:tuple, kmer:int)->None:
         for line in fjq:
             if not line.startswith('>'): fjq_set.add(line.strip())
 
-        # TODO: refactor MARKERS file to involve dataframes for 03 and 04's use
-
         # add fabsub markers found in jf_query to final marker file
         while True:
             head = fabsub.readline().strip()
@@ -177,12 +173,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
     # determine if G is male or female
     if not os.path.exists("AFLAP_tmp/Crosses.txt"):
         exit("An error occurred: Could not find AFLAP_tmp/Crosses.txt. Rerun AFLAP.py.")
-    crosses_df = pd.read_csv("AFLAP_tmp/Crosses.txt", sep='\t', header=None)
-    if str(G) in set(crosses_df[2].astype(str).unique()): sex = "male"
-    elif str(G) in set(crosses_df[3].astype(str).unique()): sex = "female"
-    else: exit(f"An error occurred: Could not find {G} in AFLAP_tmp/Crosses.txt.")
-    # convert seq_groups dataframe to txt file
-    seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{sex}_{G}_locus_seqs.txt", sep='\t', index=False)
+    seq_groups.to_csv(f"AFLAP_tmp/03/SimGroups/{SEX}_{G}_locus_seqs.txt", sep='\t', index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")

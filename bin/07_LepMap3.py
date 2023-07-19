@@ -40,7 +40,7 @@ if __name__ == "__main__":
     list_of_Gs = get_LA_info()
     sc2_processes = list()
     for G_info in list_of_Gs:
-        G, LO, UP, P0 = G_info
+        G, LO, UP, P0, SEX = G_info
 
         # check if tsv file for G exists
         if not os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):

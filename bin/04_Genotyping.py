@@ -25,7 +25,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
         exit(f"An error occurred: Count file for {prog} was not created properly.")
     print(f"\t\t\tCount for {prog} created.")
 
-def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
+def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str, sex:str)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
         print(f"\t\t\tCall for {prog} detected. Skipping.")
         return
@@ -33,14 +33,21 @@ def create_call(call_file:str, count_file:str, prog:str, low_cov:int)->None:
     with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
         for line in fcount:
             line = line.strip().split()
-            fcall.write(f"1\n") if (int(line[1]) >= low_cov) else fcall.write(f"0\n")
+            
+            if f_type == "F2":
+                same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt")
+                set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
+                if line[0] in set_of_loci_seqs: fcall.write("2\n")
+            elif int(line[1]) >= low_cov: fcall.write("1\n")
+            else: fcall.write("0\n")
 
     if not os.path.getsize(call_file):
         exit(f"An error occurred: Call file for {prog} was not created properly.")
     print(f"\t\t\tCall for {prog} created.")
 
-def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_type:str)->list:
-    # declare which F type is being worked on
+def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
+    G, LO, UP, P0, SEX = G_info
+    
     print(f"\tWorking on {f_type}...")
 
     # add progeny of parent to list
@@ -55,11 +62,11 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
         for prog in f:
             prog = prog.strip().split()
 
-            if parent in {prog[3], prog[4]} and prog[0] not in prog_set:
+            if G in {prog[3], prog[4]} and prog[0] not in prog_set:
                 prog_list.append(prog[0])
                 prog_set.add(prog[0])
     if not len(prog_list):
-        print(f"\t\tNo progeny of {parent} found among given {f_type}.")
+        print(f"\t\tNo progeny of {G} found among given {f_type}.")
 
     # perform jellyfish query
     for prog in prog_list:
@@ -67,11 +74,10 @@ def genotype_jfq(kmer:str, LowCov:str, parent:str, lo:str, up:str, p0:str, f_typ
         if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
             exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
 
-
-        count_file = f"AFLAP_tmp/04/Count/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        create_count(count_file, prog, f_type, parent, kmer, lo, up, p0)
-        call_file = f"AFLAP_tmp/04/Call/{prog}_{parent}_m{kmer}_L{lo}_U{up}_{p0}.txt"
-        create_call(call_file, count_file, prog, int(LowCov))
+        count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+        create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
+        call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+        create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
 
     return prog_list
 
@@ -88,11 +94,11 @@ if __name__ == "__main__":
     # check for markers
     list_of_Gs = get_LA_info()
     for G_info in list_of_Gs:
-        G, LO, UP, P0 = G_info
+        G, LO, UP, P0, SEX = G_info
 
         # check if marker exists
         marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
-        if not os.path.exists(marker_file): 
+        if not os.path.exists(marker_file):
             exit(f"An error occurred: {marker_file} not found. Rerun 03_ObtainMarkers.py.")
         with open(marker_file, 'r') as fmark:
             m_count = 0
@@ -101,17 +107,13 @@ if __name__ == "__main__":
                     m_count += 1
             print(f"\t{m_count} markers identified in {marker_file}. These will be surveyed against progeny.")
 
-        # initialize list consisting of F0's progeny
-        h_list = []
-
         # run jellyfish on F1 and F2 individuals who descend from F0
-        h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F1")
-        h_list += genotype_jfq(args.kmer, args.LowCov, G, LO, UP, P0, "F2")
+        prog_list = genotype_jfq(args.kmer, args.LowCov, G_info, "F1")
+        prog_list += genotype_jfq(args.kmer, args.LowCov, G_info, "F2")
 
         # extract info from MARKERS file
         with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
-            head_list = []
-            seq_list = []
+            head_list = seq_list = list()
 
             while True:
                 head = f.readline().strip().replace('>', '')
@@ -128,11 +130,12 @@ if __name__ == "__main__":
 
         # get data
         data = {"MarkerSequence": seq_list, "MarkerID": head_list}
-        for h in h_list:
-            with open(f"AFLAP_tmp/04/Call/{h}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
-                b_vals = []
+        ## get prog1 info
+        for prog in prog_list:
+            with open(f"AFLAP_tmp/04/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+                b_vals = list()
                 for b_val in fcall: b_vals.append(b_val.strip())
-            data[h] = b_vals
+            data[prog] = b_vals
 
         matrix = pd.DataFrame(data=data)
 
