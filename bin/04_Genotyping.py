@@ -69,15 +69,15 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
         print(f"\t\tNo progeny of {G} found among given {f_type}.")
 
     # perform jellyfish query
-    # for prog in prog_list:
-    #     print(f"\t\tCreating Count and Call for {prog}...")
-    #     if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
-    #         exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
+    for prog in prog_list:
+        print(f"\t\tCreating Count and Call for {prog}...")
+        if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
+            exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
 
-    #     count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-    #     create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
-    #     call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-    #     create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
+        count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+        create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
+        call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+        create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
 
     return prog_list
 
