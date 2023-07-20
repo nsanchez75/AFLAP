@@ -69,15 +69,15 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
         print(f"\t\tNo progeny of {G} found among given {f_type}.")
 
     # perform jellyfish query
-    for prog in prog_list:
-        print(f"\t\tCreating Count and Call for {prog}...")
-        if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
-            exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
+    # for prog in prog_list:
+    #     print(f"\t\tCreating Count and Call for {prog}...")
+    #     if not os.path.exists(f"AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}"):
+    #         exit(f"An error occurred: {prog} not detected among {f_type} progeny. Rerun 01_JELLYFISH.py.")
 
-        count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-        create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
-        call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-        create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
+    #     count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+    #     create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
+    #     call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
+    #     create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
 
     return prog_list
 
@@ -113,7 +113,8 @@ if __name__ == "__main__":
 
         # extract info from MARKERS file
         with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
-            head_list = seq_list = list()
+            head_list = list()
+            seq_list = list()
 
             while True:
                 head = f.readline().strip().replace('>', '')
@@ -129,23 +130,14 @@ if __name__ == "__main__":
                 exit(f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
 
         # get data
-        genotype_df = pd.DataFrame(columns=["MarkerSequence", "MarkerID"] + prog_list)
-        
-        print(prog_list)
-        print(genotype_df)
+        data = {"MarkerSequence": seq_list, "MarkerID": head_list}
+        for prog in prog_list:
+            with open(f"AFLAP_tmp/04/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+                b_vals = list()
+                for b_val in fcall: b_vals.append(b_val.strip())
+            data[prog] = b_vals
 
-        # data = {"MarkerSequence": seq_list, "MarkerID": head_list}
-        # ## get prog1 info
-        # for prog in prog_list:
-        #     with open(f"AFLAP_tmp/04/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
-        #         b_vals = list()
-        #         for b_val in fcall: b_vals.append(b_val.strip())
-        #     data[prog] = b_vals
-
-        # print(prog_list)
-        # print(data)
-
-        # matrix = pd.DataFrame(data=data)
+        matrix = pd.DataFrame(data=data)
 
         # split marker sequence and value and reorder
         matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
