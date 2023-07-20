@@ -35,7 +35,7 @@ def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str
             line = line.strip().split()
             
             if f_type == "F2":
-                same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt")
+                same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
                 set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
                 if line[0] in set_of_loci_seqs: fcall.write("2\n")
             elif int(line[1]) >= low_cov: fcall.write("1\n")
