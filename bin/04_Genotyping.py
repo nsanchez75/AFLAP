@@ -129,18 +129,23 @@ if __name__ == "__main__":
                 exit(f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
 
         # get data
-        data = {"MarkerSequence": seq_list, "MarkerID": head_list}
-        ## get prog1 info
-        for prog in prog_list:
-            with open(f"AFLAP_tmp/04/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
-                b_vals = list()
-                for b_val in fcall: b_vals.append(b_val.strip())
-            data[prog] = b_vals
-
+        genotype_df = pd.DataFrame(columns=["MarkerSequence", "MarkerID"] + prog_list)
+        
         print(prog_list)
-        print(data)
+        print(genotype_df)
 
-        matrix = pd.DataFrame(data=data)
+        # data = {"MarkerSequence": seq_list, "MarkerID": head_list}
+        # ## get prog1 info
+        # for prog in prog_list:
+        #     with open(f"AFLAP_tmp/04/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
+        #         b_vals = list()
+        #         for b_val in fcall: b_vals.append(b_val.strip())
+        #     data[prog] = b_vals
+
+        # print(prog_list)
+        # print(data)
+
+        # matrix = pd.DataFrame(data=data)
 
         # split marker sequence and value and reorder
         matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
