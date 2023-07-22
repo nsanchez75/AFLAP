@@ -25,31 +25,21 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
         exit(f"An error occurred: Count file for {prog} was not created properly.")
     print(f"\t\t\tCount for {prog} created.")
 
-# TODO: refactor call by converting count to df and setting conditional for 2nd column
 def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str, sex:str)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
         print(f"\t\t\tCall for {prog} detected. Skipping.")
         return
 
-    count_df = pd.read_csv(count_file, sep=' ', names=["Sequence", "Count", "Call"])
-    count_df["Call"].mask(count_df["Count"].astype(int) >= low_cov, 1, inplace=True)
-    count_df["Call"] = count_df["Call"].fillna(0)
-    if f_type == "F2":
-        same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
-        set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].tolist())
-        count_df["Call"].mask(count_df["Sequence"].astype(str).isin(set_of_loci_seqs), 2, inplace=True)
-    count_df["Call"].to_csv(call_file, header=None, index=False)
-    # TODO: conditional on "Count" by LowCov and set as list to call
-    # with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
-    #     for line in fcount:
-    #         line = line.strip().split()
+    with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
+        for line in fcount:
+            line = line.strip().split()
 
-    #         if f_type == "F2":
-    #             same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
-    #             set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
-    #             if line[0] in set_of_loci_seqs: fcall.write("2\n")
-    #         elif int(line[1]) >= low_cov: fcall.write("1\n")
-    #         else: fcall.write("0\n")
+            if f_type == "F2":
+                same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+                set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
+                if line[0] in set_of_loci_seqs: fcall.write("2\n")
+            elif int(line[1]) >= low_cov: fcall.write("1\n")
+            else: fcall.write("0\n")
 
     if not os.path.getsize(call_file):
         exit(f"An error occurred: Call file for {prog} was not created properly.")
