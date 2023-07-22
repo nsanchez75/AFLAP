@@ -93,7 +93,6 @@ if __name__ == "__main__":
         marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
         if not os.path.exists(marker_file):
             exit(f"An error occurred: {marker_file} not found. Rerun 03_ObtainMarkers.py.")
-        # TODO: refactor code below using regex
         with open(marker_file, 'r') as fmark:
             m_count = 0
             for m in fmark:
