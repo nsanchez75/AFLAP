@@ -7,7 +7,6 @@ import shutil
 import subprocess
 
 from get_LA_info import get_LA_info
-from find_identical_loci import find_identical_loci
 
 #################################################
 #	A Python script to derive single copy k-mers that are unique to a parent. These are then used a markers.
