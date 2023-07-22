@@ -25,15 +25,18 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
         exit(f"An error occurred: Count file for {prog} was not created properly.")
     print(f"\t\t\tCount for {prog} created.")
 
+# TODO: refactor call by converting count to df and setting conditional for 2nd column
 def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str, sex:str)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
         print(f"\t\t\tCall for {prog} detected. Skipping.")
         return
 
+    count_df = pd.read_csv(count_file, sep='\t', names=["Sequence", "Count"])
+    # TODO: conditional on "Count" by LowCov and set as list to call
     with open(count_file, 'r') as fcount, open(call_file, 'w') as fcall:
         for line in fcount:
             line = line.strip().split()
-            
+
             if f_type == "F2":
                 same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
                 set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
@@ -47,7 +50,7 @@ def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str
 
 def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
     G, LO, UP, P0, SEX = G_info
-    
+
     print(f"\tWorking on {f_type}...")
 
     # add progeny of parent to list
@@ -55,16 +58,19 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
     if not os.path.exists(ped_file):
         exit(f"An error occurred: {ped_file} not found. Rerun AFLAP.py")
 
-    prog_list = []
-    with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
-        f.readline()
-        prog_set = set()
-        for prog in f:
-            prog = prog.strip().split()
+    prog_list = list()
+    # TODO: determine if refactor using df works
+    prog_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t')
+    prog_list = prog_df[(prog_df["MP"].astype(str) == G) | (prog_df["FP"].astype(str) == G)]["Individual"].unique().tolist()
+    # with open(f"AFLAP_tmp/Pedigree_{f_type}.txt") as f:
+    #     f.readline()
+    #     prog_set = set()
+    #     for prog in f:
+    #         prog = prog.strip().split()
 
-            if G in {prog[3], prog[4]} and prog[0] not in prog_set:
-                prog_list.append(prog[0])
-                prog_set.add(prog[0])
+    #         if G in {prog[3], prog[4]} and prog[0] not in prog_set:
+    #             prog_list.append(prog[0])
+    #             prog_set.add(prog[0])
     if not len(prog_list):
         print(f"\t\tNo progeny of {G} found among given {f_type}.")
 
@@ -100,6 +106,7 @@ if __name__ == "__main__":
         marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
         if not os.path.exists(marker_file):
             exit(f"An error occurred: {marker_file} not found. Rerun 03_ObtainMarkers.py.")
+        # TODO: refactor code below using regex
         with open(marker_file, 'r') as fmark:
             m_count = 0
             for m in fmark:
@@ -111,8 +118,9 @@ if __name__ == "__main__":
         prog_list = genotype_jfq(args.kmer, args.LowCov, G_info, "F1")
         prog_list += genotype_jfq(args.kmer, args.LowCov, G_info, "F2")
 
-        # extract info from MARKERS file
-        with open(f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa", 'r') as f:
+        # extract info from marker file
+        marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
+        with open(marker_file, 'r') as f:
             head_list = list()
             seq_list = list()
 
@@ -127,7 +135,7 @@ if __name__ == "__main__":
 
             # check if head_list and seq_list are same size
             if len(head_list) != len(seq_list):
-                exit(f"An error occurred: AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa not extracted properly.")
+                exit(f"An error occurred: {marker_file} not extracted properly. Make sure every marker pairs with a sequence.")
 
         # get data
         data = {"MarkerSequence": seq_list, "MarkerID": head_list}
@@ -136,18 +144,15 @@ if __name__ == "__main__":
                 b_vals = list()
                 for b_val in fcall: b_vals.append(b_val.strip())
             data[prog] = b_vals
-
-        matrix = pd.DataFrame(data=data)
+        marker_df = pd.DataFrame(data=data)
 
         # split marker sequence and value and reorder
-        matrix[["MarkerID", "MarkerLength"]] = matrix["MarkerID"].str.split('_', expand=True)
-        matrix = matrix.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(matrix.columns[2:-1]))
+        marker_df[["MarkerID", "MarkerLength"]] = marker_df["MarkerID"].str.split('_', expand=True)
+        marker_df = marker_df.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(marker_df.columns[2:-1]))
 
         # create tsv file
-        matrix.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
+        marker_df.to_csv(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
 
-        # check tsv file status
         if not os.path.exists(f"AFLAP_tmp/04/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
             exit("An error occurred: Genotypes.MarkerID.tsv was not made.")
-        else:
-            print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
+        print(f"\tGenotypes.MarkerID.tsv for {G} has been created.")
