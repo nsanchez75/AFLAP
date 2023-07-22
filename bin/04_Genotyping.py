@@ -25,7 +25,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
         exit(f"An error occurred: Count file for {prog} was not created properly.")
     print(f"\t\t\tCount for {prog} created.")
 
-def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str, sex:str)->None:
+def create_call(call_file:str, count_file:str, loci_seqs:set, prog:str, low_cov:int, f_type:str, sex:str)->None:
     if os.path.exists(call_file) and os.path.getsize(call_file):
         print(f"\t\t\tCall for {prog} detected. Skipping.")
         return
@@ -34,10 +34,7 @@ def create_call(call_file:str, count_file:str, prog:str, low_cov:int, f_type:str
         for line in fcount:
             line = line.strip().split()
 
-            if f_type == "F2":
-                same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
-                set_of_loci_seqs = set(same_loci_seqs[f"{sex.capitalize()} Sequence"].to_list())
-                if line[0] in set_of_loci_seqs: fcall.write("2\n")
+            if f_type == "F2" and line[0] in loci_seqs: fcall.write("2\n")
             elif int(line[1]) >= low_cov: fcall.write("1\n")
             else: fcall.write("0\n")
 
@@ -69,8 +66,11 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
 
         count_file = f"AFLAP_tmp/04/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
         create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
+
         call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-        create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
+        same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+        set_of_loci_seqs = set(same_loci_seqs[f"{SEX.capitalize()} Sequence"].to_list())
+        create_call(call_file, count_file, set_of_loci_seqs, prog, int(LowCov), f_type, SEX)
 
     return prog_list
 
