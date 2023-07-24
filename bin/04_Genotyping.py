@@ -131,9 +131,6 @@ if __name__ == "__main__":
                 for b_val in fcall: b_vals.append(b_val.strip())
             data[prog] = b_vals
 
-        for key in data:
-            print(f"{key} in data: {len(data[key])}")
-
         marker_df = pd.DataFrame(data=data)
 
         # split marker sequence and value and reorder
