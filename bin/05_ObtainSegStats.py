@@ -34,6 +34,7 @@ if __name__ == "__main__":
 
         # check number of calls for G
         call_files = glob.glob("AFLAP_tmp/04/Call/*.txt")
+        print(call_files)
         num_progs = len(list(filter(lambda x: True if (x.split('_')[1] == G) else False, call_files)))
         if not num_progs: exit("An error occurred: Invalid number of progeny.")
         print(f"{num_progs} Genotype calls for {G} detected. Summarizing...")
@@ -103,14 +104,14 @@ if __name__ == "__main__":
         plot_cov_and_mcount(mc_df, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_KmerCovXMarkerCount.png")
 
         if (not args.LOD == 2):
-            print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
-                 f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
-                  "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
+            print("\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
+                 f"\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
+                  "\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
 
         # filter out progeny with coverage < LOD
         low_cov = mc_df[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
         for i in low_cov.index:
-            print(f"\t\t\t{low_cov['Prog'][i]} appears to be low coverage. Will be excluded.")
+            print(f"\t{low_cov['Prog'][i]} appears to be low coverage. Will be excluded.")
 
         # create filtered tsv file
         tsv_filtered = tsv[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
@@ -118,4 +119,4 @@ if __name__ == "__main__":
         tsv_filtered = tsv_filtered.iloc[:, :-1]
         tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
 
-        print(f"\tFinished obtaining segment statistics for {G}.")
+        print(f"Finished obtaining segment statistics for {G}.")
