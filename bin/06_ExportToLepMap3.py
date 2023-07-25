@@ -42,19 +42,28 @@ if __name__ == "__main__":
                 ["CHR", "POS", '0'                                       , '0'                                       ]]
         lepmap_df = pd.DataFrame(data)
 
-        # put all F1 progeny of parent into header
-        # TODO: refactor to use df
-        with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
-            p1_set = set()
-            fprog1.readline()
-            for p1 in fprog1:
-                p1 = p1.strip().split()
+        # put all progeny of parent into header
+        fprog1_df = pd.read_csv("AFLAP_tmp/Pedigree_F1.txt", sep='\t')
+        fprog2_df = pd.read_csv("AFLAP_tmp/Pedigree_F2.txt", sep='\t')
 
-                if G in (p1[3], p1[4]) and p1[0] not in p1_set:
-                    added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
-                                    sex_dict['male'], sex_dict['female'], '0', '0']
-                    lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
-                p1_set.add(p1[0])
+        for df in [fprog1_df, fprog2_df]:
+            df = df[(df["MP"].astype(str) == G) | (df["FP"].astype(str) == G)]
+            for prog in df["Individual"].unique():
+                added_data = [f"{sex_dict['male']}x{sex_dict['female']}", prog,
+                              sex_dict['male'], sex_dict['female'], '0', '0']
+                lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
+
+        # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
+        #     p1_set = set()
+        #     fprog1.readline()
+        #     for p1 in fprog1:
+        #         p1 = p1.strip().split()
+
+        #         if G in (p1[3], p1[4]) and p1[0] not in p1_set:
+        #             added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
+        #                             sex_dict['male'], sex_dict['female'], '0', '0']
+        #             lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
+        #         p1_set.add(p1[0])
 
         # add rows from filtered tsv file to lepmap df
         if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
