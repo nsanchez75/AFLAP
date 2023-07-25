@@ -51,7 +51,7 @@ if __name__ == "__main__":
             for prog in df["Individual"].unique():
                 added_data = [f"{sex_dict['male']}x{sex_dict['female']}", prog,
                               sex_dict['male'], sex_dict['female'], '0', '0']
-                lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
+                lepmap_df = pd.concat([lepmap_df, added_data], axis=1)
 
         # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
         #     p1_set = set()
