@@ -34,8 +34,8 @@ if __name__ == "__main__":
 
         # check number of calls for G
         call_files = glob.glob("AFLAP_tmp/04/Call/*.txt")
-        call_files = list(filter(lambda x: True if (x.split('_')[1] == G) else False, call_files))
         print(call_files)
+        call_files = list(filter(lambda x: True if (x.split('_')[1] == G) else False, call_files))
         num_progs = len(call_files)
         if not num_progs: exit("An error occurred: Invalid number of progeny.")
         print(f"{num_progs} Genotype calls for {G} detected. Summarizing...")
