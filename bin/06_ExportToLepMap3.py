@@ -13,15 +13,13 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
     args = parser.parse_args()
 
-    # get parents to run LepMap3 on
     list_of_Gs = get_LA_info()
     for G_info in list_of_Gs:
         G, LO, UP, P0, SEX = G_info
-
-        # print init statement
         print(f"\t Working on parent {G}...")
 
-        if os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv") and os.path.getsize(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):
+        forlepmap_file = f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"
+        if os.path.exists(forlepmap_file) and os.path.getsize(forlepmap_file):
             print(f"LepMap3 info for parent {G} has been detected. Skipping.")
             continue
 
@@ -31,25 +29,21 @@ if __name__ == "__main__":
             for cross in fcrosses:
                 cross = cross.strip().split()
 
-                # continue if parent not found
-                if G not in (cross[2], cross[3]): continue
-
-                # identify sex if parent found
-                if G == cross[2]:
-                    sex_dict['male'], sex_dict['female'] = G, P0
-                elif G == cross[3]:
-                    sex_dict['male'], sex_dict['female'] = P0, G
+                if G == cross[2]:   sex_dict['male'], sex_dict['female'] = G, P0
+                elif G == cross[3]: sex_dict['male'], sex_dict['female'] = P0, G
+                else: continue
                 break
 
-        data =  [["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
-                    ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
-                    ["CHR", "POS", '0'                                       , '0'                                       ],
-                    ["CHR", "POS", '0'                                       , '0'                                       ],
-                    ["CHR", "POS", '1'                                       , '2'                                       ],
-                    ["CHR", "POS", '0'                                       , '0'                                       ]]
-        df = pd.DataFrame(data)
+        data = [["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
+                ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
+                ["CHR", "POS", '0'                                       , '0'                                       ],
+                ["CHR", "POS", '0'                                       , '0'                                       ],
+                ["CHR", "POS", '1'                                       , '2'                                       ],
+                ["CHR", "POS", '0'                                       , '0'                                       ]]
+        lepmap_df = pd.DataFrame(data)
 
-        # put all F1 progeny of parent G into data header
+        # put all F1 progeny of parent into header
+        # TODO: refactor to use df
         with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
             p1_set = set()
             fprog1.readline()
@@ -59,11 +53,10 @@ if __name__ == "__main__":
                 if G in (p1[3], p1[4]) and p1[0] not in p1_set:
                     added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
                                     sex_dict['male'], sex_dict['female'], '0', '0']
-                    df.insert(len(df.columns), len(df.columns), added_data)
-
+                    lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
                 p1_set.add(p1[0])
 
-        # add rows from filtered tsv file to df
+        # add rows from filtered tsv file to lepmap df
         if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
             exit("An error occurred: Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
         ftsv = pd.read_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t')
@@ -79,18 +72,16 @@ if __name__ == "__main__":
                 elif (cross[3] == G):
                     ftsv.insert(2, "Male Parent", 0)
                     ftsv.insert(3, "Female Parent", 1)
-                else:
-                    continue
+                else: continue
                 break
 
         ftsv = ftsv.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=True)
-        ## set columns of ftsv DataFrame to match df's column names
-        ftsv = ftsv.set_axis(list(df.columns), axis=1)
-        ## concatenate ftsv under df
-        df = pd.concat([df, ftsv], ignore_index=True)
+        ftsv = ftsv.set_axis(list(lepmap_df.columns), axis=1)
+        # add filtered tsv data to lepmap df
+        lepmap_df = pd.concat([lepmap_df, ftsv], ignore_index=True)
 
-        # export df DataFrame to tsv dedicated to LepMap3
-        df.to_csv(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv", sep='\t', header=False, index=False)
-        if not os.path.exists(f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"):
+        # export lepmap df to tsv
+        lepmap_df.to_csv(forlepmap_file, sep='\t', header=False, index=False)
+        if not os.path.exists(forlepmap_file):
             exit(f"An error occurred: tsv file for {G} has not been created.")
         print(f"\tCompleted making a LepMap3 tsv file for {G}.")

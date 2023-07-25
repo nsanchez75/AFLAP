@@ -11,10 +11,6 @@ from kmercov_x_markercount import plot_cov_and_mcount
 #       A shell script to obtain segregation statistics and exclude progeny which have low coverage.
 #################################################
 
-def histo_sort(line:str)->float:
-    line_fields = line.strip().split()
-    return float(line_fields[0])
-
 def get_count_frequency(df:pd.DataFrame)->pd.DataFrame:
     return df.groupby("Frequency")["Frequency"].count().rename("Frequency Count").to_frame().reset_index(drop=False)
 
@@ -29,15 +25,14 @@ if __name__ == "__main__":
     # create directory
     os.makedirs("AFLAP_tmp/05", exist_ok=True)
 
-    # initialize variables
-    ak = 2 * int(args.kmer) - 1
-
     # analyze all parents whom we can create a genetic map for
     print("Performing segment statistics analysis...")
     list_of_Gs = get_LA_info()
     for G_info in list_of_Gs:
         G, LO, UP, P0, SEX = G_info
 
+        # check number of calls for G
+        # TODO: use glob to detect number of files associated w/ G in 04/Call/
         # check for num progs of G
         num_progs = 0
         with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
@@ -57,12 +52,12 @@ if __name__ == "__main__":
         tsv["Frequency"] = tsv.iloc[:, 3:].sum(axis=1).div(num_progs)
 
         marker_all = get_count_frequency(tsv)
-        marker_equals = tsv.loc[tsv["MarkerLength"].astype(int) == 61]
-        marker_equals = get_count_frequency(marker_equals)
-        marker_over = tsv.loc[tsv["MarkerLength"].astype(int) > 61]
-        marker_over = get_count_frequency(marker_over)
+        marker_equals = get_count_frequency(tsv[tsv["MarkerLength"].astype(int) == 61])
+        marker_over = get_count_frequency(tsv[tsv["MarkerLength"].astype(int) > 61])
 
-        get_seg_stats(marker_all, marker_equals, marker_over, ak, f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png")
+        seg_png = f"AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png"
+        ak = 2 * int(args.kmer) - 1
+        get_seg_stats(marker_all, marker_equals, marker_over, ak, seg_png)
 
         # perform analysis on progeny of G
         mc_df = pd.DataFrame(columns=["F1 Prog", "Marker Count", "K-mer Coverage"])
@@ -113,16 +108,16 @@ if __name__ == "__main__":
 
         if (not args.LOD == 2):
             print("\t\t\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from $Ped and rerun AFLAP.\n" +
-                f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
-                "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
+                 f"\t\t\tIt is possible that two peaks will be shown in AFLAP_Results/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}_MarkerSeg.png.\n" +
+                  "\t\t\tIf that is the case please rerun AFLAP.sh providing -d and -D for lower and upper limits for marker filtering.")
 
         # filter out progeny with coverage < LOD
-        low_cov = mc_df.loc[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
+        low_cov = mc_df[mc_df["K-mer Coverage"].astype(int) < int(args.LOD)]
         for i in low_cov.index:
             print(f"\t\t\t{low_cov['F1 Prog'][i]} appears to be low coverage. Will be excluded.")
 
         # create filtered tsv file
-        tsv_filtered = tsv.loc[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
+        tsv_filtered = tsv[tsv["Frequency"].astype(float).between(args.SDL, args.SDU)]
         # remove Frequency column from tsv file
         tsv_filtered = tsv_filtered.iloc[:, :-1]
         tsv_filtered.to_csv(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
