@@ -60,26 +60,21 @@ if __name__ == "__main__":
         ftsv.insert(0, "MarkerLoc", ftsv["MarkerID"].astype(str) + '_' + ftsv["MarkerLength"].astype(str))
         ftsv = ftsv.drop(["MarkerID", "MarkerLength"], axis=1)
 
-        with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-            for cross in fcrosses:
-                cross = cross.strip().split()
-                if (cross[2] == G):
-                    ftsv.insert(2, "Male Parent", 1)
-                    ftsv.insert(3, "Female Parent", 0)
-                elif (cross[3] == G):
-                    ftsv.insert(2, "Male Parent", 0)
-                    ftsv.insert(3, "Female Parent", 1)
-                else: continue
-                break
+        match SEX:
+            case "male":
+                ftsv.insert(2, "Male Parent", 1)
+                ftsv.insert(3, "Female Parent", 0)
+            case "female":
+                ftsv.insert(2, "Male Parent", 0)
+                ftsv.insert(3, "Female Parent", 1)
 
         ftsv = ftsv.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=True)
-
         ftsv = ftsv.set_axis(list(lepmap_df.columns), axis=1)
-        # add filtered tsv data to lepmap df
-        lepmap_df = pd.concat([lepmap_df, ftsv], ignore_index=True)
 
-        # export lepmap df to tsv
+        # create lepmap tsv data
+        lepmap_df = pd.concat([lepmap_df, ftsv], ignore_index=True)
         lepmap_df.to_csv(forlepmap_file, sep='\t', header=False, index=False)
+
         if not os.path.exists(forlepmap_file):
             exit(f"An error occurred: tsv file for {G} has not been created.")
         print(f"\tCompleted making a LepMap3 tsv file for {G}.")
