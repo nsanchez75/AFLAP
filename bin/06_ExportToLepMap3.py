@@ -49,8 +49,8 @@ if __name__ == "__main__":
         for df in [fprog1_df, fprog2_df]:
             df = df[(df["MP"].astype(str) == G) | (df["FP"].astype(str) == G)]
             for prog in df["Individual"].unique():
-                added_data = [f"{sex_dict['male']}x{sex_dict['female']}", prog,
-                              sex_dict['male'], sex_dict['female'], '0', '0']
+                added_data = pd.Series([f"{sex_dict['male']}x{sex_dict['female']}", prog,
+                              sex_dict['male'], sex_dict['female'], '0', '0'])
                 lepmap_df = pd.concat([lepmap_df, added_data], axis=1)
 
         # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
