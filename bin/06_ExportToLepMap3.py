@@ -76,6 +76,10 @@ if __name__ == "__main__":
                 break
 
         ftsv = ftsv.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=True)
+
+        print(ftsv)
+        print(lepmap_df)
+
         ftsv = ftsv.set_axis(list(lepmap_df.columns), axis=1)
         # add filtered tsv data to lepmap df
         lepmap_df = pd.concat([lepmap_df, ftsv], ignore_index=True)
