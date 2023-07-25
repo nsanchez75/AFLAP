@@ -25,14 +25,8 @@ if __name__ == "__main__":
 
         # determine male and female parent
         sex_dict = {'male': None, 'female': None}
-        with open("AFLAP_tmp/Crosses.txt", 'r') as fcrosses:
-            for cross in fcrosses:
-                cross = cross.strip().split()
-
-                if G == cross[2]:   sex_dict['male'], sex_dict['female'] = G, P0
-                elif G == cross[3]: sex_dict['male'], sex_dict['female'] = P0, G
-                else: continue
-                break
+        if SEX == "male":     sex_dict['male'], sex_dict['female'] = G, P0
+        elif SEX == "female": sex_dict['male'], sex_dict['female'] = P0, G
 
         data = [["CHR", "POS", f"{sex_dict['male']}x{sex_dict['female']}", f"{sex_dict['male']}x{sex_dict['female']}"],
                 ["CHR", "POS", sex_dict['male']                          , sex_dict['female']                        ],
@@ -60,13 +54,12 @@ if __name__ == "__main__":
         ftsv.insert(0, "MarkerLoc", ftsv["MarkerID"].astype(str) + '_' + ftsv["MarkerLength"].astype(str))
         ftsv = ftsv.drop(["MarkerID", "MarkerLength"], axis=1)
 
-        match SEX:
-            case "male":
-                ftsv.insert(2, "Male Parent", 1)
-                ftsv.insert(3, "Female Parent", 0)
-            case "female":
-                ftsv.insert(2, "Male Parent", 0)
-                ftsv.insert(3, "Female Parent", 1)
+        if SEX == "male":
+            ftsv.insert(2, "Male Parent", 1)
+            ftsv.insert(3, "Female Parent", 0)
+        elif SEX == "female":
+            ftsv.insert(2, "Male Parent", 0)
+            ftsv.insert(3, "Female Parent", 1)
 
         ftsv = ftsv.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=True)
         ftsv = ftsv.set_axis(list(lepmap_df.columns), axis=1)
