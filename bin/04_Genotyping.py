@@ -58,6 +58,11 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
     if not len(prog_list):
         print(f"\t\tNo progeny of {G} found among given {f_type}.")
 
+    # get loci sequences if analyzing 2nd generation type
+    if f_type == "F2":
+        same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+        set_of_loci_seqs = set(same_loci_seqs[f"{SEX.capitalize()} Sequence"].to_list())
+
     # perform jellyfish query
     for prog in prog_list:
         print(f"\t\tCreating Count and Call for {prog}...")
@@ -68,8 +73,6 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
         create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
 
         call_file = f"AFLAP_tmp/04/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
-        same_loci_seqs = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
-        set_of_loci_seqs = set(same_loci_seqs[f"{SEX.capitalize()} Sequence"].to_list())
         create_call(call_file, count_file, set_of_loci_seqs, prog, int(LowCov), f_type, SEX)
 
     return prog_list
