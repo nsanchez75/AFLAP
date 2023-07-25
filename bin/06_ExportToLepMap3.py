@@ -53,18 +53,6 @@ if __name__ == "__main__":
                               sex_dict['male'], sex_dict['female'], '0', '0'])
                 lepmap_df = pd.concat([lepmap_df, added_data], axis=1)
 
-        # with open("AFLAP_tmp/Pedigree_F1.txt", 'r') as fprog1:
-        #     p1_set = set()
-        #     fprog1.readline()
-        #     for p1 in fprog1:
-        #         p1 = p1.strip().split()
-
-        #         if G in (p1[3], p1[4]) and p1[0] not in p1_set:
-        #             added_data = [f"{sex_dict['male']}x{sex_dict['female']}", p1[0],
-        #                             sex_dict['male'], sex_dict['female'], '0', '0']
-        #             lepmap_df.insert(len(lepmap_df.columns), len(lepmap_df.columns), added_data)
-        #         p1_set.add(p1[0])
-
         # add rows from filtered tsv file to lepmap df
         if (not os.path.exists(f"AFLAP_tmp/05/{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv")):
             exit("An error occurred: Filtered .tsv file not found. Rerun 05_ObtainSegStats.py.")
@@ -85,9 +73,6 @@ if __name__ == "__main__":
                 break
 
         ftsv = ftsv.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=True)
-
-        print(ftsv)
-        print(lepmap_df)
 
         ftsv = ftsv.set_axis(list(lepmap_df.columns), axis=1)
         # add filtered tsv data to lepmap df
