@@ -85,10 +85,10 @@ if __name__ == "__main__":
                 ## confirm if coverage peak is 1
                 if coverage == 1:
                     not1 = is1 = 0
+                    for i in range(2, 6): del c_dict[i]
                     for c in c_dict:
                         if c == 1: is1 = c_dict[c]
-                        if c > 5:  not1 += c_dict[c]
-                        else: del c_dict[c]
+                        not1 += c_dict[c]
 
                     if not1 > is1:
                         del c_dict[1]
