@@ -56,7 +56,7 @@ if __name__ == "__main__":
                            shell=True, executable="/bin/bash")
 
         # counting k-mers
-        print(f"\t{int(os.path.getsize(fa_file) / 2)} {args.kmer}-mers counted for {G}.")
+        print(f"\t{os.path.getsize(fa_file) // 2} {args.kmer}-mers counted for {G}.")
 
         # create histo.png
         png_file = f"AFLAP_Results/Plots/{G}_m{args.kmer}_L{LO}_U{UP}_histo.png"
