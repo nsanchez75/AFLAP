@@ -72,7 +72,7 @@ if __name__ == "__main__":
                 # find individual coverage value
                 coverage = 0
                 count_df = pd.read_csv(f"AFLAP_tmp/04/Count/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", sep=' ', header=None, names=["Sequence", "Count"])
-                c_dict = count_df.groupby("Count").value_counts(dropna=True, sort=True).to_frame()["Count"].to_dict()
+                c_dict = count_df.groupby("Count").count().to_dict()["Sequence"]
                 del c_dict[0]   # remove 0 from dictionary
 
                 ## find most frequent count
