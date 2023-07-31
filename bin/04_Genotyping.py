@@ -18,8 +18,7 @@ def create_count(count_file:str, prog:str, f_type:str, parent:str, kmer:int, lo:
     jf_out = subprocess.run(f"jellyfish query -s AFLAP_tmp/03/F0Markers/{parent}_m{kmer}_MARKERS_L{lo}_U{up}_{p0}.fa AFLAP_tmp/01/{f_type}Count/{prog}.jf{kmer}",
                             shell=True, capture_output=True, text=True, executable="/bin/bash").stdout.split('\n')
     with open(count_file, 'w') as f:
-        for line in jf_out:
-            if len(line): f.write(f"{line}\n")
+        [f.write(f"{line}\n") if (len(line)) else None for line in jf_out]
 
     if not os.path.getsize(count_file):
         exit(f"An error occurred: Count file for {prog} was not created properly.")
@@ -52,7 +51,6 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
     G, LO, UP, P0, SEX = G_info
 
     # add progeny of parent to list
-
     prog_list = list()
     prog_df = pd.read_csv(f"AFLAP_tmp/Pedigree_{f_type}.txt", sep='\t')
     prog_list = prog_df[(prog_df["MP"].astype(str) == G) | (prog_df["FP"].astype(str) == G)]["Individual"].unique().tolist()
@@ -67,7 +65,6 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
 
         count_file = f"AFLAP_tmp/04/{f_type}/Count/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
         create_count(count_file, prog, f_type, G, kmer, LO, UP, P0)
-
         call_file = f"AFLAP_tmp/04/{f_type}/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
         create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
 
@@ -105,9 +102,7 @@ if __name__ == "__main__":
             while True:
                 head = f.readline().strip().replace('>', '')
                 if not head: break
-
                 seq = f.readline().strip()
-
                 head_list.append(head)
                 seq_list.append(seq)
 
