@@ -32,7 +32,7 @@ def abyss_assembly(k:int, G:str, LO:int, UP:int, kmer:int, abyss_file:str, fafil
 
 def get_markers(G_info:tuple, kmer:int)->None:
     G, LO, UP, P0, SEX = G_info
-    seq_groups = pd.DataFrame(columns=["Sequence", "Locus Sequence"])
+    seq_groups = pd.DataFrame(columns=["Sequence", "Sequence ID", "Locus Sequence"])
     ak = 2 * int(kmer) - 1
 
     print(f"Performing marker assembly on {G}...")
@@ -94,7 +94,8 @@ def get_markers(G_info:tuple, kmer:int)->None:
                 else: fragments_over_ak += 1
 
                 # get id
-                fabsub.write(f">{id[0]}_{id[1]}\n")
+                id = f">{id[0]}_{id[1]}"
+                fabsub.write(f"{id}\n")
                 # get subsequence and its reverse complement
                 subseq = seq[9:(9 + int(kmer))]
                 rc_subseq = subseq[::-1].translate(subseq.maketrans("ATCG", "TAGC"))
@@ -102,7 +103,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
                 if subseq > rc_subseq: subseq = rc_subseq
                 fabsub.write(f"{subseq}\n")
                 # get sequence locus via first and last couple of base pairs
-                seq_groups.loc[len(seq_groups.index)] = [subseq, seq[0:(int(kmer) - 1)] + seq[(len(seq) - int(kmer) + 1):]]
+                seq_groups.loc[len(seq_groups.index)] = [subseq, id[1:].replace('_', ' '), seq[0:(int(kmer) - 1)] + '|' + seq[(len(seq) - int(kmer) + 1):]]
 
     # refilter against self
     jf_cmd = f"jellyfish query -s {abyss_subseq_file} AFLAP_tmp/01/F0Count/{G}.jf{kmer}"
@@ -185,6 +186,7 @@ if __name__ == "__main__":
     os.makedirs("AFLAP_tmp/03/SimGroups", exist_ok=True)
 
     # assemble for markers for parents whose bounds are identified
+    print("Identifying markers for all parents...")
     processes = list()
     for G_info in get_LA_info():
         p = mp.Process(target=get_markers, args=(G_info, args.kmer))
@@ -197,12 +199,13 @@ if __name__ == "__main__":
     # find sequences of identical loci
     mp_seqs = pd.DataFrame(columns=["Male Sequence", "Locus Sequence"])
     for glob_path in glob.glob("AFLAP_tmp/03/SimGroups/male*"):
-        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Male Sequence"})
+        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Male Sequence", "Sequence ID": "Male Sequence ID"})
         mp_seqs = pd.concat([mp_seqs, glob_path_seqs])
     fp_seqs = pd.DataFrame(columns=["Female Sequence", "Locus Sequence"])
     for glob_path in glob.glob("AFLAP_tmp/03/SimGroups/female*"):
-        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Female Sequence"})
+        glob_path_seqs = pd.read_csv(glob_path, sep='\t').rename(columns={"Sequence": "Female Sequence", "Sequence ID": "Female Sequence ID"})
         fp_seqs = pd.concat([fp_seqs, glob_path_seqs])
 
-    comb_seqs = pd.merge(mp_seqs, fp_seqs, on="Locus Sequence", how='inner')
-    comb_seqs.to_csv(f"AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+    comb_seqs = pd.merge(mp_seqs, fp_seqs, on="Locus Sequence", how='inner')[["Male Sequence", "Male Sequence ID", "Female Sequence", "Female Sequence ID", "Locus Sequence"]]
+    comb_seqs["Locus Sequence ID"] = comb_seqs.index.map(lambda index: f"F2_{index}")
+    comb_seqs.to_csv(f"AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t', index=False)
