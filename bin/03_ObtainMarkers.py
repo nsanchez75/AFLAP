@@ -103,7 +103,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
                 if subseq > rc_subseq: subseq = rc_subseq
                 fabsub.write(f"{subseq}\n")
                 # get sequence locus via first and last couple of base pairs
-                seq_groups.loc[len(seq_groups.index)] = [subseq, id[1:].replace('_', ' '), seq[0:(int(kmer) - 1)] + '|' + seq[(len(seq) - int(kmer) + 1):]]
+                seq_groups.loc[len(seq_groups.index)] = [subseq, id[1:], seq[0:(int(kmer) - 1)] + '|' + seq[(len(seq) - int(kmer) + 1):]]
 
     # refilter against self
     jf_cmd = f"jellyfish query -s {abyss_subseq_file} AFLAP_tmp/01/F0Count/{G}.jf{kmer}"
