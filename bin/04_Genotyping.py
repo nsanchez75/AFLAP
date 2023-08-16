@@ -1,4 +1,5 @@
 import argparse
+import glob
 import pandas as pd
 import os
 import subprocess
@@ -68,7 +69,29 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
         call_file = f"AFLAP_tmp/04/{f_type}/Call/{prog}_{G}_m{kmer}_L{LO}_U{UP}_{P0}.txt"
         create_call(call_file, count_file, prog, int(LowCov), f_type, SEX)
 
+    num_count_files = len(list(filter(lambda x: True if (x[22:].split('_')[1] == G) else False, glob.glob(f"AFLAP_tmp/04/{f_type}/Count/*.txt"))))
+    num_call_files = len(list(filter(lambda x: True if (x[21:].split('_')[1] == G) else False, glob.glob(f"AFLAP_tmp/04/{f_type}/Call/*.txt"))))
+    if not num_count_files == num_call_files:
+        exit(f"An error occurred: Non-equivalent amount of Count and Call files were made for {f_type} progeny of {G}. Delete 04 directory in AFLAP_tmp and rerun 04_Genotyping.py.")
+
     return prog_list
+
+def make_f2_genotype_table(marker_df:pd.DataFrame, ident_loci_df:pd.DataFrame, sex:str)->pd.DataFrame:
+    # edit identical_loci dataframe
+    id_col_name = f"{sex.capitalize()} Sequence ID"
+    specific_loci_df = ident_loci_df[[id_col_name, "Locus Sequence", "Locus Sequence ID"]]
+    # TODO: fix warning
+    specific_loci_df[id_col_name] = specific_loci_df[id_col_name].apply(lambda x: x.split('_')[0])
+
+    # merge dataframes and replace marker ID with locus ID
+    marker_df = marker_df.merge(specific_loci_df, left_on="MarkerID", right_on=id_col_name, how='inner')
+    marker_df["MarkerSequence"] = marker_df["Locus Sequence"]
+    marker_df["MarkerID"] = marker_df["Locus Sequence ID"]
+
+    if sex == "male": marker_df.iloc[:, 3:] = marker_df.iloc[:, 3:].replace(['0', '1'], ['X', 'A'])
+    else:             marker_df.iloc[:, 3:] = marker_df.iloc[:, 3:].replace(['0', '1'], ['X', 'B'])
+
+    return marker_df.drop(columns=[id_col_name, "Locus Sequence", "Locus Sequence ID"])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
@@ -76,51 +99,52 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     args = parser.parse_args()
 
-    # make directories
-    os.makedirs("AFLAP_tmp/04/F1/Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/04/F1/Call", exist_ok=True)
-    os.makedirs("AFLAP_tmp/04/F2/Count", exist_ok=True)
-    os.makedirs("AFLAP_tmp/04/F2/Call", exist_ok=True)
+    os.makedirs("AFLAP_tmp/04/Reports", exist_ok=True)
 
-    # check for markers
     list_of_Gs = get_LA_info()
-    for G_info in list_of_Gs:
-        G, LO, UP, P0, SEX = G_info
+    for f_type in ["F1", "F2"]:
+        if not len(os.listdir(f"AFLAP_tmp/01/{f_type}Count")):
+            print(f"No {f_type} progeny found. Skipping.")
+            continue
 
-        # check if marker exists
-        marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
-        if not os.path.exists(marker_file):
-            exit(f"An error occurred: {marker_file} not found. Rerun 03_ObtainMarkers.py.")
-        print(f"\t{os.path.getsize(marker_file) // 2} markers identified in {marker_file}. These will be surveyed against progeny.")
+        # make directories
+        os.makedirs(f"AFLAP_tmp/04/{f_type}/Count", exist_ok=True)
+        os.makedirs(f"AFLAP_tmp/04/{f_type}/Call", exist_ok=True)
 
-        # extract info from marker file
-        marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
-        with open(marker_file, 'r') as f:
-            head_list = list()
-            seq_list = list()
+        # check for markers
+        for G_info in list_of_Gs:
+            G, LO, UP, P0, SEX = G_info
 
-            while True:
-                head = f.readline().strip().replace('>', '')
-                if not head: break
-                seq = f.readline().strip()
-                head_list.append(head)
-                seq_list.append(seq)
+            # check if marker exists
+            marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
+            if not os.path.exists(marker_file) or not os.path.getsize(marker_file):
+                exit(f"An error occurred: {marker_file} not valid. Rerun 03_ObtainMarkers.py.")
+            print(f"\t{os.path.getsize(marker_file) // 2} markers identified in {marker_file}. These will be surveyed against progeny.")
 
-            # check if head_list and seq_list are same size
-            if len(head_list) != len(seq_list):
-                exit(f"An error occurred: {marker_file} not extracted properly. Make sure every marker pairs with a sequence.")
-
-        # run jellyfish on F1 and F2 individuals who descend from F0
-        f1_prog_list = genotype_jfq(args.kmer, args.LowCov, G_info, "F1")
-        f2_prog_list = genotype_jfq(args.kmer, args.LowCov, G_info, "F2")
-
-        # get data for F1 and F2 progeny
-        for prog_list, f_type in [(f1_prog_list, "F1"), (f2_prog_list, "F2")]:
-            if not prog_list:
-                print(f"\tNo {f_type} progeny for {G} detected. Skipping.")
-                continue
+            # get data for progeny
             print(f"\tGetting {f_type} progeny data for {G}...")
+            prog_list = genotype_jfq(args.kmer, args.LowCov, G_info, f_type)
+            if not prog_list:
+                exit(f"An error occurred: Creating call and count of {f_type} progeny did not work.")
 
+            # extract info from marker file
+            marker_file = f"AFLAP_tmp/03/F0Markers/{G}_m{args.kmer}_MARKERS_L{LO}_U{UP}_{P0}.fa"
+            with open(marker_file, 'r') as f:
+                head_list = list()
+                seq_list = list()
+
+                while True:
+                    head = f.readline().strip().replace('>', '')
+                    if not head: break
+                    seq = f.readline().strip()
+                    head_list.append(head)
+                    seq_list.append(seq)
+
+                if len(head_list) != len(seq_list):
+                    exit(f"An error occurred: {marker_file} not extracted properly. Make sure every marker pairs with a sequence.")
+
+            # create genotype table
+            print(f"Creating a genotype table for {f_type} progeny of {G}...")
             data = {"MarkerSequence": seq_list, "MarkerID": head_list}
             for prog in prog_list:
                 with open(f"AFLAP_tmp/04/{f_type}/Call/{prog}_{G}_m{args.kmer}_L{LO}_U{UP}_{P0}.txt", 'r') as fcall:
@@ -129,11 +153,18 @@ if __name__ == "__main__":
                 data[prog] = b_vals
             marker_df = pd.DataFrame(data=data)
 
-            # split marker sequence and value and reorder
+            ## split marker sequence and value and reorder
             marker_df[["MarkerID", "MarkerLength"]] = marker_df["MarkerID"].str.split('_', expand=True)
             marker_df = marker_df.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(marker_df.columns[2:-1]))
 
-            # create tsv file
+            if f_type == "F2":
+                identical_loci_id_df = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+                if identical_loci_id_df.empty:
+                    exit("An error occurred: AFLAP_tmp/03/SimGroups/identical_loci.txt not found. Rerun 03_ObtainMarkers.py.")
+
+                marker_df = make_f2_genotype_table(marker_df, identical_loci_id_df, SEX)
+
+            ## create tsv file
             marker_df.to_csv(f"AFLAP_tmp/04/{G}_{f_type}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv", sep='\t', index=False)
 
             if not os.path.exists(f"AFLAP_tmp/04/{G}_{f_type}_m{args.kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.tsv"):
