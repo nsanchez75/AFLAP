@@ -97,8 +97,8 @@ def genotype_table_stats(marker_df:pd.DataFrame, G_info:tuple, f_type:str, kmer:
     # filter out progeny with coverage < LOD
     if not LOD == 2:
         print("\tAFLAP ran in low coverage mode. Coverage cut-off not run. Please manually remove any isolates you wish to exclude from the pedigree file and rerun AFLAP.\n" +
-             f"\tIt is possible that two peaks will be shown in {seg_png}.\n" +
-              "\tIf that is the case please rerun AFLAP.py providing -d and -D for lower and upper limits for marker filtering.")
+            f"\tIt is possible that two peaks will be shown in {seg_png}.\n" +
+            "\tIf that is the case please rerun AFLAP.py providing -d and -D for lower and upper limits for marker filtering.")
     low_cov = mc_df[mc_df["K-mer Coverage"].astype(int) < LOD]
     for i in low_cov.index:
         filtered_progs.add(low_cov['Prog'][i])
@@ -120,6 +120,10 @@ def filter_f1(kmer:int, LOD:int, SDL:float, SDU:float)->None:
 
         # remove LOD-filtered progeny from male and female dataframes
         marker_df = marker_df.drop(columns=list(filtered_progs))
+
+        # combine marker ID and marker length
+        marker_df["MarkerID"] = marker_df["MarkerID"].astype(str) + '_' + marker_df["MarkerLength"].astype(str)
+        marker_df = marker_df.drop(columns=["MarkerLength"])
 
         marker_df.to_csv(f"AFLAP_tmp/05/{G}_F1_m{kmer}_L{LO}_U{UP}_{P0}.Genotypes.MarkerID.Filtered.tsv", sep='\t', index=False)
         print(f"Finished creating F1 genotype table for {G}.")
@@ -176,7 +180,10 @@ def filter_f2(kmer:int, LOD:int, SDL:float, SDU:float, xx_filter:float=None)->No
     comb_marker_df = pd.concat([comb_marker_df, freq_df], axis=1)
 
     # if necessary, filter out sequences by XX frequency
-    if xx_filter: comb_marker_df = comb_marker_df[comb_marker_df["XX Frequency"].astype(float) <= xx_filter]
+    if xx_filter is not None: comb_marker_df = comb_marker_df[comb_marker_df["XX Frequency"].astype(float) <= xx_filter]
+    else:
+        print("XX Filter not specified. Using median of all XX Frequency values as a filter...")
+        comb_marker_df = comb_marker_df[comb_marker_df["XX Frequency"].astype(float) <= comb_marker_df["XX Frequency"].astype(float).quantile(0.75)]
 
     # create frequency stats table
     freq_stats_df = comb_marker_df[["MarkerSequence", "MarkerID", "XX Frequency", "AA Frequency", "BB Frequency", "AB Frequency"]]
