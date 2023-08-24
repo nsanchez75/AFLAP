@@ -14,9 +14,6 @@ def create_f1_forlepmap(kmer:int)->None:
         print(f"Working on F1 progeny from parent {G}...")
 
         forlepmap_file = f"AFLAP_Results/{G}_F1_m{kmer}_L{LO}_U{UP}_{P0}.ForLepMap3.tsv"
-        if os.path.exists(forlepmap_file) and os.path.getsize(forlepmap_file):
-            print(f"LepMap3 info for parent {G} has been detected. Skipping.")
-            continue
 
         # determine male and female parent
         if SEX == "male":     male, female = G, P0
@@ -77,9 +74,6 @@ def create_f2_forlepmap(kmer:int)->None:
     female = '_'.join(female)
 
     forlepmap_file = f"AFLAP_Results/{male}x{female}_F2_m{kmer}.ForLepMap3.tsv"
-    if os.path.exists(forlepmap_file) and os.path.getsize(forlepmap_file):
-        print(f"LepMap3 info for F2 progeny has been detected. Skipping.")
-        return
 
     # get info from filtered genotype table
     filtered_tsv = f"AFLAP_tmp/05/{male}x{female}_F2_m{kmer}.Genotypes.MarkerID.Filtered.tsv"
@@ -100,8 +94,8 @@ def create_f2_forlepmap(kmer:int)->None:
     # create lepmap header
     data = [["CHR", "POS", f"{male}x{female}" , f"{male}x{female}", f"{male}x{female}", f"{male}x{female}"],
             ["CHR", "POS", male               , female            , "DUM1"            , "DUM2"            ],
-            ["CHR", "POS", '0'                , '0'               , female            , female            ],
             ["CHR", "POS", '0'                , '0'               , male              , male              ],
+            ["CHR", "POS", '0'                , '0'               , female            , female            ],
             ["CHR", "POS", '1'                , '2'               , '1'               , '2'               ],
             ["CHR", "POS", '0'                , '0'               , '0'               , '0'               ]]
     lepmap_df = pd.DataFrame(data)
