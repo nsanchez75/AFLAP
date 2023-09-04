@@ -26,22 +26,22 @@ def update_individual(rem_ind:str, pedigree:str)->None:
     # remove individual from all analysis files
     match rem_ind_gen:
         case 0:
-            # remove jellyfish count
+            # remove 01 jellyfish count
             remove_files([f"AFLAP_tmp/01/F0Count/{rem_ind}*"], "AFLAP_tmp/01")
-            # remove histoplots
+            # remove 02 files
             remove_files([f"AFLAP_tmp/02/{rem_ind}*", f"AFLAP_tmp/02/F0Histo/{rem_ind}*"], "AFLAP_tmp/02")
-            # remove markers
-            remove_files([f"AFLAP_tmp/03/{rem_ind}*", f"AFLAP_tmp/03/F0Markers/{rem_ind}*"], "AFLAP_tmp/03")
-            # remove tsv file
-            remove_files([f"AFLAP_tmp/04/{rem_ind}*"], "AFLAP_tmp/04")
-            # TODO: add removal of simgroups and reportlogs in 03
-            # TODO: add removal of count and call related to parent in 04 (_<parent>_ in filename)
-        case 1:
+            # remove 03 files
+            remove_files([f"AFLAP_tmp/03/{rem_ind}*", f"AFLAP_tmp/03/F0Markers/{rem_ind}*", f"AFLAP_tmp/03/ReportLogs/{rem_ind}*", f"AFLAP_tmp/03/SimGroups/*_{rem_ind}_*", "AFLAP_tmp/03/SimGroups/identical_loci.txt"], "AFLAP_tmp/03")
+            # remove 04 files
+            remove_files([f"AFLAP_tmp/04/{rem_ind}*", f"AFLAP_tmp/04/*/Call/*_{rem_ind}_*", f"AFLAP_tmp/*/04/Count/*_{rem_ind}_*"], "AFLAP_tmp/04")
+            # remove 05 files
+            remove_files([f"AFLAP_tmp/05/*{rem_ind}*"], "AFLAP_tmp/05")
+        case 1: # FIX
             # remove jellyfish count
             remove_files([f"AFLAP_tmp/01/F1Count/{rem_ind}*"], "AFLAP_tmp/01")
             # remove count and call
             remove_files([f"AFLAP_tmp/04/Call/{rem_ind}*", f"AFLAP_tmp/04/Count/{rem_ind}*"], "AFLAP_tmp/04")
-        case 2:
+        case 2: # FIX
             # remove jellyfish count
             remove_files([f"AFLAP_tmp/01/F2Count/{rem_ind}*"], "AFLAP_tmp/01")
             # remove count and call
