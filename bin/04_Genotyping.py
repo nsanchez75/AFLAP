@@ -99,8 +99,6 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     args = parser.parse_args()
 
-    os.makedirs("AFLAP_tmp/04/Reports", exist_ok=True)
-
     list_of_Gs = get_LA_info()
     for f_type in ["F1", "F2"]:
         if not len(os.listdir(f"AFLAP_tmp/01/{f_type}Count")):
