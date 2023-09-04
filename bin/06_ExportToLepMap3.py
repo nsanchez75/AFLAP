@@ -24,8 +24,8 @@ def create_f1_forlepmap(kmer:int)->None:
         if (not os.path.exists(filtered_tsv)):
             exit(f"An error occurred: Filtered {filtered_tsv} file not found. Rerun 05_ObtainSegStats.py.")
         ftsv_df = pd.read_csv(filtered_tsv, sep='\t')
-        ftsv_df.insert(0, "MarkerLoc", ftsv_df["MarkerID"].astype(str) + '_' + ftsv_df["MarkerLength"].astype(str))
-        ftsv_df = ftsv_df.drop(["MarkerID", "MarkerLength"], axis=1)
+        ftsv_df.insert(0, "MarkerLoc", ftsv_df["MarkerID"].astype(str))
+        ftsv_df = ftsv_df.drop(["MarkerID"], axis=1)
 
         # add columns for male and female parents
         if SEX == "male":
@@ -36,7 +36,6 @@ def create_f1_forlepmap(kmer:int)->None:
             ftsv_df.insert(3, "Female Parent", 1)
 
         ftsv_df = ftsv_df.replace([0, 1, 2], ['1 0 0 0 0 0 0 0 0 0', '0 1 0 0 0 0 0 0 0 0', '0 0 0 0 1 0 0 0 0 0'], regex=False)
-        ftsv_df = ftsv_df.set_axis(list(lepmap_df.columns), axis=1)
 
         # create lepmap header
         data = [["CHR", "POS", f"{male}x{female}", f"{male}x{female}"],
@@ -57,6 +56,7 @@ def create_f1_forlepmap(kmer:int)->None:
                 lepmap_df = pd.concat([lepmap_df, added_data], axis=1)
 
         # create lepmap data file
+        ftsv_df = ftsv_df.set_axis(list(lepmap_df.columns), axis=1)
         lepmap_df = pd.concat([lepmap_df, ftsv_df], ignore_index=True)
         lepmap_df.to_csv(forlepmap_file, sep='\t', header=False, index=False)
 
