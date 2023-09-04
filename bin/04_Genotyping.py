@@ -77,7 +77,7 @@ def genotype_jfq(kmer:str, LowCov:str, G_info:tuple, f_type:str)->list:
     return prog_list
 
 def make_f2_genotype_table(marker_df:pd.DataFrame, ident_loci_df:pd.DataFrame, sex:str)->pd.DataFrame:
-    # edit identical_loci dataframe
+    # edit identical loci dataframe
     id_col_name = f"{sex.capitalize()} Sequence ID"
     specific_loci_df = ident_loci_df[[id_col_name, "Locus Sequence", "Locus Sequence ID"]]
     # TODO: fix warning
@@ -158,9 +158,9 @@ if __name__ == "__main__":
             marker_df = marker_df.reindex(columns=["MarkerSequence", "MarkerID", "MarkerLength"] + list(marker_df.columns[2:-1]))
 
             if f_type == "F2":
-                identical_loci_id_df = pd.read_csv("AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t')
+                identical_loci_id_df = pd.read_csv("AFLAP_Results/IdenticalLoci.txt", sep='\t')
                 if identical_loci_id_df.empty:
-                    exit("An error occurred: AFLAP_tmp/03/SimGroups/identical_loci.txt not found. Rerun 03_ObtainMarkers.py.")
+                    exit("An error occurred: AFLAP_Results/IdenticalLoci.txt not found. Rerun 03_ObtainMarkers.py.")
 
                 marker_df = make_f2_genotype_table(marker_df, identical_loci_id_df, SEX)
 
