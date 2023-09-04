@@ -196,7 +196,7 @@ def filter_f2(kmer:int, LOD:int, SDL:float, SDU:float, xx_filter:float=None)->No
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainSegStats', description='A script to plot marker distributions in progeny.')
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
     parser.add_argument('-d', '--SDL', type=float, default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')

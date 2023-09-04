@@ -44,8 +44,8 @@ def jellyfish_count(kmer:str, threads:str, f_type:str, ped_df:pd.DataFrame)->Non
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='JELLYFISH', description="A script to obtain JELLYFISH hashes to be used when running AFLAP.")
-    parser.add_argument('-m', '--kmer', default=31, help="K-mer size (optional). Default [31].")
-    parser.add_argument('-t', '--threads', default=4, help="Threads for JELLYFISH counting (optional). Default [4].")
+    parser.add_argument('-m', '--kmer', default=31, help="K-mer size. Default [31].")
+    parser.add_argument('-t', '--threads', default=4, help="Threads for JELLYFISH counting. Default [4].")
     args = parser.parse_args()
 
     # make directories

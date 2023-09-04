@@ -9,13 +9,15 @@ from bin.update_individual import update_individual
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='AFLAP', description="A script to run all stages of AFLAP.")
     parser.add_argument('-P', '--Pedigree', type=str, required=True, help="Pedigree file (required). See AFLAP README for more information.")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
-    parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting (optional). Default [4].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
+    parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting. Default [4].')
     parser.add_argument('-r', '--remove', type=str, help='Individual to remove. All other options will be ignored.')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
     parser.add_argument('-d', '--SDL', type=float, default=0.2, help='Lower boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.2].')
     parser.add_argument('-D', '--SDU', type=float, default=0.8, help='Upper boundary for marker cut off. Can be used to filter for segregation distortion. Default [0.8].')
+    parser.add_argument('-f', '--fXX', type=float, default=None, help='Limit for how many XX can exist in a row. If surpassed then sequence is not considered for analysis. Default [None].')
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
+    parser.add_argument('-n', '--nLG', type=int, default=10, help='Minimum number of linkage groups needed to continue F2 LepMap3 analysis. Default [10].')
     parser.add_argument('-U', '--Max', type=int, help='Maximum number of markers to output in the genotype tables output under ./AFLAP_Results/')
     args = parser.parse_args()
 
@@ -70,7 +72,7 @@ if __name__ == "__main__":
                        check=True, shell=True)
         # 05_ObtainSegStats.py
         print("\nStep 5/6: Obtaining Segment Statistics\n")
-        subprocess.run(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD}",
+        subprocess.run(f"python3 {DIR}/bin/05_ObtainSegStats.py -m {args.kmer} -L {args.LOD} -f {args.fXX}",
                        check=True, shell=True)
 
         if (args.Max is not None):
@@ -83,7 +85,7 @@ if __name__ == "__main__":
                        check=True, shell=True)
         # 07_LepMap3.py
         print("\nRunning LepMap3\n")
-        subprocess.run(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD}",
+        subprocess.run(f"python3 {DIR}/bin/07_LepMap3.py -m {args.kmer} -t {args.threads} -L {args.LOD} -n {args.nLG}",
                        check=True, shell=True)
 
         print("AFLAP complete!")

@@ -110,8 +110,8 @@ def run_lepmap(parent_header:str, txt_header:str, f_type:str, num_threads:int, L
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='LepMap3', description='A script to run LepMap3 and produce a genetic map which can be aligned to a genome assembly.')
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
-    parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting (optional). Default [4].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
+    parser.add_argument('-t', '--threads', type=int, default=4, help='Threads for JELLYFISH counting. Default [4].')
     parser.add_argument('-L', '--LOD', type=int, default=2, help='LOD score - Will run LepMap3 with minimum LOD. Default [2].')
     parser.add_argument('-n', '--nLG', type=int, default=10, help='Minimum number of linkage groups needed to continue F2 LepMap3 analysis. Default [10].')
     args = parser.parse_args()

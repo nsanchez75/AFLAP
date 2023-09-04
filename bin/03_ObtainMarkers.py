@@ -177,7 +177,7 @@ def get_markers(G_info:tuple, kmer:int)->None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ObtainMarkers', description="A script to obtain single copy k-mers from parental JELLYFISH hashes.")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
     args = parser.parse_args()
 
     # make directories
@@ -208,4 +208,4 @@ if __name__ == "__main__":
 
     comb_seqs = pd.merge(mp_seqs, fp_seqs, on="Locus Sequence", how='inner')[["Male Sequence", "Male Sequence ID", "Female Sequence", "Female Sequence ID", "Locus Sequence"]]
     comb_seqs["Locus Sequence ID"] = comb_seqs.index.map(lambda index: f"F2_{index}")
-    comb_seqs.to_csv(f"AFLAP_tmp/03/SimGroups/identical_loci.txt", sep='\t', index=False)
+    comb_seqs.to_csv(f"AFLAP_Results/IdenticalLoci.txt", sep='\t', index=False)

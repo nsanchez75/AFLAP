@@ -95,7 +95,7 @@ def make_f2_genotype_table(marker_df:pd.DataFrame, ident_loci_df:pd.DataFrame, s
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='Genotyping', description="A script to genotype progeny")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
     parser.add_argument('-x', '--LowCov', type=int, default=2, help='Run with low coverage parameters.')
     args = parser.parse_args()
 

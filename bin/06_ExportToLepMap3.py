@@ -120,7 +120,7 @@ def create_f2_forlepmap(kmer:int)->None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='ExportToLepMap3', description="A script to export the genotype table to LepMap3.")
-    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size (optional). Default [31].')
+    parser.add_argument('-m', '--kmer', type=int, default=31, help='K-mer size. Default [31].')
     args = parser.parse_args()
 
     for f_type in ["F1", "F2"]:
